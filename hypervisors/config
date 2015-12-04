@@ -1,0 +1,3 @@
+[server]
+address=http://dashboard_address/vdi/
+password=12345

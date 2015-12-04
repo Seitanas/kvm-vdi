@@ -1,0 +1,15 @@
+#!/bin/bash
+
+x=$1
+name=$2
+#y=-1
+if [[ $x == "--help" || $x == "" ]]
+then
+    echo "vdi-mass-start machine_count append_name. e.g. vdi-mass-start 10 PC"
+    exit
+fi
+
+for i in `seq -w 1 $x`;
+do
+    echo `virsh start $name$i`
+done

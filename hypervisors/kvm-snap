@@ -1,0 +1,5 @@
+#!/bin/bash
+
+TMPDIR=/tmp exec /usr/bin/kvm "$@" -snapshot
+#exec /usr/bin/kvm "$@"
+
