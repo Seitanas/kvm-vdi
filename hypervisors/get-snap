@@ -19,6 +19,7 @@ while (x != y):
 if (startup_procedure):
     responce=requests.post(address+"/backend.php", data={'pass': password, 'vm': vmname})
     snapshot=(responce.text)
+    snapshot = snapshot.replace("\n", "")
     if (snapshot=="true"):
 	print " -snapshot"
 
