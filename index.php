@@ -16,8 +16,9 @@
   <body>
 <form method="post" action="login.php">
 <div style="Width:300px;margin:300px auto;" align="center">
-    <input type="text" name="username" class="form-control" required autofocus>
-    <input type="password" name="password" class="form-control" required>
+    <h2>Login</h2>
+    <input type="text" name="username" class="form-control" required autofocus placeholder="Username">
+    <input type="password" name="password" class="form-control" required placeholder="Password">
     <input type="submit" value="Login" class="btn btn-lg btn-default">
     <?php if ($_GET['error']==1){?>   
 	<div class="alert alert-danger" role="alert">Wrong username/password
