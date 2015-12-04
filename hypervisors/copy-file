@@ -17,7 +17,7 @@ password = config.get('server', 'password')
 
 bytes_copied=0
 progress=0
-requests.post(address+"/backend.php", data={'pass': password, 'tmpname': tmpname, 'data': '0'})
+requests.post(address+"/backend.php", data={'pass': password, 'tmpname': tmpname, 'data': '0'}, verify=False)
 with open(sourcefile,'rb') as f1:
     size = os.path.getsize(sourcefile)
     with open(destfile+".tmp",'wb') as f2:
