@@ -2,6 +2,8 @@
 from ConfigParser import ConfigParser
 import requests
 import sys
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 config = ConfigParser()
 config.read('/usr/local/VDI/config')
@@ -17,8 +19,8 @@ while (x != y):
 	startup_procedure=1
     x += 1
 if (startup_procedure):
-    responce=requests.post(address+"/backend.php", data={'pass': password, 'vm': vmname})
-    snapshot=(responce.text)
+    response=requests.post(address+"/backend.php", data={'pass': password, 'vm': vmname}, verify=False)
+    snapshot=(response.text)
     snapshot = snapshot.replace("\n", "")
     if (snapshot=="true"):
 	print " -snapshot"

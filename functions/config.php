@@ -4,7 +4,7 @@ $hypervizors=array("192.168.10.1:22","192.168.10.2:22");
 #Substitute local hypervisor IP address with external one if needed.
 #Substituted IP adresses will be provided for SPICE remote console connections in dashboard.
 $remote_spice_substitute=array("192.168.10.1"=>"172.31.1.1","192.168.10.2"=>"172.31.1.2");
-$serviceurl="http://dashboardaddress/vdi";
+$serviceurl="https://dashboardaddress/vdi";
 ############################################################
 
 

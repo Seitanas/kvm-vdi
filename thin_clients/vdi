@@ -1,0 +1,33 @@
+#!/usr/bin/python
+
+import json
+from pprint import pprint
+import urllib2
+import time
+import os
+import ssl
+context = ssl._create_unverified_context()
+signal=0
+runs=0
+pulseaudio=0
+while (signal==0):
+    reply=json.load(urllib2.urlopen("https://dashboard_address/vdi/client.php", context=context))
+    if reply["status"]=="MAINTENANCE":
+	time.sleep(10)
+    if reply["status"]=="BOOTUP":
+	time.sleep(1)
+    if reply["status"]=="OK":
+        os.system("/usr/local/bin/numlock_on &")
+	#signal=1
+	if reply["protocol"]=="SPICE":
+	    tmp=reply["address"].split(":")
+	    if pulseaudio==0:
+		    os.system("/usr/bin/pulseaudio --start")
+		    pulseaudio=1
+	    os.system("startx /usr/local/bin/remote-viewer --kiosk-quit=on-disconnect  --kiosk spice://" +tmp[0] + ":" + tmp[1] + "  ")
+	if reply["protocol"]=="RDP":
+	    os.system("startx /usr/bin/xfreerdp /f /sec:rdp /v:"+reply["address"]+" ")
+	if reply["protocol"]=="vmView":
+	    os.system("startx /usr/bin/vmware-view -s " + reply["address"] + " --fullscreen -q --applicationName=" + reply["pool"] + " --once --protocol=PCOIP ")
+	    os.system("resize")
+    time.sleep(2)

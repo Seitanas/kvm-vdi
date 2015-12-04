@@ -1,0 +1,12 @@
+#!/bin/bash
+
+export DISPLAY=:0.0
+
+while [ "$CLIENT_BG" = "" ]
+do
+    CLIENT_BG=$(xwininfo -root -tree|grep 640x545|awk '{print $1}')
+    CLIENT_LOGIN=$(xwininfo -root -tree|grep "Server Login"|awk '{print $1}')
+    xwit -id $CLIENT_BG -move 0 0 -resize 1920 1080
+    xwit -id $CLIENT_LOGIN -move 700 400
+    sleep 1
+done

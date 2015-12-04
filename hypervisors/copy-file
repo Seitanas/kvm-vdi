@@ -2,8 +2,9 @@
 from ConfigParser import ConfigParser
 import os
 import sys
-
 import requests
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 config = ConfigParser()
 config.read('/usr/local/VDI/config')
@@ -13,6 +14,7 @@ destfile=str(sys.argv[2])
 tmpname=str(sys.argv[3])
 address = config.get('server', 'address')
 password = config.get('server', 'password')
+
 bytes_copied=0
 progress=0
 requests.post(address+"/backend.php", data={'pass': password, 'tmpname': tmpname, 'data': '0'})
@@ -24,18 +26,18 @@ with open(sourcefile,'rb') as f1:
 	  bytes_copied=bytes_copied+1024*10480
           if bytes: 
               for byte in bytes:
-                 pass 
+                 pass    # process the bytes if this is what you want
               n=f2.write(bytes)
 	      progress1=int(round(progress))
 	      progress=int(round(100.0/size*bytes_copied))
-	      if size<3000000000: #if source less than 3GB print just at 25/50/75% (to stop from flooding webservice)
+	      if size<3000000000: #if less than 3GB print just at 25/50/75%
     	        if progress1<progress:
 		    if (progress==0) or (progress==25) or (progress==50) or (progress==75) or (progress==100):
-			requests.post(address+"/backend.php", data={'pass': password, 'tmpname': tmpname, 'data': progress})
+			requests.post(address+"/backend.php", data={'pass': password, 'tmpname': tmpname, 'data': progress}, verify=False)
 	      else:
 		 if progress1<progress:
 #		    print progress1
-	 	    requests.post(address+"/backend.php", data={'pass': password, 'tmpname': tmpname, 'data': progress})
+	 	    requests.post(address+"/backend.php", data={'pass': password, 'tmpname': tmpname, 'data': progress}, verify=False)
           else:
               break
 os.rename(destfile+".tmp", destfile)
