@@ -12,11 +12,9 @@ if (empty($vm)||empty($hypervisor)){
 }
 $h_reply=get_SQL_line("SELECT * FROM hypervisors WHERE id='$hypervisor'");
 $v_reply=get_SQL_line("SELECT * FROM vms WHERE id='$vm'");
-$filepath=$temp_folder. '/' .uniqid().".ppm";
-
+$filepath=$temp_folder. '/' . $v_reply[1] . ".ppm";
 ssh_connect($h_reply[2].":".$h_reply[3]);
 ssh_command("sudo virsh screenshot " . $v_reply[1] . " " . $filepath, true);
-
 $im=ssh_command("cat ". $filepath,true);
 $image = new Imagick();
 $image->readImageBlob($im);
