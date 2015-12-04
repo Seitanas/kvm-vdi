@@ -1,5 +1,4 @@
 <?php
-
 function SQL_connect(){
     include ('functions/config.php');
     mysql_connect($mysql_host,$mysql_user,$mysql_pass);
@@ -95,5 +94,3 @@ function close_session(){
     session_start();
     session_unset();
 }
-
-?>
