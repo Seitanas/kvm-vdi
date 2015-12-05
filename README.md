@@ -2,11 +2,11 @@
 
 This project aims to provide fully functional VDI solution by using open source virtualization.
 
-"KVM-VDI" consists of three parts:
+**"KVM-VDI"** consists of three parts:
 
-* Dashboard. A webservice, which provides virtual machine control.
-* Thin client. A collection of scripts (thin_clients directory), which are run from thin client side (must be copied /usr/local/bin on thin client).
-* Hypervisor. A collection of scripts (hypervisors directory) which are used at hypervisor side (must be copied to /usr/local/VDI on hypervisor).
+* **Dashboard**. A webservice, which provides virtual machine control.
+* **Thin client**. A collection of scripts (thin_clients directory), which are run from thin client side (must be copied /usr/local/bin on thin client).
+* **Hypervisor**. A collection of scripts (hypervisors directory) which are used at hypervisor side (must be copied to /usr/local/VDI on hypervisor).
 
 Project uses qemu-kvm virtualization and provides VMs to thin client via SPICE protocol.
 Additionally dashboard can provide thin client with a RDP session, or a VM from vmWare horizon VDI pool (if used).
@@ -19,10 +19,10 @@ username     ALL=(ALL:ALL) NOPASSWD: /usr/bin/virsh, /usr/local/VDI/copy-file, /
 
 Dashboard service has four types of virtual machines:
 
-* Simple machine - a standard VM, which is not connected with VDI service in any way.
-* Source machine - a VM, which is used as source image - the "Initial machine" will be run from the copy of it's drive image.
-* Initial machine - a VM, which will provide a bootable source for VDI VMs.
-* VDI - a virtual machine, which runs from "Initial machine's" disk image. All change are written to it's snapshot drive, or virtual snapshot (if enabled).
+* **Simple machine** - a standard VM, which is not connected with VDI service in any way.
+* **Source machine** - a VM, which is used as source image - the "Initial machine" will be run from the copy of it's drive image.
+* **Initial machine** - a VM, which will provide a bootable source for VDI VMs.
+* **VDI** - a virtual machine, which runs from "Initial machine's" disk image. All change are written to it's snapshot drive, or virtual snapshot (if enabled).
 
 Virtual snaphot - if marked, VM will write disk changes to a temporary location (defined in hypervisor's kvm-snap file). After machine is shut down (or rebooted, depending on its libvirt configuration), snapshot will be deleted.
 Maintenance - thin clients will not be provided with a VM, while "Maintenance" is marked.
