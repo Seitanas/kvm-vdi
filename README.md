@@ -37,5 +37,5 @@ Configure "clients.xml" file, to provide thin clients with it's own VDI VM.
 
 
 ![Alt text](http://webjail.ring.lt/vdi/vdi.jpg?raw=true)
-![Alt text](http://webjail.ring.lt/vdi/vdi2.jpg?raw=true)
+![Alt text](http://webjail.ring.lt/vdi/vdi2.jpg?raw=true?&1)
 ![Alt text](http://webjail.ring.lt/vdi/vdi3.jpg?raw=true)
