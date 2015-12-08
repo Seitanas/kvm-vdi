@@ -1,4 +1,11 @@
 <?php
+/*
+KVM-VDI
+Tadas Ustinavičius
+tadas at ring.lt
+2015-12-08
+Vilnius, Lithuania.
+*/
 include ('functions/config.php');
 require_once('functions/functions.php');
 if (!check_session()){
@@ -201,7 +208,7 @@ if (!check_session()){
 	?>
           <h1 class="sub-header"><?php echo "Hypervisor: " . $sql_reply[$x]['ip']; ?></h1>
       <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-striped table-hover">
               <thead>
                 <tr>
                   <th>#</th>
