@@ -1,4 +1,11 @@
 <?php
+/*
+KVM-VDI
+Tadas Ustinavičius
+tadas at ring.lt
+2015-12-10
+Vilnius, Lithuania.
+*/
 include ('functions/config.php');
 require_once('functions/functions.php');
 if (!check_session()){
@@ -20,6 +27,8 @@ if ($action=="mass_on" || $action == "mass_off"){
 	if ($action=="mass_on")
 	    ssh_command("sudo virsh start " . $child_vms[$x]['name'],true);
         if ($action=="mass_off")
+    	    ssh_command("sudo virsh shutdown " . $child_vms[$x]['name'], true);
+        if ($action=="mass_destroy")
     	    ssh_command("sudo virsh destroy " . $child_vms[$x]['name'], true);
         ++$x;
     }
