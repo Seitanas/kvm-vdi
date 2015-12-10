@@ -20,7 +20,7 @@ if (empty($vm)||empty($hypervisor)){
 }
 $h_reply=get_SQL_line("SELECT * FROM hypervisors WHERE id='$hypervisor'");
 ssh_connect($h_reply[2].":".$h_reply[3]);
-if ($action=="mass_on" || $action == "mass_off"){
+if ($action=="mass_on" || $action == "mass_off" || $action == "mass_destroy"){
     $child_vms=get_SQL_array("SELECT name FROM vms WHERE source_volume='$vm'");
     $x=0;
     while ($child_vms[$x]['name']){

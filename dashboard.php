@@ -73,9 +73,10 @@ if (!check_session()){
 	    (function step() {
 		count=readposition(filepath);
 		$container.css('width', count+'%').attr('aria-valuenow', count);  
+		$container.html(count+'%');
 		if (count < 100) {                    
 		    $container.parent('div').show();
-    		    setTimeout(step, 3000);              
+    		    setTimeout(step, 5000);              
 		}
 		if (count == 100 || count == -1) {
 		    $container.parent('div').hide();
@@ -96,12 +97,14 @@ if (!check_session()){
 	function confirmation() {
 	    if (confirm("All virtual machines will be powered off and their initial snapshots recreated.\nProceed?")) {
 		$('#populatealert').show();
+		return true;
 	     }
         return false;
 	}
 	function confirmation1() {
 	    if (confirm("All virtual machines will be powered off and their initial snapshots recreated.\nProceed?")) {
 		$('#copyalert').show();
+		return true;
 	     }
         return false;
 	}
@@ -244,7 +247,7 @@ if (!check_session()){
 			      <td class="col-md-1"><input type="checkbox" '. $vms_query[$y]['maintenance']. " onclick='handleMaintenance(this);' " . 'id="' . $vms_query[$y]['id'] .  '">';
 			if (!empty($vms_query[$y]['filecopy'])){
 				echo '<div class="progress">
-					 <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="' . $vms_query[$y]['filecopy'] . '">
+					 <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="' . $vms_query[$y]['filecopy'] . '">
 				         </div>
 				     </div>
 				     <script>
@@ -260,12 +263,12 @@ if (!check_session()){
 					    VDI <span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu">
-					    <li><a href="copy_disk.php?hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] . '" onclick=' . "'confirmation1();'"  .  '>Copy disk from source</a></li>
+					    <li><a href="copy_disk.php?hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] . '" onclick="return confirmation1();">Copy disk from source</a></li>
 					    <li role="separator" class="divider"></li>
 					    <li><a href="maintenance.php?action=mass_on&source=' . $vms_query[$y]['id'] .  '">Turn maintenance on</a></li>
 					    <li><a href="maintenance.php?action=mass_off&source=' . $vms_query[$y]['id'] .  '">Turn maintenance off</a></li>
 					    <li role="separator" class="divider"></li>
-					    <li><a href="populate.php?hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '" onclick=' . "'confirmation();'"  .  '>Populate machines</a></li>
+					    <li><a href="populate.php?hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '" onclick="return confirmation();" >Populate machines</a></li>
 					    <li role="separator" class="divider"></li>
 					    <li><a href="power.php?action=mass_on&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">Mass power on</a></li>
 					    <li><a href="power.php?action=mass_off&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">Mass shut down (soft)</a></li>
