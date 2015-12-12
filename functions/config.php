@@ -28,5 +28,3 @@ $mysql_db="vdi";
 $mysql_user="user";
 $mysql_pass="password";
 ############################################################
-
-$version=0.1;
