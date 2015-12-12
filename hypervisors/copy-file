@@ -8,13 +8,11 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 config = ConfigParser()
 config.read('/usr/local/VDI/config')
-
 sourcefile=str(sys.argv[1])
 destfile=str(sys.argv[2])
 tmpname=str(sys.argv[3])
 address = config.get('server', 'address')
 password = config.get('server', 'password')
-
 bytes_copied=0
 progress=0
 requests.post(address+"/backend.php", data={'pass': password, 'tmpname': tmpname, 'data': '0'}, verify=False)
@@ -26,7 +24,7 @@ with open(sourcefile,'rb') as f1:
 	  bytes_copied=bytes_copied+1024*10480
           if bytes: 
               for byte in bytes:
-                 pass    # process the bytes if this is what you want
+                 pass    \
               n=f2.write(bytes)
 	      progress1=int(round(progress))
 	      progress=int(round(100.0/size*bytes_copied))
@@ -36,7 +34,6 @@ with open(sourcefile,'rb') as f1:
 			requests.post(address+"/backend.php", data={'pass': password, 'tmpname': tmpname, 'data': progress}, verify=False)
 	      else:
 		 if progress1<progress:
-#		    print progress1
 	 	    requests.post(address+"/backend.php", data={'pass': password, 'tmpname': tmpname, 'data': progress}, verify=False)
           else:
               break

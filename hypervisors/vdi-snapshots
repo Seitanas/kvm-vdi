@@ -10,7 +10,6 @@ then
     echo "vdi-snapshots snaphot_count append_name initial_imge path. e.g. vdi-snapshots 10 PC /var/lib/image.qcow2 /data"
     exit
 fi
-
 for i in `seq -w 1 $x`;
 do
     echo `qemu-img create -f qcow2 -b $initial $path/$name$i.qcow2`

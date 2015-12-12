@@ -8,7 +8,6 @@ then
     echo "vdi-mass-start machine_count append_name. e.g. vdi-mass-start 10 PC"
     exit
 fi
-
 for i in `seq -w 1 $x`;
 do
     echo `virsh start $name$i`
