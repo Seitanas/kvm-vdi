@@ -3,7 +3,7 @@
 KVM-VDI
 Tadas Ustinavičius
 tadas at ring.lt
-2015-12-10
+2015-12-17
 Vilnius, Lithuania.
 */
 include ('functions/config.php');
@@ -188,6 +188,7 @@ if (!check_session()){
           <ul class="nav nav-sidebar">
             <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
             <li><a href="showxml.php" data-toggle="modal" data-target="#vmInfo">Edit clients.xml</a></li>
+            <li><a href="new_vm.php" data-toggle="modal" data-target="#vmInfo">Create VM(s)</a></li>
             <li><a href="change_password.php" data-toggle="modal" data-target="#vmInfo">Change password</a></li>
             <li><a href="logout.php">Logout</a></li>
 	    <li></li>
