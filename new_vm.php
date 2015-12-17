@@ -21,7 +21,12 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
   <title>Remote file for Bootstrap Modal</title>  
 </head>
 <body>
-<form method="POST" action="">
+<style>
+.input-group-addon {
+    min-width:80px;
+}
+</style>
+<form method="POST" action="create_vm.php">
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -108,7 +113,7 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 	    <div class="row">
 		<hr class="divider">	
 		<div class="col-md-5">
-        	    <label>Mass deployment:</label>
+        	    <label>Mass deployment</label>
 		</div>
 	    </div>
 	    <div class="row">
