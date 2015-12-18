@@ -123,7 +123,7 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 			<span class="input-group-addon">Network</span>
 		    </div>
 		</div>
-		<div class="col-md-8">
+		<div class="col-md-8 hide" id="newmachine-os">
 		    <label>System info:</label>
 		    <div class="input-group">
 			<span class="input-group-addon">OS type</span>
@@ -197,9 +197,11 @@ $('.selectClass').on('change', function(){
 	$('#hypervisor-manualpath').removeAttr('required');
 	$('#source_drivepath').prop('required',false);
 	$('#source_volume').prop('required',true);
+	$('#newmachine-os').addClass('hide');
     }
     if (($('#machine_type').val() == 'simplemachine' || $('#machine_type').val() == 'sourcemachine') && $hypervisor_id!='') {
 	$('#hypervisor-manualpath').removeClass('hide');
+	$('#newmachine-os').removeClass('hide');
 	$('#hypervisor-imagepath').removeClass('hide');
 	$('#source_drivepath').prop('required',true);
 	$('#source_volume').prop('required',false);
