@@ -89,6 +89,19 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 			</div>
 		    </div>	
 	    </div>
+	    <div class="hide" id="hypervisor-imagepath">
+		<div class="row">
+		    <div class="col-md-9">
+			<label>Mount CD iso:</label>
+			<div class="input-group">
+			    <span class="input-group-addon" style="min-width:40px;">
+				<input type="checkbox" name="iso_image" id="iso_image">
+			    </span>
+			    <input type="text" value="<?php echo $default_iso_path; ?>" class="form-control" name="iso_path" id="iso_path" disabled>
+			</div>
+		    </div>
+		</div>
+	    </div>
 	    <div class="row">
 		<div class="col-md-4">
 		    <label>Hardware info:</label>
@@ -105,7 +118,7 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 			<span class="input-group-addon">GB RAM</span>
 		    </div>
 		    <div class="input-group">
-			<input type="text" value="br0" class="form-control" name="network">
+			<input type="text" value="<?php echo $default_bridge; ?>" class="form-control" name="network">
 			<span class="input-group-addon">Network</span>
 		    </div>
 		</div>
@@ -137,12 +150,25 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 <script>
 $('.selectClass').on('change', function(){
     $('[id^=hypervisor-]').addClass('hide');
-    $hypervisor_id=$("#hypervisor").val();
-    if (($("#machine_type").val() == 'initialmachine' || $("#machine_type").val() == 'vdimachine') && $hypervisor_id!='') {
+    $hypervisor_id=$('#hypervisor').val();
+    if (($('#machine_type').val() == 'initialmachine' || $('#machine_type').val() == 'vdimachine') && $hypervisor_id!='') {
         $('#hypervisor-'+$hypervisor_id).removeClass('hide');
     }
-    if (($("#machine_type").val() == 'simplemachine' || $("#machine_type").val() == 'sourcemachine') && $hypervisor_id!='') {
-        $('#hypervisor-manualpath').removeClass('hide');
+    if (($('#machine_type').val() == 'simplemachine' || $('#machine_type').val() == 'sourcemachine') && $hypervisor_id!='') {
+	$('#hypervisor-manualpath').removeClass('hide');
+	if ($('#machine_type').val() == 'simplemachine') {
+	    $('#hypervisor-imagepath').removeClass('hide');
+	}
+    }
+	
+})
+
+$('#iso_image').on('change', function(){
+    if (this.checked) {
+	$('#iso_path').prop('disabled', false);
+    }
+    else {
+	$('#iso_path').prop('disabled', true);
     }
 })
 </script>
