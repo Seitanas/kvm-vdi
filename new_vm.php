@@ -156,9 +156,7 @@ $('.selectClass').on('change', function(){
     }
     if (($('#machine_type').val() == 'simplemachine' || $('#machine_type').val() == 'sourcemachine') && $hypervisor_id!='') {
 	$('#hypervisor-manualpath').removeClass('hide');
-	if ($('#machine_type').val() == 'simplemachine') {
-	    $('#hypervisor-imagepath').removeClass('hide');
-	}
+	$('#hypervisor-imagepath').removeClass('hide');
     }
 	
 })
