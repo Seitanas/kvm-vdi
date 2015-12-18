@@ -36,7 +36,7 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 	    <div class="row">
 		 <div class="col-md-5">
 		    <label>Machine type:</label>
-		    <select class="form-control selectClass" name="machine_type" id="machine_type">
+		    <select class="form-control selectClass" name="machine_type" id="machine_type" required tabindex="1">
 			<option selected value="">Please select machine type</option>
 	    	        <option value="simplemachine">Simple machine</option>
         		<option value="initialmachine">Initial machine</option>
@@ -46,7 +46,7 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 		</div>
 		 <div class="col-md-5">
 		    <label>Target hypervisor:</label>
-		    <select class="form-control selectClass" name="hypervisor" id="hypervisor">
+		    <select class="form-control selectClass" name="hypervisor" id="hypervisor" required tabindex="2">
 			<option selected value="">Please select hypervisor</option>
 			<?php
 			$x=0;
@@ -65,7 +65,7 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 			    <label>Use volume from:</label>';
 			$v_reply=get_SQL_array("SELECT id,name FROM vms WHERE hypervisor='{$h_reply[$x][id]}' ORDER By name");
 			$y=0;
-			echo '<select class="form-control" name="source_volume" id="source_volume">' ."\n";
+			echo '<select class="form-control" name="source_volume" id="source_volume" required>' ."\n";
 			while ($v_reply[$y]['id']){
 			    echo '<option value="' . $v_reply[$y]['id'] .  '">' . $v_reply[$y]['name'] . '</option>' ."\n";
 			    ++$y;
@@ -122,6 +122,36 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 			<span class="input-group-addon">Network</span>
 		    </div>
 		</div>
+		<div class="col-md-8">
+		    <label>System info:</label>
+		    <div class="input-group">
+			<span class="input-group-addon">OS type</span>
+			<select class="form-control" name="os_type" id="os_type" tabindex="3" required>
+			    <option selected value="">Please select OS type</option>
+	    		    <option value="linux">Linux</option>
+        		    <option value="windows">Windows</option>
+	    		</select>
+		    </div>
+		    <div class="input-group hide" id="os">
+			<span class="input-group-addon">Version</span>
+			<select class="form-control selectClass" name="os_version" id="os_version" tabindex="4" required>
+			    <option selected value="">Please select version</option>
+	    		    <option class="linux" value="debiansqueeze">Debian Squeeze (or newer)</option>
+	    		    <option class="linux" value="debianlenny">Debian Lenny</option>
+	    		    <option class="linux" value="debianetch">Debian Etch</option>
+	    		    <option class="linux" value="ubuntuprecise">Ubuntu 12.04 LTS</option>
+	    		    <option class="linux" value="ubuntusaucy">Ubuntu 13.10</option>
+	    		    <option class="linux" value="fedora18">Fedora 18</option>
+	    		    <option class="linux" value="fedora19">Fedora 19</option>
+	    		    <option class="linux" value="fedora20">Fedora 20</option>
+        		    <option class="windows" value="win7">Microsoft Windows 7 (or newer)</option>
+        		    <option class="windows" value="vista">Microsoft Windows Vista</option>
+        		    <option class="windows" value="winxp">Microsoft Windows XP</option>
+        		    <option class="windows" value="win2k8">Microsoft Windows Server 2008</option>
+        		    <option class="windows" value="win2k3">Microsoft Windows Server 2003</option>
+	    		</select>
+		    </div>
+		</div>
 	    </div>
 	    <div class="row">
 		<hr class="divider">	
@@ -160,7 +190,20 @@ $('.selectClass').on('change', function(){
     }
 	
 })
-
+$('#os_type').on('change', function(){
+    if ($('#os_type').val()=='linux'){
+	$('#os_version').prop('selectedIndex',0);
+	$('#os').removeClass('hide');
+	$('.windows').hide();
+	$('.linux').show();
+    }
+    if ($('#os_type').val()=='windows'){
+	$('#os_version').prop('selectedIndex',0);
+	$('#os').removeClass('hide');
+	$('.windows').show();
+	$('.linux').hide();
+    }
+})
 $('#iso_image').on('change', function(){
     if (this.checked) {
 	$('#iso_path').prop('disabled', false);
