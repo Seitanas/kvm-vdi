@@ -63,11 +63,12 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 		    while ($h_reply[$x]['id']){    
 	    		echo '<div class="col-md-5 hide" id="hypervisor-' . $h_reply[$x]['id'] . '">
 			    <label>Use volume from:</label>';
-			$v_reply=get_SQL_array("SELECT id,name FROM vms WHERE hypervisor='{$h_reply[$x][id]}' ORDER By name");
+			$v_reply=get_SQL_array("SELECT id,name,machine_type FROM vms WHERE hypervisor='{$h_reply[$x][id]}' AND (machine_type='sourcemachine' OR machine_type='initialmachine') ORDER By name");
 			$y=0;
-			echo '<select class="form-control" name="source_volume" id="source_volume" required>' ."\n";
+			echo '<select class="form-control" name="source_volume" id="source_volume">' ."\n";
+			echo '<option selected value="">Please select source</option>'."\n";
 			while ($v_reply[$y]['id']){
-			    echo '<option value="' . $v_reply[$y]['id'] .  '">' . $v_reply[$y]['name'] . '</option>' ."\n";
+			    echo '<option class="' . $v_reply[$y]['machine_type'] . '" value="' . $v_reply[$y]['id'] .  '">' . $v_reply[$y]['name'] . '</option>' ."\n";
 			    ++$y;
 			}
 			echo '</select>' . "\n";
@@ -78,12 +79,12 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 		    <div id="hypervisor-manualpath" class="hide">
 		        <div class="col-md-5">
 		    	    <label>Specify disk path:</label>		    
-			    <input type="text" name="source_drivepath" class="form-control" required>
+			    <input type="text" name="source_drivepath" class="form-control" id="source_drivepath">
 			</div>
 			<div class="col-md-4">
     				<label>Disk size</label>		    
 			    <div class="input-group">
-				<input type="number" min="1" value="10" name="source_drive_size" class="form-control" required>
+				<input type="number" min="1" value="10" name="source_drive_size" class="form-control">
 				<span class="input-group-addon">GB</span>
 			    </div>
 			</div>
@@ -181,12 +182,27 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 $('.selectClass').on('change', function(){
     $('[id^=hypervisor-]').addClass('hide');
     $hypervisor_id=$('#hypervisor').val();
+    $('.initialmachine').show();	
+    $('.sourcemachine').show();
     if (($('#machine_type').val() == 'initialmachine' || $('#machine_type').val() == 'vdimachine') && $hypervisor_id!='') {
+	if ($('#machine_type').val() == 'initialmachine'){
+	    $('.initialmachine').hide();	
+	    $('#source_volume').prop('selectedIndex',0);
+	}
+	if ($('#machine_type').val() == 'vdimachine'){
+	    $('.sourcemachine').hide();	
+	    $('#source_volume').prop('selectedIndex',0);
+	}
         $('#hypervisor-'+$hypervisor_id).removeClass('hide');
+	$('#hypervisor-manualpath').removeAttr('required');
+	$('#source_drivepath').prop('required',false);
+	$('#source_volume').prop('required',true);
     }
     if (($('#machine_type').val() == 'simplemachine' || $('#machine_type').val() == 'sourcemachine') && $hypervisor_id!='') {
 	$('#hypervisor-manualpath').removeClass('hide');
 	$('#hypervisor-imagepath').removeClass('hide');
+	$('#source_drivepath').prop('required',true);
+	$('#source_volume').prop('required',false);
     }
 	
 })
