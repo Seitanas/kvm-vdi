@@ -127,7 +127,7 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 		    <label>System info:</label>
 		    <div class="input-group">
 			<span class="input-group-addon">OS type</span>
-			<select class="form-control" name="os_type" id="os_type" tabindex="3" required>
+			<select class="form-control osselection" name="os_type" id="os_type" tabindex="3" required>
 			    <option selected value="">Please select OS type</option>
 	    		    <option value="linux">Linux</option>
         		    <option value="windows">Windows</option>
@@ -135,7 +135,7 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 		    </div>
 		    <div class="input-group hide" id="os">
 			<span class="input-group-addon">Version</span>
-			<select class="form-control selectClass" name="os_version" id="os_version" tabindex="4" required>
+			<select class="form-control osselection" name="os_version" id="os_version" tabindex="4" required>
 			    <option selected value="">Please select version</option>
 	    		    <option class="linux" value="debiansqueeze">Debian Squeeze (or newer)</option>
 	    		    <option class="linux" value="debianlenny">Debian Lenny</option>
@@ -198,6 +198,7 @@ $('.selectClass').on('change', function(){
 	$('#source_drivepath').prop('required',false);
 	$('#source_volume').prop('required',true);
 	$('#newmachine-os').addClass('hide');
+	$('.osselection').prop('required',false);
     }
     if (($('#machine_type').val() == 'simplemachine' || $('#machine_type').val() == 'sourcemachine') && $hypervisor_id!='') {
 	$('#hypervisor-manualpath').removeClass('hide');
@@ -205,6 +206,7 @@ $('.selectClass').on('change', function(){
 	$('#hypervisor-imagepath').removeClass('hide');
 	$('#source_drivepath').prop('required',true);
 	$('#source_volume').prop('required',false);
+	$('.osselection').prop('required',true);
     }
 	
 })
