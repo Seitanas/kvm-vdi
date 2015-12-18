@@ -1,4 +1,11 @@
 <?php
+/*
+KVM-VDI
+Tadas Ustinavičius
+tadas at ring.lt
+2015-12-18
+Vilnius, Lithuania.
+*/
 function SQL_connect(){
     include ('functions/config.php');
     mysql_connect($mysql_host,$mysql_user,$mysql_pass);
@@ -93,4 +100,12 @@ function check_session(){
 function close_session(){
     session_start();
     session_unset();
+}
+//##############################################################################
+//check list of variables for any empty value
+function check_empty(){
+    foreach(func_get_args() as $arg)
+        if(empty($arg))
+            return 1;
+    return false;
 }
