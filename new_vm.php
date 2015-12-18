@@ -65,7 +65,7 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 			    <label>Use volume from:</label>';
 			$v_reply=get_SQL_array("SELECT id,name,machine_type FROM vms WHERE hypervisor='{$h_reply[$x][id]}' AND (machine_type='sourcemachine' OR machine_type='initialmachine') ORDER By name");
 			$y=0;
-			echo '<select class="form-control" name="source_volume" id="source_volume">' ."\n";
+			echo '<select class="form-control" name="source_volume-' . $x . '" id="source_volume">' ."\n";
 			echo '<option selected value="">Please select source</option>'."\n";
 			while ($v_reply[$y]['id']){
 			    echo '<option class="' . $v_reply[$y]['machine_type'] . '" value="' . $v_reply[$y]['id'] .  '">' . $v_reply[$y]['name'] . '</option>' ."\n";
