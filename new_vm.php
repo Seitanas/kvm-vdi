@@ -75,7 +75,7 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 		    <div id="hypervisor-manualpath" class="hide">
 		        <div class="col-md-5">
 		    	    <label>Specify disk path:</label>		    
-			    <input type="text" name="source_drivepath" class="form-control" id="source_drivepath">
+			    <input type="text" name="source_drivepath" class="form-control" id="source_drivepath" value="<?php echo $default_imagepath; ?>">
 			</div>
 			<div class="col-md-4">
     				<label>Disk size</label>		    

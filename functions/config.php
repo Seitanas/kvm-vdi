@@ -18,6 +18,7 @@ $ssh_user='VDI';
 $ssh_key_path='/var/hyper_keys/';
 $hypervisor_cmdline_path='/usr/local/VDI/';
 $default_bridge='br0';
+$default_imagepath='/data';
 $default_iso_path='/var/lib/libvirt/images';
 ############################################################
 
