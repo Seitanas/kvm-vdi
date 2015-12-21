@@ -59,22 +59,18 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 	    </div>
 	    <div class="row">
 		<?php 
-		    $x=0;
-		    while ($h_reply[$x]['id']){    
-	    		echo '<div class="col-md-5 hide" id="hypervisor-' . $h_reply[$x]['id'] . '">
+	    		echo '<div class="col-md-5 hide" id="hypervisor-sourceimage">
 			    <label>Use volume from:</label>';
-			$v_reply=get_SQL_array("SELECT id,name,machine_type FROM vms WHERE hypervisor='{$h_reply[$x][id]}' AND (machine_type='sourcemachine' OR machine_type='initialmachine') ORDER By name");
+			$v_reply=get_SQL_array("SELECT id,name,machine_type,hypervisor FROM vms WHERE (machine_type='sourcemachine' OR machine_type='initialmachine') ORDER By name");
 			$y=0;
-			echo '<select class="form-control" name="source_volume-' . $x . '" id="source_volume">' ."\n";
+			echo '<select class="form-control" name="source_volume" id="source_volume">' ."\n";
 			echo '<option selected value="">Please select source</option>'."\n";
 			while ($v_reply[$y]['id']){
-			    echo '<option class="' . $v_reply[$y]['machine_type'] . '" value="' . $v_reply[$y]['id'] .  '">' . $v_reply[$y]['name'] . '</option>' ."\n";
+			    echo '<option class="' . $v_reply[$y]['machine_type'] . ' hypervisor-' . $v_reply[$y]['hypervisor']  . '" value="' . $v_reply[$y]['id'] .  '">' . $v_reply[$y]['name'] . '</option>' ."\n";
 			    ++$y;
 			}
 			echo '</select>' . "\n";
 			echo '</div>' . "\n";
-		    ++$x;
-		    }
 		    ?>
 		    <div id="hypervisor-manualpath" class="hide">
 		        <div class="col-md-5">
@@ -180,11 +176,13 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 </form>
 <script>
 $('.selectClass').on('change', function(){
-    $('[id^=hypervisor-]').addClass('hide');
+    $('#hypervisor-sourceimage').addClass('hide');
+    $('.sourcemachine').hide();	
+    $('.initialmachine').hide();	
     $hypervisor_id=$('#hypervisor').val();
-    $('.initialmachine').show();	
-    $('.sourcemachine').show();
     if (($('#machine_type').val() == 'initialmachine' || $('#machine_type').val() == 'vdimachine') && $hypervisor_id!='') {
+	$('#hypervisor-sourceimage').removeClass('hide');	    
+	$('.hypervisor-'+$hypervisor_id).show();	
 	if ($('#machine_type').val() == 'initialmachine'){
 	    $('.initialmachine').hide();	
 	    $('#source_volume').prop('selectedIndex',0);
