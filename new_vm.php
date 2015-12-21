@@ -94,7 +94,22 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 			    <span class="input-group-addon" style="min-width:40px;">
 				<input type="checkbox" name="iso_image" id="iso_image">
 			    </span>
-			    <input type="text" value="<?php echo $default_iso_path; ?>" class="form-control" name="iso_path" id="iso_path" disabled>
+			    <select class="form-control" name="iso_path" id="iso_path" disabled>
+				<option value="">Select ISO image</option>
+			<?php
+			$x=0;
+			while ($h_reply[$x]['id']){
+			    ssh_connect($h_reply[$x]['ip'].":".$h_reply[$x]['port']);
+			    $files=explode("\n",ssh_command("sudo ls /var/lib/libvirt/images/|grep -i .iso", true));
+			    foreach ($files as &$value) {
+				if (!empty($value))
+				    echo '<option class="iso_option hypervisor_iso-' . $h_reply[$x]['id'] . '" value="' . $value . '">' . $value . '</option>'."\n";
+			    }
+	    		    ++$x;
+			}
+			?>
+			    </select>
+			    <!--<input type="text" value="<?php echo $default_iso_path; ?>" class="form-control" name="iso_path" id="iso_path" disabled>-->
 			</div>
 		    </div>
 		</div>
@@ -177,8 +192,10 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 <script>
 $('.selectClass').on('change', function(){
     $('#hypervisor-sourceimage').addClass('hide');
+    $('#hypervisor-imagepath').addClass('hide');
     $('.sourcemachine').hide();	
     $('.initialmachine').hide();	
+    $('.iso_option').hide();	
     $hypervisor_id=$('#hypervisor').val();
     if (($('#machine_type').val() == 'initialmachine' || $('#machine_type').val() == 'vdimachine') && $hypervisor_id!='') {
 	$('#hypervisor-sourceimage').removeClass('hide');	    
@@ -199,6 +216,7 @@ $('.selectClass').on('change', function(){
 	$('.osselection').prop('required',false);
     }
     if (($('#machine_type').val() == 'simplemachine' || $('#machine_type').val() == 'sourcemachine') && $hypervisor_id!='') {
+	$('.hypervisor_iso-'+$hypervisor_id).show();	
 	$('#hypervisor-manualpath').removeClass('hide');
 	$('#newmachine-os').removeClass('hide');
 	$('#hypervisor-imagepath').removeClass('hide');
