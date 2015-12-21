@@ -3,7 +3,7 @@
 KVM-VDI
 Tadas Ustinavičius
 tadas at ring.lt
-2015-12-17
+2015-12-21
 Vilnius, Lithuania.
 */
 include ('functions/config.php');
@@ -134,7 +134,7 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 			<span class="input-group-addon">Network</span>
 		    </div>
 		</div>
-		<div class="col-md-8 hide" id="newmachine-os">
+		<div class="col-md-8" id="newmachine-os">
 		    <label>System info:</label>
 		    <div class="input-group">
 			<span class="input-group-addon">OS type</span>
@@ -200,7 +200,6 @@ $('.selectClass').on('change', function(){
     if (($('#machine_type').val() == 'initialmachine' || $('#machine_type').val() == 'vdimachine') && $hypervisor_id!='') {
 	$('#hypervisor-sourceimage').removeClass('hide');	    
 	$('.hypervisor-'+$hypervisor_id).show();
-	$('#newmachine-os').removeClass('hide');	
 	if ($('#machine_type').val() == 'initialmachine'){
 	    $('.initialmachine').hide();	
 	    $('#source_volume').prop('selectedIndex',0);
@@ -218,7 +217,6 @@ $('.selectClass').on('change', function(){
     if (($('#machine_type').val() == 'simplemachine' || $('#machine_type').val() == 'sourcemachine') && $hypervisor_id!='') {
 	$('.hypervisor_iso-'+$hypervisor_id).show();	
 	$('#hypervisor-manualpath').removeClass('hide');
-	$('#newmachine-os').removeClass('hide');
 	$('#hypervisor-imagepath').removeClass('hide');
 	$('#source_drivepath').prop('required',true);
 	$('#source_volume').prop('required',false);
