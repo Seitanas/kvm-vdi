@@ -199,7 +199,8 @@ $('.selectClass').on('change', function(){
     $hypervisor_id=$('#hypervisor').val();
     if (($('#machine_type').val() == 'initialmachine' || $('#machine_type').val() == 'vdimachine') && $hypervisor_id!='') {
 	$('#hypervisor-sourceimage').removeClass('hide');	    
-	$('.hypervisor-'+$hypervisor_id).show();	
+	$('.hypervisor-'+$hypervisor_id).show();
+	$('#newmachine-os').removeClass('hide');	
 	if ($('#machine_type').val() == 'initialmachine'){
 	    $('.initialmachine').hide();	
 	    $('#source_volume').prop('selectedIndex',0);
@@ -212,7 +213,6 @@ $('.selectClass').on('change', function(){
 	$('#hypervisor-manualpath').removeAttr('required');
 	$('#source_drivepath').prop('required',false);
 	$('#source_volume').prop('required',true);
-	$('#newmachine-os').addClass('hide');
 	$('.osselection').prop('required',false);
     }
     if (($('#machine_type').val() == 'simplemachine' || $('#machine_type').val() == 'sourcemachine') && $hypervisor_id!='') {
