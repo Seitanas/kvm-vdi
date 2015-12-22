@@ -3,8 +3,13 @@
 KVM-VDI
 Tadas Ustinavičius
 tadas at ring.lt
-2015-12-18
-Vilnius, Lithuania.
+
+Vilnius University.
+Center of Information Technology Development.
+
+
+Vilnius,Lithuania.
+2015-12-22
 */
 function SQL_connect(){
     include ('functions/config.php');
@@ -108,4 +113,14 @@ function check_empty(){
         if(empty($arg))
             return 1;
     return false;
+}
+//#############################################################################
+function set_lang(){
+    include ('config.php');
+    $domain = 'kvm-vdi';
+    setlocale(LC_ALL, $language.'.UTF-8');
+    //putenv('LC_ALL=lt');
+    bindtextdomain($domain, 'locale/');
+    bind_textdomain_codeset($domain, 'UTF-8');
+    textdomain($domain);
 }

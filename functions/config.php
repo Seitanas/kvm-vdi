@@ -1,10 +1,23 @@
 <?php
+/*
+KVM-VDI
+Tadas Ustinavičius
+tadas at ring.lt
+
+Vilnius University.
+Center of Information Technology Development.
+
+
+Vilnius,Lithuania.
+2015-12-22
+*/
 ###################Dashboard config##########################
 $hypervizors=array('192.168.10.1:22','192.168.10.2:22');
 #Substitute local hypervisor IP address with external one if needed.
 #Substituted IP adresses will be provided for SPICE remote console connections in dashboard.
 $remote_spice_substitute=array('192.168.10.1'=>'172.31.1.1','192.168.10.2'=>'172.31.1.2');
 $serviceurl='https://dashboardaddress/vdi';
+$language='en_EN';
 ############################################################
 
 ##################vmWare Horizon config (if used)###########
