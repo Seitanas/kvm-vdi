@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-22 12:45+0200\n"
+"POT-Creation-Date: 2015-12-23 09:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,33 +17,268 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: /var/www/html/vdi/change_password.php:33
+#: /var/www/html/vdi/dashboard.php:196
 msgid "Change password"
 msgstr "Slaptaždžio keitimas"
 
+#: /var/www/html/vdi/change_password.php:40
 msgid "Enter password"
 msgstr "Įveskite slaptažodį"
 
+#: /var/www/html/vdi/change_password.php:47
 msgid "Repeat password"
 msgstr "Pakartokite slaptažodį"
 
+#: /var/www/html/vdi/change_password.php:61 /var/www/html/vdi/showxml.php:51
+#: /var/www/html/vdi/vm_info.php:78 /var/www/html/vdi/vm_screen.php:50
 msgid "Close"
 msgstr "Uždaryti"
 
+#: /var/www/html/vdi/change_password.php:62 /var/www/html/vdi/showxml.php:50
+#: /var/www/html/vdi/vm_info.php:79
 msgid "Save changes"
 msgstr "Išsaugoti"
 
+#: /var/www/html/vdi/change_password.php:77
+#: /var/www/html/vdi/change_password.php:81
 msgid "'<strong>Error!</strong> Empty password.'"
 msgstr "'<strong>Klaida!</strong> Tuščias slaptažodis.'"
 
+#: /var/www/html/vdi/change_password.php:85
 msgid "'<strong>Error!</strong> Passwords do not match.'"
 msgstr "'<strong>Klaida!</strong> Nesutampa slaptažodžiai.'"
 
-msgid ""
-"All virtual machines will be powered off and their initial snapshots "
-"recreated.\\nProceed?"
-msgstr ""
-"Visos virtualios mašios bus išjungtos ir jų kopijos ištrintos "
-"\\nTęsti?"
+#: /var/www/html/vdi/dashboard.php:183
+msgid "Refresh VM info"
+msgstr "Antaujinti VM informaciją"
 
+#: /var/www/html/vdi/dashboard.php:194
+msgid "Edit clients.xml"
+msgstr "Redaguoti \"clients.xml\""
+
+#: /var/www/html/vdi/dashboard.php:195
+msgid "Create VM(s)"
+msgstr "Sukurti virtualias mašinas"
+
+#: /var/www/html/vdi/dashboard.php:197
+msgid "Logout"
+msgstr "Atsijugnti"
+
+#: /var/www/html/vdi/dashboard.php:203
+msgid "<strong>Please wait!</strong> Populating virtual machines."
+msgstr "<strong>Prašome palaukti!</strong> Kuriamos naujos mašinos."
+
+#: /var/www/html/vdi/dashboard.php:206
+msgid "<strong>Please wait!</strong> Copying image."
+msgstr "<strong>Prašome palaukt!</strong> Kopijuojamas atvaizdas."
+
+#: /var/www/html/vdi/dashboard.php:213
 msgid "Hypervisor: "
 msgstr "Hypervizorius: "
+
+#: /var/www/html/vdi/dashboard.php:219
+msgid "Machine name"
+msgstr "Mašinos pavadinimas"
+
+#: /var/www/html/vdi/dashboard.php:220
+msgid "Machine type"
+msgstr "Mašinos tipas"
+
+#: /var/www/html/vdi/dashboard.php:221
+msgid "Source image"
+msgstr "Atvaizdo šaltinis"
+
+#: /var/www/html/vdi/dashboard.php:222
+msgid "Virt-snapshot"
+msgstr "Virtuali atvaizdo kopija"
+
+#: /var/www/html/vdi/dashboard.php:223
+msgid "Maintenance"
+msgstr "Priežiūra"
+
+#: /var/www/html/vdi/dashboard.php:224
+msgid "Operations"
+msgstr "Veiksmai"
+
+#: /var/www/html/vdi/dashboard.php:230 /var/www/html/vdi/new_vm.php:47
+#: /var/www/html/vdi/vm_info.php:51
+msgid "Simple machine"
+msgstr "Paprasta mašina"
+
+#: /var/www/html/vdi/dashboard.php:231 /var/www/html/vdi/new_vm.php:48
+#: /var/www/html/vdi/vm_info.php:52
+msgid "Initial machine"
+msgstr "Pirminė mašina"
+
+#: /var/www/html/vdi/dashboard.php:232 /var/www/html/vdi/new_vm.php:49
+#: /var/www/html/vdi/vm_info.php:53
+msgid "Source machine"
+msgstr "Šaltinis"
+
+#: /var/www/html/vdi/dashboard.php:233 /var/www/html/vdi/new_vm.php:50
+#: /var/www/html/vdi/vm_info.php:54
+msgid "VDI machine"
+msgstr "Virtuali darbo vieta"
+
+#: /var/www/html/vdi/dashboard.php:271
+msgid "Copy disk from source"
+msgstr "Kopijuoti advaizdą iš šaltinio"
+
+#: /var/www/html/vdi/dashboard.php:273
+msgid "Turn maintenance on"
+msgstr "Įjungti priežiūrą"
+
+#: /var/www/html/vdi/dashboard.php:274
+msgid "Turn maintenance off"
+msgstr "Išjungti priežiūrą"
+
+#: /var/www/html/vdi/dashboard.php:276
+msgid "Populate machines"
+msgstr "Diegti darbo vietas"
+
+#: /var/www/html/vdi/dashboard.php:278
+msgid "Mass power on"
+msgstr "Įjungti visas mašinas"
+
+#: /var/www/html/vdi/dashboard.php:279
+msgid "Mass shut down (soft)"
+msgstr "Išjungti visas mašinas"
+
+#: /var/www/html/vdi/dashboard.php:280
+msgid "Mass shut down (forced)"
+msgstr "Išjungti visas mašinas (priverstinai)"
+
+#: /var/www/html/vdi/dashboard.php:282
+msgid "Turn on snapshots"
+msgstr "Įjungti virtualius atvaizdus"
+
+#: /var/www/html/vdi/dashboard.php:283
+msgid "Turn off snapshots"
+msgstr "Išjungti virtualius atvaizdus"
+
+#: /var/www/html/vdi/dashboard.php:288
+msgid "Power up"
+msgstr "Įjungti"
+
+#: /var/www/html/vdi/dashboard.php:290
+msgid "Shut down"
+msgstr "Išjungti"
+
+#: /var/www/html/vdi/dashboard.php:290
+msgid "Shut down (soft)"
+msgstr "Išjungti"
+
+#: /var/www/html/vdi/dashboard.php:290 /var/www/html/vdi/dashboard.php:292
+msgid "Are you sure?"
+msgstr "Ar jūs įsitikinę?"
+
+#: /var/www/html/vdi/dashboard.php:292
+msgid "Power down"
+msgstr "Išjungti"
+
+#: /var/www/html/vdi/dashboard.php:295
+msgid "Open console"
+msgstr "Atidaryti konsolę"
+
+#: /var/www/html/vdi/new_vm.php:39
+msgid "Create virtual machine(s)"
+msgstr "Sukurti virtualias mašinas"
+
+#: /var/www/html/vdi/new_vm.php:46 /var/www/html/vdi/vm_info.php:50
+msgid "Please select machine type"
+msgstr "Pasirinkite mašinos tipą"
+
+#: /var/www/html/vdi/new_vm.php:56
+msgid "Please select hypervisor"
+msgstr "Pasirinkite hipervizorių"
+
+#: /var/www/html/vdi/new_vm.php:69
+msgid "Use volume from:"
+msgstr "Naudoti atvaizdą iš:"
+
+#: /var/www/html/vdi/new_vm.php:73
+msgid "Please select source"
+msgstr "Pasirinkite šaltinį"
+
+#: /var/www/html/vdi/new_vm.php:83
+msgid "Specify disk path:"
+msgstr "NUrodykite atvaizdo kelią:"
+
+#: /var/www/html/vdi/new_vm.php:87
+msgid "Disk size"
+msgstr "Atvaizdo dydis"
+
+#: /var/www/html/vdi/new_vm.php:98
+msgid "Mount CD iso:"
+msgstr "Prijungti CD disko ISO"
+
+#: /var/www/html/vdi/new_vm.php:104
+msgid "Select ISO image"
+msgstr "Pasirinkite ISO matvaizdą"
+
+#: /var/www/html/vdi/new_vm.php:124
+msgid "Hardware info:"
+msgstr "Informacija apie įrangą:"
+
+#: /var/www/html/vdi/new_vm.php:127
+msgid "CPUs"
+msgstr "procesoriai"
+
+#: /var/www/html/vdi/new_vm.php:131
+msgid "Cores"
+msgstr "Branduoliai"
+
+#: /var/www/html/vdi/new_vm.php:139
+msgid "Network"
+msgstr "Tinklas"
+
+#: /var/www/html/vdi/new_vm.php:147
+msgid "Please select OS type"
+msgstr "Pasirinkite OS"
+
+#: /var/www/html/vdi/new_vm.php:148
+msgid "Linux"
+msgstr ""
+
+#: /var/www/html/vdi/new_vm.php:149
+msgid "Windows"
+msgstr ""
+
+#: /var/www/html/vdi/new_vm.php:153
+msgid "Version"
+msgstr "Versija"
+
+#: /var/www/html/vdi/new_vm.php:176
+msgid "Mass deployment"
+msgstr "Masinis diegimas"
+
+#: /var/www/html/vdi/new_vm.php:181
+msgid "Prepend machine name:"
+msgstr "Pradinis mašinos pavadinimas:"
+
+#: /var/www/html/vdi/new_vm.php:185
+msgid "Number of machines to create:"
+msgstr "Naujų mašinų kiekis:"
+
+#: /var/www/html/vdi/vm_info.php:72
+msgid "Use virtual snapshots"
+msgstr "Naudoti virtualius atvaizdus"
+
+#: /var/www/html/vdi/vm_screen.php:37
+msgid "VM screen"
+msgstr "VM nuotrauka"
+
+#: /var/www/html/vdi/vm_screen.php:43
+msgid "VM name: "
+msgstr "VM vardas: "
+
+#: /var/www/html/vdi/vm_screen.php:49
+msgid "Open remote console"
+msgstr "Atidaryti konsolę"
+
+msgid ""
+ "All virtual machines will be powered off and their initial snapshots "
+ "recreated.\\nProceed?"
+msgstr ""
+ "Visos virtualios mašios bus išjungtos ir jų kopijos ištrintos \\nTęsti?"
