@@ -24,8 +24,8 @@ Dashboard service has four types of virtual machines:
 * **Initial machine** - a VM, which will provide a bootable source for VDI VMs.
 * **VDI** - a virtual machine, which runs from "Initial machine's" disk image. All changes are written to it's snapshot drive, or virtual snapshot (if enabled).
 
-* Virtual snaphot - if marked, VM will write disk changes to a temporary location (defined in hypervisor's kvm-snap file). After machine is shut down (or rebooted, depending on its libvirt configuration), snapshot will be deleted.
-* Maintenance - if marked, VM will not be provided to thin client.
+* **Virtual snapshot** - if marked, VM will write disk changes to a temporary location (defined in hypervisor's kvm-snap file). After machine is shut down (or rebooted, depending on its libvirt configuration), snapshot will be deleted.
+* **Maintenance** - if marked, VM will not be provided to thin client.
 
 
 To provide a VDI enviroment you should take folowing steps:
