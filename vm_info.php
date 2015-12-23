@@ -1,4 +1,16 @@
 <?php
+/*
+KVM-VDI
+Tadas Ustinavičius
+tadas at ring.lt
+
+Vilnius University.
+Center of Information Technology Development.
+
+
+Vilnius,Lithuania.
+2015-12-23
+*/
 include ('functions/config.php');
 require_once('functions/functions.php');
 if (!check_session()){
@@ -13,12 +25,12 @@ if (empty($vm)||empty($hypervisor)){
 $h_reply=get_SQL_line("SELECT * FROM hypervisors WHERE id='$hypervisor'");
 $v_reply=get_SQL_line("SELECT * FROM vms WHERE id='$vm'");
 $all_machines_reply=get_SQL_array("SELECT * FROM vms WHERE hypervisor='$hypervisor' ORDER BY name");
+set_lang();
 ?>
 <!DOCTYPE html>
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <title>Remote file for Bootstrap Modal</title>  
 </head>
 <body>
 <form method="POST" action="vm_update.php">
@@ -35,11 +47,11 @@ $all_machines_reply=get_SQL_array("SELECT * FROM vms WHERE hypervisor='$hypervis
 		    <label>Machine type:</label>
 		    <select class="form-control" name="machine_type" id="machine_type">
 			<?php if (empty($v_reply[3])){?>
-				<option selected value="">Please select machine type</option> <?php } ?>
-	    	        <option value="simplemachine">Simple machine</option>
-        		<option value="initialmachine">Initial machine</option>
-			<option value="sourcemachine">Source machine</option>
-			<option value="vdimachine">VDI machine</option>
+				<option selected value=""><?php echo _("Please select machine type");?></option> <?php } ?>
+	    	        <option value="simplemachine"><?php echo _("Simple machine");?></option>
+        		<option value="initialmachine"><?php echo _("Initial machine");?></option>
+			<option value="sourcemachine"><?php echo _("Source machine");?></option>
+			<option value="vdimachine"><?php echo _("VDI machine");?></option>
 	    	    </select>
 		</div>
 		 <div class="col-md-5 hide" id="sourcevolume">
@@ -57,14 +69,14 @@ $all_machines_reply=get_SQL_array("SELECT * FROM vms WHERE hypervisor='$hypervis
 	    </div>
 	    <div class="row">
 		<div class="col-md-4">
-		    <label>Use virtual snapshots </label>
+		    <label><?php echo _("Use virtual snapshots");?></label>
 		    <input type="checkbox" name="snapshot" id="snapshot">
 		</div>
 	    </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _("Close");?></button>
+            <button type="submit" class="btn btn-primary"><?php echo _("Save changes");?></button>
         </div>
     </div>
 </form>

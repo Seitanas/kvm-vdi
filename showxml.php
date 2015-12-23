@@ -1,11 +1,23 @@
 <?php
+/*
+KVM-VDI
+Tadas Ustinavičius
+tadas at ring.lt
+
+Vilnius University.
+Center of Information Technology Development.
+
+
+Vilnius,Lithuania.
+2015-12-23
+*/
 include ('functions/config.php');
 require_once('functions/functions.php');
 if (!check_session()){
     header ("Location: $serviceurl/?error=1");
     exit;
 }
-
+set_lang();
 ?>
 
 <!DOCTYPE html>
@@ -35,8 +47,8 @@ if (!check_session()){
 	    <input type="hidden" name="xml" id="xml">
         </div>
         <div class="modal-footer">
-            <button class="btn btn-primary" type="submit">Save changes</a>
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button class="btn btn-primary" type="submit"><?php echo _("Save changes");?></a>
+            <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _("Close");?></button>
         </div>
     </div>
 

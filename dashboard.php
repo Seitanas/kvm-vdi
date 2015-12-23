@@ -3,8 +3,13 @@
 KVM-VDI
 Tadas Ustinavičius
 tadas at ring.lt
-2015-12-17
-Vilnius, Lithuania.
+
+Vilnius University.
+Center of Information Technology Development.
+
+
+Vilnius,Lithuania.
+2015-12-23
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -175,7 +180,7 @@ if (!check_session()){
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="reload_vm_info.php" data-toggle="hover"><button type="button" class="btn btn-info" aria-label="Refresh" title="Refresh VM info">
+            <li><a href="reload_vm_info.php" data-toggle="hover"><button type="button" class="btn btn-info" aria-label="Refresh" title="<?php echo _("Refresh VM info");?>">
   <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
 </button></a></li>
           </ul>
@@ -186,47 +191,46 @@ if (!check_session()){
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
-            <li><a href="showxml.php" data-toggle="modal" data-target="#vmInfo">Edit clients.xml</a></li>
-            <li><a href="new_vm.php" data-toggle="modal" data-target="#vmInfo">Create VM(s)</a></li>
-            <li><a href="change_password.php" data-toggle="modal" data-target="#vmInfo">Change password</a></li>
-            <li><a href="logout.php">Logout</a></li>
+            <li><a href="showxml.php" data-toggle="modal" data-target="#vmInfo"><?php echo _("Edit clients.xml");?></a></li>
+            <li><a href="new_vm.php" data-toggle="modal" data-target="#vmInfo"><?php echo _("Create VM(s)");?></a></li>
+            <li><a href="change_password.php" data-toggle="modal" data-target="#vmInfo"><?php echo _("Change password");?></a></li>
+            <li><a href="logout.php"><?php echo _("Logout");?></a></li>
 	    <li></li>
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 <div class="alert alert-info" id="populatealert" style="display:none;">
-  <strong>Please wait!</strong> Populating virtual machines.
+ <?php echo _("<strong>Please wait!</strong> Populating virtual machines.");?>
 </div>
 <div class="alert alert-info" id="copyalert" style="display:none;">
-  <strong>Please wait!</strong> Copying image.
+ <?php echo _("<strong>Please wait!</strong> Copying image.");?>
 </div>
 	<?php
 	    $x=0;
 	    while ($sql_reply[$x]['id']){
 		$vms_query=get_SQL_array("SELECT vms.id,vms.name,vms.hypervisor,vms.machine_type,vms.source_volume,vms.snapshot,vms.maintenance,vms.filecopy,vms.state,vms_tmp.name AS sourcename  FROM vms LEFT JOIN vms AS vms_tmp ON vms.source_volume=vms_tmp.id WHERE vms.hypervisor='{$sql_reply[$x][id]}' ORDER BY vms.name");
 	?>
-          <h1 class="sub-header"><?php echo "Hypervisor: " . $sql_reply[$x]['ip']; ?></h1>
+          <h1 class="sub-header"><?php echo _("Hypervisor: ") . $sql_reply[$x]['ip']; ?></h1>
       <div class="table-responsive">
             <table class="table table-striped table-hover">
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>Machine name</th>
-		  <th>Machine type</th>
-		  <th>Source image</th>
-		  <th>Virt-snapshot</th>
-		  <th>Maintenance</th>
-                  <th>Operations</th>
+                  <th><?php echo _("Machine name");?></th>
+		  <th><?php echo _("Machine type");?></th>
+		  <th><?php echo _("Source image");?></th>
+		  <th><?php echo _("Virt-snapshot");?></th>
+		  <th><?php echo _("Maintenance");?></th>
+                  <th><?php echo _("Operations");?></th>
                 </tr>
               </thead>
               <tbody>
 		<?php 
 		    $y=0;
-		    $machine_type['simplemachine']="Simple machine";
-                    $machine_type['initialmachine']="Initial machine";
-                    $machine_type['sourcemachine']="Source machine";
-                    $machine_type['vdimachine']="VDI machine";
+		    $machine_type['simplemachine']=_("Simple machine");
+                    $machine_type['initialmachine']=_("Initial machine");
+                    $machine_type['sourcemachine']=_("Source machine");
+                    $machine_type['vdimachine']=_("VDI machine");
 		    while ($vms_query[$y]['id']){
 			$pwr_status="off";
 			if ($vms_query[$y]['state']=="shut")
@@ -264,31 +268,31 @@ if (!check_session()){
 					    VDI <span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu">
-					    <li><a href="copy_disk.php?hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] . '" onclick="return confirmation1();">Copy disk from source</a></li>
+					    <li><a href="copy_disk.php?hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] . '" onclick="return confirmation1();">' . _("Copy disk from source") . '</a></li>
 					    <li role="separator" class="divider"></li>
-					    <li><a href="maintenance.php?action=mass_on&source=' . $vms_query[$y]['id'] .  '">Turn maintenance on</a></li>
-					    <li><a href="maintenance.php?action=mass_off&source=' . $vms_query[$y]['id'] .  '">Turn maintenance off</a></li>
+					    <li><a href="maintenance.php?action=mass_on&source=' . $vms_query[$y]['id'] .  '">' . _("Turn maintenance on") . '</a></li>
+					    <li><a href="maintenance.php?action=mass_off&source=' . $vms_query[$y]['id'] .  '">' . _("Turn maintenance off") . '</a></li>
 					    <li role="separator" class="divider"></li>
-					    <li><a href="populate.php?hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '" onclick="return confirmation();" >Populate machines</a></li>
+					    <li><a href="populate.php?hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '" onclick="return confirmation();" >' . _("Populate machines") . '</a></li>
 					    <li role="separator" class="divider"></li>
-					    <li><a href="power.php?action=mass_on&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">Mass power on</a></li>
-					    <li><a href="power.php?action=mass_off&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">Mass shut down (soft)</a></li>
-					    <li><a href="power.php?action=mass_destroy&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">Mass shut down (forced)</a></li>
+					    <li><a href="power.php?action=mass_on&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">' . _("Mass power on") . '</a></li>
+					    <li><a href="power.php?action=mass_off&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">' . _("Mass shut down (soft)") . '</a></li>
+					    <li><a href="power.php?action=mass_destroy&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">' . _("Mass shut down (forced)") . '</a></li>
 					    <li role="separator" class="divider"></li>
-					    <li><a href="snapshot.php?action=mass_on&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">Turn on snapshots</a></li>
-					    <li><a href="snapshot.php?action=mass_off&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">Turn off snapshots</a></li>
+					    <li><a href="snapshot.php?action=mass_on&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">' . _("Turn on snapshots") . '</a></li>
+					    <li><a href="snapshot.php?action=mass_off&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">' . _("Turn off snapshots") . '</a></li>
 					</ul>
 				    </div>';
 
 			}
-			echo  '<a href="power.php?action=single&state=up&vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover" class="btn ' . $pwr_button . '" aria-label="Power up" title="Power up">
+			echo  '<a href="power.php?action=single&state=up&vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover" class="btn ' . $pwr_button . '" aria-label="' . _("Power up") . '" title="' . _("Power up") . '">
 			      <span class="glyphicon glyphicon-play" aria-hidden="true"></span></a>
-			      <a href="power.php?action=single&state=down&vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover" class="btn btn-default" aria-label="Shut down" title="Shut down (soft)"  onclick="return confirmBox(' . "'Are you sure?'" . ');">
+			      <a href="power.php?action=single&state=down&vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover" class="btn btn-default" aria-label="' . _("Shut down") . '" title="' . _("Shut down (soft)") . '"  onclick="return confirmBox(' . "'" . _("Are you sure?") . "'" . ');">
 			      <span class="glyphicon glyphicon-off" aria-hidden="true"></span></a>
-			      <a href="power.php?action=single&state=destroy&vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn btn-danger" aria-label="Power down" title="Shut down (forced)"  onclick="return confirmBox(' . "'Are you sure?'" . ');">
+			      <a href="power.php?action=single&state=destroy&vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn btn-danger" aria-label="' . _("Power down") . '" title="Shut down (forced)"  onclick="return confirmBox(' . "'" . _("Are you sure?") . "'" . ');">
 			      <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a>';
 			      if ($pwr_status=="on"){
-				    echo' <a data-toggle="modal" data-target="#vmConsole" href="vm_screen.php?vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn btn-info" aria-label="Open console" title="Open console">
+				    echo' <a data-toggle="modal" data-target="#vmConsole" href="vm_screen.php?vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn btn-info" aria-label="' . _("Open console") . '" title="' . _("Open console") . '">
 			    		<span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span></a>';
 			      }
 			echo  '</td> 

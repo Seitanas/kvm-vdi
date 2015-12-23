@@ -3,8 +3,13 @@
 KVM-VDI
 Tadas Ustinavičius
 tadas at ring.lt
-2015-12-21
-Vilnius, Lithuania.
+
+Vilnius University.
+Center of Information Technology Development.
+
+
+Vilnius,Lithuania.
+2015-12-23
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -13,6 +18,7 @@ if (!check_session()){
     exit;
 }
 $h_reply=get_SQL_array("SELECT * FROM hypervisors");
+set_lang();
 ?>
 <!DOCTYPE html>
 <html>
@@ -30,24 +36,24 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-             <h4 class="modal-title">Create virtual machine(s)</h4>
+             <h4 class="modal-title"><?php echo _("Create virtual machine(s)");?></h4>
         </div>
         <div class="modal-body">
 	    <div class="row">
 		 <div class="col-md-5">
 		    <label>Machine type:</label>
 		    <select class="form-control selectClass" name="machine_type" id="machine_type" required tabindex="1">
-			<option selected value="">Please select machine type</option>
-	    	        <option value="simplemachine">Simple machine</option>
-        		<option value="initialmachine">Initial machine</option>
-			<option value="sourcemachine">Source machine</option>
-			<option value="vdimachine">VDI machine</option>
+			<option selected value=""><?php echo _("Please select machine type");?></option>
+	    	        <option value="simplemachine"><?php echo _("Simple machine");?></option>
+        		<option value="initialmachine"><?php echo _("Initial machine");?></option>
+			<option value="sourcemachine"><?php echo _("Source machine");?></option>
+			<option value="vdimachine"><?php echo _("VDI machine");?></option>
 	    	    </select>
 		</div>
 		 <div class="col-md-5">
 		    <label>Target hypervisor:</label>
 		    <select class="form-control selectClass" name="hypervisor" id="hypervisor" required tabindex="2">
-			<option selected value="">Please select hypervisor</option>
+			<option selected value=""><?php echo _("Please select hypervisor");?></option>
 			<?php
 			$x=0;
 			while ($h_reply[$x]['id']){
@@ -60,11 +66,11 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 	    <div class="row">
 		<?php 
 	    		echo '<div class="col-md-5 hide" id="hypervisor-sourceimage">
-			    <label>Use volume from:</label>';
+			    <label>' . _("Use volume from:") . '</label>';
 			$v_reply=get_SQL_array("SELECT id,name,machine_type,hypervisor FROM vms WHERE (machine_type='sourcemachine' OR machine_type='initialmachine') ORDER By name");
 			$y=0;
 			echo '<select class="form-control" name="source_volume" id="source_volume">' ."\n";
-			echo '<option selected value="">Please select source</option>'."\n";
+			echo '<option selected value="">' . _("Please select source") . '</option>'."\n";
 			while ($v_reply[$y]['id']){
 			    echo '<option class="' . $v_reply[$y]['machine_type'] . ' hypervisor-' . $v_reply[$y]['hypervisor']  . '" value="' . $v_reply[$y]['id'] .  '">' . $v_reply[$y]['name'] . '</option>' ."\n";
 			    ++$y;
@@ -74,11 +80,11 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 		    ?>
 		    <div id="hypervisor-manualpath" class="hide">
 		        <div class="col-md-5">
-		    	    <label>Specify disk path:</label>		    
+		    	    <label><?php echo _("Specify disk path:");?></label>		    
 			    <input type="text" name="source_drivepath" class="form-control" id="source_drivepath" value="<?php echo $default_imagepath; ?>">
 			</div>
 			<div class="col-md-4">
-    				<label>Disk size</label>		    
+    				<label><?php echo _("Disk size");?></label>		    
 			    <div class="input-group">
 				<input type="number" min="1" value="10" name="source_drive_size" class="form-control">
 				<span class="input-group-addon">GB</span>
@@ -89,18 +95,18 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 	    <div class="hide" id="hypervisor-imagepath">
 		<div class="row">
 		    <div class="col-md-9">
-			<label>Mount CD iso:</label>
+			<label><?php echo _("Mount CD iso:");?></label>
 			<div class="input-group">
 			    <span class="input-group-addon" style="min-width:40px;">
 				<input type="checkbox" name="iso_image" id="iso_image">
 			    </span>
 			    <select class="form-control" name="iso_path" id="iso_path" disabled>
-				<option value="">Select ISO image</option>
+				<option value=""><?php echo _("Select ISO image");?></option>
 			<?php
 			$x=0;
 			while ($h_reply[$x]['id']){
 			    ssh_connect($h_reply[$x]['ip'].":".$h_reply[$x]['port']);
-			    $files=explode("\n",ssh_command("sudo ls /var/lib/libvirt/images/|grep -i .iso", true));
+			    $files=explode("\n",ssh_command("sudo ls " . $default_iso_path . "|grep -i .iso", true));
 			    foreach ($files as &$value) {
 				if (!empty($value))
 				    echo '<option class="iso_option hypervisor_iso-' . $h_reply[$x]['id'] . '" value="' . $value . '">' . $value . '</option>'."\n";
@@ -109,29 +115,28 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 			}
 			?>
 			    </select>
-			    <!--<input type="text" value="<?php echo $default_iso_path; ?>" class="form-control" name="iso_path" id="iso_path" disabled>-->
 			</div>
 		    </div>
 		</div>
 	    </div>
 	    <div class="row">
 		<div class="col-md-4">
-		    <label>Hardware info:</label>
+		    <label><?php echo _("Hardware info:");?></label>
 		    <div class="input-group">
 			<input type="number" min="1" value="1" class="form-control" name="numcpu">
-			<span class="input-group-addon">CPUs</span>
+			<span class="input-group-addon"><?php echo _("CPUs");?></span>
 		    </div>
 		    <div class="input-group">
 			<input type="number" min="1" value="1" class="form-control" name="numcore">
-			<span class="input-group-addon">Cores</span>
+			<span class="input-group-addon"><?php echo _("Cores");?></span>
 		    </div>
 		    <div class="input-group">
 			<input type="number" min="1" value="1" class="form-control" name="numram">
-			<span class="input-group-addon">GB RAM</span>
+			<span class="input-group-addon"><php echo _("GB RAM");?></span>
 		    </div>
 		    <div class="input-group">
 			<input type="text" value="<?php echo $default_bridge; ?>" class="form-control" name="network">
-			<span class="input-group-addon">Network</span>
+			<span class="input-group-addon"><?php echo _("Network");?></span>
 		    </div>
 		</div>
 		<div class="col-md-8" id="newmachine-os">
@@ -139,13 +144,13 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 		    <div class="input-group">
 			<span class="input-group-addon">OS type</span>
 			<select class="form-control osselection" name="os_type" id="os_type" tabindex="3" required>
-			    <option selected value="">Please select OS type</option>
-	    		    <option value="linux">Linux</option>
-        		    <option value="windows">Windows</option>
+			    <option selected value=""><?php echo _("Please select OS type");?></option>
+	    		    <option value="linux"><?php echo _("Linux");?></option>
+        		    <option value="windows"><?php echo _("Windows");?></option>
 	    		</select>
 		    </div>
 		    <div class="input-group hide" id="os">
-			<span class="input-group-addon">Version</span>
+			<span class="input-group-addon"><?php echo _("Version");?></span>
 			<select class="form-control osselection" name="os_version" id="os_version" tabindex="4" required>
 			    <option selected value="">Please select version</option>
 	    		    <option class="linux" value="debiansqueeze">Debian Squeeze (or newer)</option>
@@ -168,16 +173,16 @@ $h_reply=get_SQL_array("SELECT * FROM hypervisors");
 	    <div class="row">
 		<hr class="divider">	
 		<div class="col-md-5">
-        	    <label>Mass deployment</label>
+        	    <label><?php echo _("Mass deployment");?></label>
 		</div>
 	    </div>
 	    <div class="row">
 		<div class="col-md-5">
-		    <label>Prepend machine name:</label>		    
+		    <label><?php echo _("Prepend machine name:");?></label>		    
 		    <input type="text" name="machinename" placeholder="somename-" class="form-control" required>
 		</div>
 		<div class="col-md-5">
-		    <label>Number of machines to create:</label>		    
+		    <label><?php echo _("Number of machines to create:");?></label>		    
 		    <input type="number" name="machinecount" min="1" value="1" class="form-control" required>
 		</div>
 	    </div>
