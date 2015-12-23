@@ -41,7 +41,7 @@ set_lang();
         <div class="modal-body">
 	    <div class="row">
 		 <div class="col-md-5">
-		    <label>Machine type:</label>
+		    <label><?php echo _("Machine type:");?></label>
 		    <select class="form-control selectClass" name="machine_type" id="machine_type" required tabindex="1">
 			<option selected value=""><?php echo _("Please select machine type");?></option>
 	    	        <option value="simplemachine"><?php echo _("Simple machine");?></option>
@@ -51,7 +51,7 @@ set_lang();
 	    	    </select>
 		</div>
 		 <div class="col-md-5">
-		    <label>Target hypervisor:</label>
+		    <label><?php echo _("Target hypervisor:");?></label>
 		    <select class="form-control selectClass" name="hypervisor" id="hypervisor" required tabindex="2">
 			<option selected value=""><?php echo _("Please select hypervisor");?></option>
 			<?php
@@ -132,7 +132,7 @@ set_lang();
 		    </div>
 		    <div class="input-group">
 			<input type="number" min="1" value="1" class="form-control" name="numram">
-			<span class="input-group-addon"><php echo _("GB RAM");?></span>
+			<span class="input-group-addon"><?php echo _("GB RAM");?></span>
 		    </div>
 		    <div class="input-group">
 			<input type="text" value="<?php echo $default_bridge; ?>" class="form-control" name="network">
@@ -142,7 +142,7 @@ set_lang();
 		<div class="col-md-8" id="newmachine-os">
 		    <label>System info:</label>
 		    <div class="input-group">
-			<span class="input-group-addon">OS type</span>
+			<span class="input-group-addon"><?php echo _("OS type");?></span>
 			<select class="form-control osselection" name="os_type" id="os_type" tabindex="3" required>
 			    <option selected value=""><?php echo _("Please select OS type");?></option>
 	    		    <option value="linux"><?php echo _("Linux");?></option>
@@ -152,7 +152,7 @@ set_lang();
 		    <div class="input-group hide" id="os">
 			<span class="input-group-addon"><?php echo _("Version");?></span>
 			<select class="form-control osselection" name="os_version" id="os_version" tabindex="4" required>
-			    <option selected value="">Please select version</option>
+			    <option selected value=""><?php echo _("Please select version");?></option>
 	    		    <option class="linux" value="debiansqueeze">Debian Squeeze (or newer)</option>
 	    		    <option class="linux" value="debianlenny">Debian Lenny</option>
 	    		    <option class="linux" value="debianetch">Debian Etch</option>
@@ -189,8 +189,8 @@ set_lang();
         </div>
 	
         <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Create VMs</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _("Close");?></button>
+            <button type="submit" class="btn btn-primary"><?php echo _("Create VMs");?></button>
         </div>
     </div>
 </form>

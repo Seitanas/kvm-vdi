@@ -17,6 +17,7 @@ if (!check_session()){
     header ("Location: $serviceurl/?error=1");
     exit;
 }
+set_lang();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -100,14 +101,14 @@ if (!check_session()){
 
     <script>
 	function confirmation() {
-	    if (confirm("All virtual machines will be powered off and their initial snapshots recreated.\nProceed?")) {
+	    if (confirm("<?php echo _("All virtual machines will be powered off and their initial snapshots recreated.\nProceed?");?>")) {
 		$('#populatealert').show();
 		return true;
 	     }
         return false;
 	}
 	function confirmation1() {
-	    if (confirm("All virtual machines will be powered off and their initial snapshots recreated.\nProceed?")) {
+	    if (confirm("<?php echo _("All virtual machines will be powered off and their initial snapshots recreated.\nProceed?");?>")) {
 		$('#copyalert').show();
 		return true;
 	     }
