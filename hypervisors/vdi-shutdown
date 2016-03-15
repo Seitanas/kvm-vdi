@@ -1,0 +1,25 @@
+#!/usr/bin/python
+#used to mass shutdown virtual machines of one type.
+#syntax: shutdown-machines machine_type hypervisor_id
+from ConfigParser import ConfigParser
+import requests
+import sys
+import json
+import os
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
+config = ConfigParser()
+config.read('/usr/local/VDI/config')
+machine_type=str(sys.argv[1])
+hypervisor=str(sys.argv[2])
+address = config.get('server', 'address')
+password = config.get('server', 'password')
+bytes_copied=0
+progress=0
+reply=requests.post(address+"/list_machines.php", data={'pass': password, 'type': machine_type, 'hypervisor': hypervisor}, verify=False)
+machines=json.loads(reply.text)
+x=0
+while x<len(machines):
+    os.system("virsh shutdown " + machines[x]);
+    x+=1
