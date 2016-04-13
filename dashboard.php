@@ -9,7 +9,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2015-12-23
+2016-04-13
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -29,7 +29,7 @@ set_lang();
     <meta name="description" content="">
     <meta name="author" content="Tadas Ustinavičius">
     <title>VDI dashboard</title>
-
+    <link href="inc/css/custom.css" rel="stylesheet">
     <!-- Bootstrap core CSS -->
     <link href="inc/css/bootstrap.min.css" rel="stylesheet">
 
@@ -209,13 +209,17 @@ set_lang();
 	<?php
 	    $x=0;
 	    while ($sql_reply[$x]['id']){
+		$table_status="";
 		$vms_query=get_SQL_array("SELECT vms.id,vms.name,vms.hypervisor,vms.machine_type,vms.source_volume,vms.snapshot,vms.maintenance,vms.filecopy,vms.state,vms_tmp.name AS sourcename  FROM vms LEFT JOIN vms AS vms_tmp ON vms.source_volume=vms_tmp.id WHERE vms.hypervisor='{$sql_reply[$x][id]}' ORDER BY vms.name");
 	?>
           <h1 class="sub-header"><?php echo _("Hypervisor: ") . $sql_reply[$x]['ip']; ?> 
 		<?php	if (!$sql_reply[$x]['maintenance']) echo '<a href="hypervisor.php?maintenance=1&id=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn glyphicon glyphicon-ok-circle btn-success"> ' . _("Enabled") . '</a>';
-			else echo '<a href="hypervisor.php?maintenance=0&id=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn glyphicon glyphicon-ban-circle btn-default"> ' . _("Disabled") . '</a>';?>
+			else {
+			    echo '<a href="hypervisor.php?maintenance=0&id=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn glyphicon glyphicon-ban-circle btn-default"> ' . _("Disabled") . '</a>';
+			    $table_status="disabled";
+			    }?>
 	 </h1>
-      <div class="table-responsive">
+      <div class="table-responsive <?php echo $table_status;?>">
             <table class="table table-striped table-hover">
               <thead>
                 <tr>
@@ -314,7 +318,5 @@ set_lang();
         </div>
       </div>
     </div>
-
-
   </body>
 </html>
