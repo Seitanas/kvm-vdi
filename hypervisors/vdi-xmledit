@@ -1,0 +1,48 @@
+#!/usr/bin/env python
+
+#This script is called after new machine is created
+#It changes emulator path to a kvm-vdi script,
+#Also it enables compression on a SPICE channel for a virtual machine
+
+
+
+import xml.etree.ElementTree as ET
+import sys
+import os
+
+x=0
+y=len(sys.argv)
+vmname=""
+while (x != y):
+    namearg=str(sys.argv[x])
+    if (namearg=="-name"):
+        vmname=str(sys.argv[x+1])
+    x += 1
+if (vmname==""):
+    sys.exit(0)
+os.system("virsh dumpxml " + vmname + " > /tmp/" + vmname + ".xml")
+tree = ET.parse('/tmp/' + vmname+'.xml')
+root = tree.getroot()
+devices=root.find('devices')
+emulator = devices.find('emulator')
+emulator.text='/usr/local/bin/kvm-snap'
+graphics = devices.find('graphics')
+for item in graphics[::-1]: #need to remove in reverse order
+    graphics.remove(item)
+gr=ET.SubElement(graphics, 'listen')
+gr.set('type', 'address')
+gr.set('address', '0.0.0.0')
+gr=ET.SubElement(graphics, 'image')
+gr.set('compression', 'auto_glz')
+gr=ET.SubElement(graphics, "streaming")
+gr.set('mode', 'filter')
+gr=ET.SubElement(graphics, 'mouse')
+gr.set('mode', 'client')
+gr=ET.SubElement(graphics, 'clipboard')
+gr.set('copypaste', 'no')
+gr=ET.SubElement(graphics, 'filetransfer')
+gr.set('enable', 'no')
+tree.write('/tmp/' + vmname + '_new.xml')
+os.system("virsh define /tmp/" + vmname + "_new.xml")
+os.remove("/tmp/" + vmname + ".xml")
+os.remove("/tmp/" + vmname + "_new.xml")

@@ -3,7 +3,7 @@
 KVM-VDI
 Tadas Ustinavičius
 tadas at ring.lt
-2015-12-21
+2016-04-13
 Vilnius, Lithuania.
 */
 include ('functions/config.php');
@@ -74,8 +74,10 @@ if ($machine_type=='vdimachine'){
 	$disk=$source_drivepath . '/' . $name . "-" . uniqid() . ".qcow2";
 	$vm_cmd="sudo virt-install --name=" . $name . " --disk path=" . $disk . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . $numcpu . ",cores=" . $numcore . " --ram=" . $numram . " --network bridge=" . $network . ",model=virtio --os-type=" . $os_type . " --os-variant=" . $os_version . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --noreboot --import";
 	$drive_cmd="sudo qemu-img create -f qcow2 -b " . $source_disk . " " . $disk;
+	$xmledit_cmd="sudo vdi-xmledit -name " . $name;
 	ssh_command($drive_cmd,true);
 	ssh_command($vm_cmd,true);
+	ssh_command($xmledit_cmd);
 	add_SQL_line("INSERT INTO  vms (name,hypervisor,machine_type,source_volume) VALUES ('$name','$hypervisor','$machine_type','$source_volume')");
 	++$x;
 
