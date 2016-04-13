@@ -3,13 +3,8 @@
 KVM-VDI
 Tadas Ustinavičius
 tadas at ring.lt
-
-Vilnius University.
-Center of Information Technology Development.
-
-
-Vilnius,Lithuania.
-2015-12-22
+2015-12-18
+Vilnius, Lithuania.
 */
 function SQL_connect(){
     include ('functions/config.php');
@@ -69,29 +64,31 @@ function reload_vm_info(){
 	$tmp = explode(":", $hypervizors[$x]);
 	$ip=$tmp[0];
 	$port=$tmp[1];
-	$sql_reply=get_SQL_line("SELECT id FROM hypervisors WHERE ip='$ip'");
-	if (empty($sql_reply[0]))
-    	    add_SQL_line("INSERT INTO  hypervisors (ip,port) VALUES ('$ip','$port')");
-	else
-    	    add_SQL_line("UPDATE hypervisors SET ip='$ip', port='$port' WHERE id='$sql_reply[0]'");
-	$sql_reply=get_SQL_line("SELECT id FROM hypervisors WHERE ip='$ip'");
-	$hyper_id=$sql_reply[0];
-        ssh_connect($ip . ":" . $port);
-    	$output = ssh_command("sudo virsh list --all |tail -n +3|head -n -1|awk '{print $2" . '" "' . "$3}'",true);
-	$vms=array();
-        $output=str_replace("\n"," ",$output);
-	$vms=explode(" ",$output);
-	$y=0;
-	while ($vms[$y]){
-    	    $sql_reply=get_SQL_line("SELECT id FROM vms WHERE name='$vms[$y]' AND hypervisor='$hyper_id'");
-            $state=$vms[$y+1];
-    	    if (empty($sql_reply[0]))
-                add_SQL_line("INSERT INTO  vms (name,hypervisor,state) VALUES ('$vms[$y]','$hyper_id','$state')");
-    	    else
-                add_SQL_line("UPDATE vms SET name='$vms[$y]', hypervisor='$hyper_id', state='$state' WHERE id='$sql_reply[0]'");
-            $y=$y+2;
+	$sql_reply=get_SQL_line("SELECT id,maintenance FROM hypervisors WHERE ip='$ip'");
+	if ($sql_reply[1]!=1){//do not try to connect to disabled hypervisor
+	    if (empty($sql_reply[0]))
+    		add_SQL_line("INSERT INTO  hypervisors (ip,port) VALUES ('$ip','$port')");
+	    else
+    		add_SQL_line("UPDATE hypervisors SET ip='$ip', port='$port' WHERE id='$sql_reply[0]'");
+	    $sql_reply=get_SQL_line("SELECT id FROM hypervisors WHERE ip='$ip'");
+	    $hyper_id=$sql_reply[0];
+    	    ssh_connect($ip . ":" . $port);
+    	    $output = ssh_command("sudo virsh list --all |tail -n +3|head -n -1|awk '{print $2" . '" "' . "$3}'",true);
+	    $vms=array();
+    	    $output=str_replace("\n"," ",$output);
+	    $vms=explode(" ",$output);
+	    $y=0;
+	    while ($vms[$y]){
+    		$sql_reply=get_SQL_line("SELECT id FROM vms WHERE name='$vms[$y]' AND hypervisor='$hyper_id'");
+        	$state=$vms[$y+1];
+    		if (empty($sql_reply[0]))
+            	    add_SQL_line("INSERT INTO  vms (name,hypervisor,state) VALUES ('$vms[$y]','$hyper_id','$state')");
+    		else
+            	    add_SQL_line("UPDATE vms SET name='$vms[$y]', hypervisor='$hyper_id', state='$state' WHERE id='$sql_reply[0]'");
+        	$y=$y+2;
+	    }
 	}
-    ++$x;
+	++$x;
     }
 }
 //##############################################################################
@@ -119,7 +116,7 @@ function set_lang(){
     include ('config.php');
     $domain = 'kvm-vdi';
     setlocale(LC_ALL, $language.'.UTF-8');
-    //putenv('LC_ALL=lt');
+    putenv('LC_ALL='.$language);
     bindtextdomain($domain, 'locale/');
     bind_textdomain_codeset($domain, 'UTF-8');
     textdomain($domain);
