@@ -18,5 +18,4 @@ if ($pass==$backend_pass){
 	echo $v_reply[0];
     }
 }
-
 ?>

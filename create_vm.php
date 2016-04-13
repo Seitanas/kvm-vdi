@@ -81,6 +81,7 @@ if ($machine_type=='vdimachine'){
 
     }
 }
+
 header("Location: $serviceurl/reload_vm_info.php");
 exit;
 ?>

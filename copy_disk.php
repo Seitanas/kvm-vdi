@@ -26,7 +26,7 @@ while ($child_vms[$x]['name']){
     ssh_command("sudo virsh destroy " . $child_vms[$x]['name'], true);
     ++$x;
 }
-ssh_command("sudo /usr/local/VDI/copy-file $source_path $dest_path $filekey",false);
+ssh_command("sudo " . $hypervisor_cmdline_path . "copy-file $source_path $dest_path $filekey",false);
 header("Location: $serviceurl/dashboard.php");
 exit;
 ?>

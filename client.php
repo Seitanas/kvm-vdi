@@ -31,7 +31,7 @@ if ($protocol=="vmView"){
 if ($protocol=="SPICE"){
     $vm=get_SQL_line("SELECT hypervisor,maintenance FROM vms WHERE name='$machine_name'");
     $h_reply=get_SQL_line("SELECT * FROM hypervisors WHERE id='$vm[0]'");
-    if ($vm[1]=="true"){
+    if ($vm[1]=="true"||$h_reply[4]==1){
         echo json_encode(array('status'=>"MAINTENANCE"));
 	exit;
     }

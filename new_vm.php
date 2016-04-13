@@ -17,7 +17,7 @@ if (!check_session()){
     header ("Location: $serviceurl/?error=1");
     exit;
 }
-$h_reply=get_SQL_array("SELECT * FROM hypervisors");
+$h_reply=get_SQL_array("SELECT * FROM hypervisors WHERE maintenance=0");
 set_lang();
 ?>
 <!DOCTYPE html>
