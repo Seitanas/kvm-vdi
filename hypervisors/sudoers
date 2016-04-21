@@ -1,0 +1,2 @@
+
+VDI     ALL=(ALL:ALL) NOPASSWD: /usr/bin/virsh, /usr/local/VDI/copy-file, /usr/bin/qemu-img, /bin/ls, /usr/bin/virt-install, /usr/local/bin/vdi-xmledit, /bin/rm /vdi_imagepath/*
