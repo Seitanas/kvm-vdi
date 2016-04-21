@@ -101,14 +101,14 @@ set_lang();
 
     <script>
 	function confirmation() {
-	    if (confirm("<?php echo _("All virtual machines will be powered off and their initial snapshots recreated.\nProceed?");?>")) {
+	    if (confirm("<?php echo _("All virtual machines will be powered off and their initial snapshots recreated.\\nProceed?");?>")) {
 		$('#populatealert').show();
 		return true;
 	     }
         return false;
 	}
 	function confirmation1() {
-	    if (confirm("<?php echo _("All virtual machines will be powered off and their initial snapshots recreated.\nProceed?");?>")) {
+	    if (confirm("<?php echo _("All virtual machines will be powered off and their initial snapshots recreated.\\nProceed?");?>")) {
 		$('#copyalert').show();
 		return true;
 	     }
@@ -303,7 +303,7 @@ set_lang();
 				    echo' <a data-toggle="modal" data-target="#vmConsole" href="vm_screen.php?vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn btn-info" aria-label="' . _("Open console") . '" title="' . _("Open console") . '">
 			    		<span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span></a>';
 			      }
-			echo  '</td> 
+			echo	'</td> 
         		      </tr>'; 
 			++$y;
 		    }
