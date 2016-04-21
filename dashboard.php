@@ -9,7 +9,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-04-13
+2016-04-21
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -303,6 +303,10 @@ set_lang();
 				    echo' <a data-toggle="modal" data-target="#vmConsole" href="vm_screen.php?vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn btn-info" aria-label="' . _("Open console") . '" title="' . _("Open console") . '">
 			    		<span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span></a>';
 			      }
+			if ($vms_query[$y]['machine_type']=='vdimachine'){
+			    echo' <a href="delete_vm.php?vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn btn-danger" aria-label="' . _("Delete VM") . '" title="Shut down (forced)"  onclick="return confirmBox(' . "'" . _("Are you sure?") . "'" . ');">
+			      <span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
+			}
 			echo	'</td> 
         		      </tr>'; 
 			++$y;
