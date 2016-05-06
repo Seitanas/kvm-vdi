@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: vdi
 -- ------------------------------------------------------
--- Server version	10.0.23-MariaDB-0+deb8u1
+-- Server version       10.0.23-MariaDB-0+deb8u1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -29,7 +29,7 @@ CREATE TABLE `hypervisors` (
   `port` varchar(6) COLLATE utf8_lithuanian_ci NOT NULL,
   `maintenance` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_lithuanian_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -43,9 +43,9 @@ CREATE TABLE `log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ip` varchar(255) CHARACTER SET latin1 NOT NULL,
   `message` text CHARACTER SET latin1 NOT NULL,
-  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `date` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_lithuanian_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -62,8 +62,11 @@ CREATE TABLE `users` (
   `ip` varchar(255) COLLATE utf8_lithuanian_ci NOT NULL,
   `lastlogin` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_lithuanian_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+INSERT INTO `users` (`id`, `username`, `password`, `ip`, `lastlogin`) VALUES
+(1, 'admin', '$1$lTog9F7d$Bwp5Mt8HWBTaXiFhvRY4m0', '', '');
 
 --
 -- Table structure for table `vms`
@@ -83,7 +86,7 @@ CREATE TABLE `vms` (
   `filecopy` varchar(255) COLLATE utf8_lithuanian_ci NOT NULL,
   `state` varchar(255) COLLATE utf8_lithuanian_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_lithuanian_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
