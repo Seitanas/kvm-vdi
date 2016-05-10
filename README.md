@@ -38,7 +38,7 @@ Configure "clients.xml" file, to provide thin clients with it's own VDI VM.
 
 ### Dashboard installation
 
-**On Debian basesd systems:**
+**On Debian bases systems:**
 
 Note: you can use mysql server instead of Maria-db  
 apt-get install mariadb-server apache2 php git libapache2-mod-php php-mbstring php-gettext php-ssh2  
@@ -48,7 +48,7 @@ git clone https://github.com/Seitanas/kvm-vdi
 cd kvm-vdi  
 Edit functions/config.php file to fit your needs.  
 Go to http://yourservename/kvm-vdi  
-Read information. If installation is successful, you will be redirected to login page. Default credentials are: admin/password
+If installation is successful, you will be redirected to login page. Default credentials are: admin/password
   
 
 ![Alt text](http://webjail.ring.lt/vdi/vdi.jpg?raw=true&1)
