@@ -1,3 +1,23 @@
+<?php
+/*
+KVM-VDI
+Tadas Ustinavičius
+tadas at ring.lt
+
+Vilnius University.
+Center of Information Technology Development.
+
+
+Vilnius,Lithuania.
+2016-05-10
+*/
+include ('functions/config.php');
+require_once('functions/functions.php');
+if (check_db()<1){
+    header("Location:  $serviceurl/install/");
+    exit;
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>

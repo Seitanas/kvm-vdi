@@ -3,18 +3,18 @@
 KVM-VDI
 Tadas Ustinavičius
 tadas at ring.lt
-2015-12-18
+2016-05-10
 Vilnius, Lithuania.
 */
 function SQL_connect(){
-    include ('functions/config.php');
+    include (dirname(__FILE__).'/config.php');
     $mysql_connection=mysqli_connect($mysql_host,$mysql_user,$mysql_pass);
     mysqli_select_db($mysql_connection, $mysql_db);
     return $mysql_connection;
 }
 function add_SQL_line($sql_line){
     $mysql_connection=SQL_connect();
-    mysqli_query($mysql_connection,$sql_line) or die (mysqli_error());
+    mysqli_query($mysql_connection, $sql_line) or die (mysqli_error($mysql_connection));
     mysqli_close();
     return 0;
 }
@@ -28,7 +28,7 @@ function get_SQL_line($sql_line){
 //##############################################################################
 function get_SQL_array($sql_line){
     $mysql_connection=SQL_connect();
-    $q_string = mysqli_query($mysql_connection, $sql_line)or die (mysqli_error());
+    $q_string = mysqli_query($mysql_connection, $sql_line)or die (mysqli_error($mysql_connection));
     while ($row=mysqli_fetch_array($q_string)){
         $query_array[]=$row;
     }
@@ -121,4 +121,21 @@ function set_lang(){
     bindtextdomain($domain, 'locale/');
     bind_textdomain_codeset($domain, 'UTF-8');
     textdomain($domain);
+}
+//############################################################################
+function check_db(){
+    return sizeof(get_SQL_array("SHOW TABLES LIKE 'vms'"));
+}
+//############################################################################
+function populate_db(){
+    $mysql_connection=SQL_connect();
+    $sql_file=file_get_contents(dirname(__FILE__) . '/../sql/vdi.sql');
+    $lines=explode(';', $sql_file);
+    $failure=0;
+    foreach($lines as $line) { 
+	$result=mysqli_query($mysql_connection,$line);
+	if (!$result)
+	    $failure=1;
+    }
+    return $failure;
 }
