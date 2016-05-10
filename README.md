@@ -36,7 +36,22 @@ Create snapshots for all VDI VM's from "Initial machine's" disk image ("Populate
 Configure "clients.xml" file, to provide thin clients with it's own VDI VM.
 
 
-![Alt text](http://webjail.ring.lt/vdi/vdi.jpg?raw=true)
-![Alt text](http://webjail.ring.lt/vdi/vdi2.jpg?raw=true?&1)
+### Dashboard installation
+
+**On Debian basesd systems:**
+
+Note: you can use mysql server instead of Maria-db  
+apt-get install mariadb-server apache2 php git libapache2-mod-php php-mbstring php-gettext php-ssh2  
+Create empty database/user on db server.  
+cd /var/www/html/  
+git clone https://github.com/Seitanas/kvm-vdi  
+cd kvm-vdi  
+Edit functions/config.php file to fit your needs.  
+Go to http://yourservename/kvm-vdi  
+Read information. If installation is successful, you will be redirected to login page. Default credentials are: admin/password
+  
+
+![Alt text](http://webjail.ring.lt/vdi/vdi.jpg?raw=true&1)
+![Alt text](http://webjail.ring.lt/vdi/vdi2.jpg?raw=true&1)
 ![Alt text](http://webjail.ring.lt/vdi/vdi3.jpg?raw=true)
 ![Alt text](http://webjail.ring.lt/vdi/vdi4.png?raw=true)
