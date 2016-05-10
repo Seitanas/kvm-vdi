@@ -8,30 +8,31 @@ Vilnius, Lithuania.
 */
 function SQL_connect(){
     include ('functions/config.php');
-    mysql_connect($mysql_host,$mysql_user,$mysql_pass);
-    mysql_select_db($mysql_db);
+    $mysql_connection=mysqli_connect($mysql_host,$mysql_user,$mysql_pass);
+    mysqli_select_db($mysql_connection, $mysql_db);
+    return $mysql_connection;
 }
 function add_SQL_line($sql_line){
-    SQL_connect();
-    mysql_query($sql_line) or die (mysql_error());
-    mysql_close();
+    $mysql_connection=SQL_connect();
+    mysqli_query($mysql_connection,$sql_line) or die (mysqli_error());
+    mysqli_close();
     return 0;
 }
 //##############################################################################
-function get_SQL_line($sql_line){//funkcija skirta vienai sql ishrinkimo komandai ivykdyti
-    SQL_connect();
-    $result = mysql_fetch_row(mysql_query($sql_line));
-    mysql_close();
+function get_SQL_line($sql_line){
+    $mysql_connection=SQL_connect();
+    $result = mysqli_fetch_row(mysqli_query($mysql_connection, $sql_line));
+    mysqli_close();
     return $result;
 }
 //##############################################################################
-function get_SQL_array($sql_line){//funkcija skirta masyvo ishrinikimui ivykdyti
-    SQL_connect();
-    $q_string = mysql_query($sql_line)or die (mysql_error());
-    while ($row=mysql_fetch_array($q_string)){
-                        $query_array[]=$row;
+function get_SQL_array($sql_line){
+    $mysql_connection=SQL_connect();
+    $q_string = mysqli_query($mysql_connection, $sql_line)or die (mysqli_error());
+    while ($row=mysqli_fetch_array($q_string)){
+        $query_array[]=$row;
     }
-    mysql_close();
+    mysqli_close();
     return $query_array;
 }
 

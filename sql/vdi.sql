@@ -24,9 +24,9 @@ DROP TABLE IF EXISTS `hypervisors`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `hypervisors` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8_lithuanian_ci NOT NULL,
-  `ip` varchar(255) COLLATE utf8_lithuanian_ci NOT NULL,
-  `port` varchar(6) COLLATE utf8_lithuanian_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8_general_ci NOT NULL,
+  `ip` varchar(255) COLLATE utf8_general_ci NOT NULL,
+  `port` varchar(6) COLLATE utf8_general_ci NOT NULL,
   `maintenance` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -41,11 +41,11 @@ DROP TABLE IF EXISTS `log`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ip` varchar(255) CHARACTER SET latin1 NOT NULL,
-  `message` text CHARACTER SET latin1 NOT NULL,
+  `ip` varchar(255) CHARACTER SET utf8_general_ci NOT NULL,
+  `message` text CHARACTER SET utf8_general_ci NOT NULL,
   `date` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -57,16 +57,13 @@ DROP TABLE IF EXISTS `users`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) COLLATE utf8_lithuanian_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8_lithuanian_ci NOT NULL,
-  `ip` varchar(255) COLLATE utf8_lithuanian_ci NOT NULL,
+  `username` varchar(255) COLLATE utf8_general_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8_general_ci NOT NULL,
+  `ip` varchar(255) COLLATE utf8_general_ci NOT NULL,
   `lastlogin` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
-INSERT INTO `users` (`id`, `username`, `password`, `ip`, `lastlogin`) VALUES
-(1, 'admin', '$1$lTog9F7d$Bwp5Mt8HWBTaXiFhvRY4m0', '', '');
 
 --
 -- Table structure for table `vms`
@@ -77,14 +74,14 @@ DROP TABLE IF EXISTS `vms`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `vms` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8_lithuanian_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8_general_ci NOT NULL,
   `hypervisor` int(11) NOT NULL,
-  `machine_type` varchar(25) COLLATE utf8_lithuanian_ci NOT NULL,
-  `source_volume` varchar(255) COLLATE utf8_lithuanian_ci NOT NULL,
-  `snapshot` varchar(11) COLLATE utf8_lithuanian_ci NOT NULL,
-  `maintenance` varchar(11) COLLATE utf8_lithuanian_ci DEFAULT NULL,
-  `filecopy` varchar(255) COLLATE utf8_lithuanian_ci NOT NULL,
-  `state` varchar(255) COLLATE utf8_lithuanian_ci NOT NULL,
+  `machine_type` varchar(25) COLLATE utf8_general_ci NOT NULL,
+  `source_volume` varchar(255) COLLATE utf8_general_ci NOT NULL,
+  `snapshot` varchar(11) COLLATE utf8_general_ci NOT NULL,
+  `maintenance` varchar(11) COLLATE utf8_general_ci DEFAULT NULL,
+  `filecopy` varchar(255) COLLATE utf8_general_ci NOT NULL,
+  `state` varchar(255) COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
