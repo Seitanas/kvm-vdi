@@ -74,7 +74,7 @@ if ($machine_type=='vdimachine'){
 	$disk=$source_drivepath . '/' . $name . "-" . uniqid() . ".qcow2";
 	$vm_cmd="sudo virt-install --name=" . $name . " --disk path=" . $disk . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . $numcpu . ",cores=" . $numcore . " --ram=" . $numram . " --network bridge=" . $network . ",model=virtio --os-type=" . $os_type . " --os-variant=" . $os_version . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --noreboot --import";
 	$drive_cmd="sudo qemu-img create -f qcow2 -b " . $source_disk . " " . $disk;
-	$xmledit_cmd="sudo vdi-xmledit -name " . $name;
+	$xmledit_cmd="sudo " . $hypervisor_cmdline_path . "/vdi-xmledit -name " . $name;
 	ssh_command($drive_cmd,true);
 	ssh_command($vm_cmd,true);
 	ssh_command($xmledit_cmd);
