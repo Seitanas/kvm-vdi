@@ -13,8 +13,7 @@ Additionally dashboard can provide thin client with a RDP session of remote mach
 
 Basic architecture would look like this:
 * Thin clients are booted from a network (or local storage for that matter). /usr/local/bin/vdi_init application should be run on system startup. I suggest using systemd for that. (systemd config file is provided in thin_clients directory).
-* Hypervisors should have a user account with sudo nopasswd rights:
-username     ALL=(ALL:ALL) NOPASSWD: /usr/bin/virsh, /usr/local/VDI/copy-file, /usr/bin/qemu-img
+* Hypervisors should have a user account with sudo nopasswd rights (see hypervisors/sudoers) file.
 * Dashboard web service should be able to ssh to hypervisors via 'username' using RSA public/private keys.
 
 Dashboard service has four types of virtual machines:
@@ -41,7 +40,10 @@ Configure "clients.xml" file, to provide thin clients with it's own VDI VM.
 **On Debian bases systems:**
 
 Note: you can use mysql server instead of Maria-db  
+Ubuntu 16
 apt-get install mariadb-server apache2 php git libapache2-mod-php php-mbstring php-gettext php-ssh2  
+Debian, Ubuntu 15 and earlier.  
+apt-get install mariadb-server apache2 php5 git libapache2-mod-php5 php5-mbstring php-gettext php5-ssh2  
 Create empty database/user on db server.  
 cd /var/www/html/  
 git clone https://github.com/Seitanas/kvm-vdi  
