@@ -41,8 +41,8 @@ DROP TABLE IF EXISTS `log`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ip` varchar(255) CHARACTER SET utf8_general_ci NOT NULL,
-  `message` text CHARACTER SET utf8_general_ci NOT NULL,
+  `ip` varchar(255) COLLATE utf8_general_ci NOT NULL,
+  `message` text COLLATE utf8_general_ci NOT NULL,
   `date` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
