@@ -42,8 +42,10 @@ Configure "clients.xml" file, to provide thin clients with it's own VDI VM.
 Note: you can use mysql server instead of Maria-db  
 Ubuntu 16
     apt-get install mariadb-server apache2 php git libapache2-mod-php php-mbstring php-gettext php-ssh2 php-imagick  
-Debian, Ubuntu 15 and earlier.  
-    apt-get install mariadb-server apache2 php5 git libapache2-mod-php5 php-gettext php5-ssh2 php5-imagick  
+Debian, Ubuntu 15 and earlier.
+
+    apt-get install mariadb-server apache2 php5 git libapache2-mod-php5 php-gettext php5-ssh2 php5-imagick
+
 Create empty database/user on db server.  
     cd /var/www/html/  
     git clone https://github.com/Seitanas/kvm-vdi  
