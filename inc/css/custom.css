@@ -5,13 +5,13 @@
     pointer-events: none;
 }
 .table-stripe-ani{
-    background-color: #D2F0FF !important;
+    background-color: #F4FBFF !important;
 }
 .table-stripe-ani:hover {
-    background-color: #C9EDFF !important;
+    background-color: #E7F7FF !important;
 }
 .table-stripe-static{
-    background-color: #C9EDFF !important;
+    background-color: #E7F7FF !important;
 }
 
 .table-stripe-clear{
