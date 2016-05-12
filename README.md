@@ -90,7 +90,7 @@ On each hypervisor create /usr/local/VDI folder. Copy all files from "hypervisor
 Edit config file accordingly.
 Edit your /etc/sudoers file according to examlpe of hypervisors/sudeors file.
 
-![Alt text](http://webjail.ring.lt/vdi/vdi.jpg?raw=true&2)
+![Alt text](http://webjail.ring.lt/vdi/vdi.jpg?raw=true&3)
 ![Alt text](http://webjail.ring.lt/vdi/vdi2.jpg?raw=true&1)
 ![Alt text](http://webjail.ring.lt/vdi/vdi3.jpg?raw=true)
 ![Alt text](http://webjail.ring.lt/vdi/vdi4.png?raw=true)
