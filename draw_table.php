@@ -23,7 +23,7 @@ $sql_reply=get_SQL_array("SELECT * FROM hypervisors");
 $x=0;
 while ($sql_reply[$x]['id']){
     $table_status="";
-    $vms_query=get_SQL_array("SELECT vms.id,vms.name,vms.hypervisor,vms.machine_type,vms.source_volume,vms.snapshot,vms.maintenance,vms.filecopy,vms.state,vms_tmp.name AS sourcename  FROM vms LEFT JOIN vms AS vms_tmp ON vms.source_volume=vms_tmp.id WHERE vms.hypervisor='{$sql_reply[$x]['id']}' ORDER BY vms.name");
+    $vms_query=get_SQL_array("SELECT vms.id,vms.name,vms.hypervisor,vms.machine_type,vms.source_volume,vms.snapshot,vms.maintenance,vms.filecopy,vms.state,vms_tmp.name AS sourcename  FROM vms LEFT JOIN vms AS vms_tmp ON vms.source_volume=vms_tmp.id WHERE vms.hypervisor='{$sql_reply[$x]['id']}' AND vms.machine_type <> 'vdimachine' ORDER BY vms.name");
 ?>
     <h1 class="sub-header"><?php echo _("Hypervisor: ") . $sql_reply[$x]['ip']; ?> 
     <?php
@@ -33,11 +33,12 @@ while ($sql_reply[$x]['id']){
         $table_status="disabled";
     }?>
     </h1>
-    <div class="table-responsive <?php echo $table_status;?>">
+    <div class="table-responsive <?php echo $table_status;?>"  style="overflow: inherit;">
         <table class="table table-striped table-hover">
           <thead>
             <tr>
               <th>#</th>
+	      <th></th>
               <th><?php echo _("Machine name");?></th>
               <th><?php echo _("Machine type");?></th>
               <th><?php echo _("Source image");?></th>
@@ -65,11 +66,12 @@ while ($sql_reply[$x]['id']){
                 $vms_query[$y]['snapshot']=str_replace("false","",$vms_query[$y]['snapshot']);
                 $vms_query[$y]['maintenance']=str_replace("true","checked",$vms_query[$y]['maintenance']);
                 $vms_query[$y]['maintenance']=str_replace("false","",$vms_query[$y]['maintenance']);
-                echo '<tr> 
+                echo '<tr class=" table-stripe-bottom-line"> 
                         <td class="col-md-1">' . ($y+1) . '</td> 
+                        <td class="col-md-1"></td> 
                         <td class="col-md-2"><a data-toggle="modal" href="vm_info.php?vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id']  . '" data-target="#vmInfo">' . $vms_query[$y]['name'] . '</a> </td> 
                         <td class="col-md-2">' . $machine_type[$vms_query[$y]['machine_type']] . '</td>
-                        <td class="col-md-2">' . $vms_query[$y]['sourcename'] . '</td>
+                        <td class="col-md-1">' . $vms_query[$y]['sourcename'] . '</td>
                         <td class="col-md-1"><input type="checkbox" '. $vms_query[$y]['snapshot'] . " onclick='handleSnapshot(this);' " . 'id="' . $vms_query[$y]['id'] .  '"></td>
                         <td class="col-md-1"><input type="checkbox" '. $vms_query[$y]['maintenance']. " onclick='handleMaintenance(this);' " . 'id="' . $vms_query[$y]['id'] .  '">';
                         if (!empty($vms_query[$y]['filecopy'])){
@@ -84,8 +86,7 @@ while ($sql_reply[$x]['id']){
                         echo  '</td>
                               <td class="col-md-3">';
                         if ($vms_query[$y]['machine_type']=="initialmachine"){
-                	    echo '<!-- Single button -->
-                                <div class="btn-group">
+                	    echo '<div class="btn-group">
                                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 VDI <span class="caret"></span>
                                 </button>
@@ -117,12 +118,61 @@ while ($sql_reply[$x]['id']){
                               <span class="glyphicon glyphicon-off" aria-hidden="true"></span></a>
                               <a href="power.php?action=single&state=destroy&vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn btn-danger" aria-label="' . _("Power down") . '" title="Shut down (forced)"  onclick="return confirmBox(' . "'" . _("Are you sure?") . "'" . ');">
                               <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a>';
-                        if ($vms_query[$y]['machine_type']=='vdimachine'){
-                            echo' <a href="delete_vm.php?vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn btn-danger" aria-label="' . _("Delete VM") . '" title="' . _("Delete VM") .  '"  onclick="return confirmBox(' . "'" . _("Are you sure?") . "'" . ');">
-                              <span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
-                        }
+
                         echo    '</td> 
                               </tr>'; 
+			if ($vms_query[$y]['machine_type']=='initialmachine'){
+			    $q=0;
+			    $VDI_query=get_SQL_array("SELECT vms.id,vms.name,vms.hypervisor,vms.machine_type,vms.source_volume,vms.snapshot,vms.maintenance,vms.filecopy,vms.state,vms_tmp.name AS sourcename  FROM vms LEFT JOIN vms AS vms_tmp ON vms.source_volume=vms_tmp.id WHERE vms.source_volume='{$vms_query[$y]['id']}' AND vms.machine_type = 'vdimachine' ORDER BY vms.name");
+			    if (!empty($VDI_query))
+				echo '<thead class="vdi-font">
+    				<tr class="table-stripe-static">
+		            	    <th class="table-stripe-clear"></th>
+	    			    <th>#</th>
+            			    <th>' . _("VDI name") . '</th>
+            			    <th>' . _("Machine type") . '</th>
+            			    <th>' . _("Source image") . '</th>
+            			    <th>' . _("Virt-snapshot") . '</th>
+            			    <th>' . _("Maintenance") . '</th>
+            			    <th>' . _("Operations") . '</th>
+        			</tr>
+        			</thead>';
+			    while ($VDI_query[$q]['id']){
+            			$VDI_query[$q]['snapshot']=str_replace("true","checked",$VDI_query[$q]['snapshot']);
+            			$VDI_query[$q]['snapshot']=str_replace("false","",$VDI_query[$q]['snapshot']);
+            			$VDI_query[$q]['maintenance']=str_replace("true","checked",$VDI_query[$q]['maintenance']);
+            			$VDI_query[$q]['maintenance']=str_replace("false","",$VDI_query[$q]['maintenance']);
+				$pwr_status="off";
+            			if ($VDI_query[$q]['state']=="shut")
+                		    $pwr_button="btn-default";
+            			else{
+                		    $pwr_button="btn-success";
+		                    $pwr_status="on";}
+				echo '<tr class="table-stripe-ani vdi-font"> 
+                    		<td class="col-md-1 table-stripe-clear"></td> 
+                    		<td class="col-md-1">' . ($y+1) . "-" . ($q+1) . '</td> 
+                    		<td class="col-md-2"><a data-toggle="modal" href="vm_info.php?vm=' . $VDI_query[$q]['id'] . '&hypervisor=' . $sql_reply[$x]['id']  . '" data-target="#vmInfo">' . $VDI_query[$q]['name'] . '</a> </td> 
+                    		<td class="col-md-2">' . $machine_type[$VDI_query[$q]['machine_type']] . '</td>
+                    		<td class="col-md-1">' . $VDI_query[$q]['sourcename'] . '</td>
+                    		<td class="col-md-1"><input type="checkbox" '. $VDI_query[$q]['snapshot'] . " onclick='handleSnapshot(this);' " . 'id="' . $VDI_query[$q]['id'] .  '"></td>
+                    		<td class="col-md-1"><input type="checkbox" '. $VDI_query[$q]['maintenance']. " onclick='handleMaintenance(this);' " . 'id="' . $VDI_query[$q]['id'] .  '"></td>
+				<td class="col-md-3">';
+		                echo  '<a href="power.php?action=single&state=up&vm=' . $VDI_query[$q]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover" class="btn ' . $pwr_button . '" aria-label="' . _("Power up") . '" title="' . _("Power up") . '">
+                            	    <span class="glyphicon glyphicon-play" aria-hidden="true"></span></a>';
+                    		if ($pwr_status=="on"){
+                        	    echo' <a data-toggle="modal" data-target="#vmConsole" href="vm_screen.php?vm=' . $VDI_query[$q]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn btn-info" aria-label="' . _("Open console") . '" title="' . _("Open console") . '">
+                            		<span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span></a>';
+                    		}
+                                echo '<a href="power.php?action=single&state=down&vm=' . $VDI_query[$q]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover" class="btn btn-default" aria-label="' . _("Shut down") . '" title="' . _("Shut down (soft)") . '"  onclick="return confirmBox(' . "'" . _("Are you sure?") . "'" . ');">
+                        		<span class="glyphicon glyphicon-off" aria-hidden="true"></span></a>
+                            	        <a href="power.php?action=single&state=destroy&vm=' . $VDI_query[$q]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn btn-danger" aria-label="' . _("Power down") . '" title="Shut down (forced)"  onclick="return confirmBox(' . "'" . _("Are you sure?") . "'" . ');">
+                            		<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a>';
+                        	echo' <a href="delete_vm.php?vm=' . $VDI_query[$q]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn btn-danger" aria-label="' . _("Delete VM") . '" title="' . _("Delete VM") .  '"  onclick="return confirmBox(' . "'" . _("Are you sure?") . "'" . ');">
+                            		<span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
+				echo '</td></tr>';
+				++$q;
+			    }
+			}
                         ++$y;
                     }
                 ?>

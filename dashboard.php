@@ -188,9 +188,11 @@ set_lang();
         </div>
       </div>
     </nav>
+
+
     <div class="container-fluid">
       <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
+        <div class="col-sm-1 col-md-1 sidebar">
           <ul class="nav nav-sidebar">
             <li><a href="showxml.php" data-toggle="modal" data-target="#vmInfo"><?php echo _("Edit clients.xml");?></a></li>
             <li><a href="new_vm.php" data-toggle="modal" data-target="#vmInfo"><?php echo _("Create VM(s)");?></a></li>
@@ -199,7 +201,8 @@ set_lang();
 	    <li></li>
           </ul>
         </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+	
+        <div class="col-sm-10 col-sm-offset-3 col-md-11 col-md-offset-1 main">
 <div class="alert alert-info" id="populatealert" style="display:none;">
  <?php echo _("<strong>Please wait!</strong> Populating virtual machines.");?>
 </div>

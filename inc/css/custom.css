@@ -4,3 +4,24 @@
     opacity: 0.6;
     pointer-events: none;
 }
+.table-stripe-ani{
+    background-color: #D2F0FF !important;
+}
+.table-stripe-ani:hover {
+    background-color: #C9EDFF !important;
+}
+.table-stripe-static{
+    background-color: #C9EDFF !important;
+}
+
+.table-stripe-clear{
+    background-color: white !important;
+    border: none !important;
+
+}
+.table-stripe-bottom-line{
+    border-bottom:1pt solid lightgrey;
+}
+.vdi-font{
+    color: #3B8DA8;
+}
