@@ -61,8 +61,7 @@ if ($machine_type=='initialmachine'){
     ssh_command($vm_cmd,true);
     add_SQL_line("INSERT INTO  vms (name,hypervisor,machine_type,source_volume) VALUES ('$name','$hypervisor','$machine_type','$source_volume')");
     $v_reply=get_SQL_line("SELECT id FROM vms WHERE name='$name'");
-    header("Location: $serviceurl/copy_disk.php?vm=".$v_reply[0]);
-    exit;
+    header("Location: $serviceurl/copy_disk.php?vm=" . $v_reply[0] . "&hypervisor=" . $hypervisor);
 }
 
 if ($machine_type=='vdimachine'){

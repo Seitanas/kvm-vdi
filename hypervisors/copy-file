@@ -24,7 +24,7 @@ with open(sourcefile,'rb') as f1:
 	  bytes_copied=bytes_copied+1024*10480
           if bytes: 
               for byte in bytes:
-                 pass    \
+                 pass
               n=f2.write(bytes)
 	      progress1=int(round(progress))
 	      progress=int(round(100.0/size*bytes_copied))
