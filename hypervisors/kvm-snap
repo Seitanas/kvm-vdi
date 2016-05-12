@@ -1,5 +1,5 @@
 #!/bin/bash
 
 snap=`/usr/local/VDI/get-snap "$@"`
-TMPDIR=/data_tmp exec /usr/bin/kvm "$@" $snap
+TMPDIR=/tmp exec /usr/bin/kvm "$@" $snap
 
