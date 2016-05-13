@@ -51,7 +51,7 @@ if ($machine_type=='simplemachine'||$machine_type=='sourcemachine'){
 	$chown_command="sudo chown $libvirt_user:$libvirt_group $disk";
 	add_SQL_line("INSERT INTO  vms (name,hypervisor,machine_type) VALUES ('$name','$hypervisor','$machine_type')");
 	ssh_command($drive_cmd,true);
-	ssh_command($chown_command,true);
+        ssh_command($chown_command,true);
 	ssh_command($vm_cmd,true);
 	++$x;
 

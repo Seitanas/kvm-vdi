@@ -37,7 +37,7 @@ Configure "clients.xml" file, to provide thin clients with it's own VDI VM.
 
 ### Dashboard installation
 
-**On Debian bases systems:**
+**On Debian based systems:**
 
 Note: you can use mysql server instead of Maria-db  
 Ubuntu 16
