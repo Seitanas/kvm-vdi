@@ -24,7 +24,7 @@ while (signal==0):
 	    if pulseaudio==0:
 		    os.system("/usr/bin/pulseaudio --start")
 		    pulseaudio=1
-	    os.system("startx /usr/local/bin/remote-viewer --kiosk-quit=on-disconnect  --kiosk spice://" +tmp[0] + ":" + tmp[1] + "  ")
+	    os.system("startx /usr/bin/remote-viewer --kiosk-quit=on-disconnect  --kiosk spice://" +tmp[0] + ":" + tmp[1] + "  ")
 	if reply["protocol"]=="RDP":
 	    os.system("startx /usr/bin/xfreerdp /f /sec:rdp /v:"+reply["address"]+" ")
 	if reply["protocol"]=="vmView":
