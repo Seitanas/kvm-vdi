@@ -17,8 +17,11 @@ $hypervisor=$_POST['hypervisor'];
 $source_volume=$_POST['source_volume'];
 $source_drivepath=$_POST['source_drivepath'];
 $source_drive_size=$_POST['source_drive_size'];
-$iso_image=$_POST['iso_image'];
-$iso_path=$_POST['iso_path'];
+$iso_image='';
+if (isset($_POST['iso_image']))
+    $iso_image=$_POST['iso_image'];
+if (isset($_POST['iso_path']))
+    $iso_path=$_POST['iso_path'];
 $numcpu=$_POST['numcpu'];
 $numcore=$_POST['numcore'];
 $numram=1024*$_POST['numram'];
@@ -78,7 +81,7 @@ if ($machine_type=='vdimachine'){
 	$xmledit_cmd="sudo " . $hypervisor_cmdline_path . "/vdi-xmledit -name " . $name;
 	ssh_command($drive_cmd,true);
 	ssh_command($vm_cmd,true);
-	ssh_command($xmledit_cmd);
+	ssh_command($xmledit_cmd,true);
 	add_SQL_line("INSERT INTO  vms (name,hypervisor,machine_type,source_volume) VALUES ('$name','$hypervisor','$machine_type','$source_volume')");
 	++$x;
 

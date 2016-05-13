@@ -9,7 +9,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-05-12
+2016-05-13
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -21,7 +21,7 @@ set_lang();
 reload_vm_info();
 $sql_reply=get_SQL_array("SELECT * FROM hypervisors");
 $x=0;
-while ($sql_reply[$x]['id']){
+while ($x<sizeof($sql_reply)){
     $table_status="";
     $vms_query=get_SQL_array("SELECT vms.id,vms.name,vms.hypervisor,vms.machine_type,vms.source_volume,vms.snapshot,vms.maintenance,vms.filecopy,vms.state,vms_tmp.name AS sourcename  FROM vms LEFT JOIN vms AS vms_tmp ON vms.source_volume=vms_tmp.id WHERE vms.hypervisor='{$sql_reply[$x]['id']}' AND vms.machine_type <> 'vdimachine' ORDER BY vms.name");
 ?>
@@ -54,7 +54,7 @@ while ($sql_reply[$x]['id']){
             $machine_type['initialmachine']=_("Initial machine");
             $machine_type['sourcemachine']=_("Source machine");
             $machine_type['vdimachine']=_("VDI machine");
-            while ($vms_query[$y]['id']){
+            while ($y<sizeof($vms_query)){
                 $pwr_status="off";
                 if ($vms_query[$y]['state']=="shut")
                     $pwr_button="btn-default";
@@ -137,7 +137,7 @@ while ($sql_reply[$x]['id']){
             			    <th>' . _("Operations") . '</th>
         			</tr>
         			</thead>';
-			    while ($VDI_query[$q]['id']){
+			    while ($q<sizeof($VDI_query)){
             			$VDI_query[$q]['snapshot']=str_replace("true","checked",$VDI_query[$q]['snapshot']);
             			$VDI_query[$q]['snapshot']=str_replace("false","",$VDI_query[$q]['snapshot']);
             			$VDI_query[$q]['maintenance']=str_replace("true","checked",$VDI_query[$q]['maintenance']);

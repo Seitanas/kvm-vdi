@@ -3,7 +3,7 @@
 KVM-VDI
 Tadas Ustinavičius
 tadas at ring.lt
-2016-05-11
+2016-05-13
 Vilnius, Lithuania.
 */
 function SQL_connect(){
@@ -61,7 +61,7 @@ function ssh_command($command,$blocking){
 function reload_vm_info(){
     include ('config.php');
     $x=0;
-    while ($hypervizors[$x]){
+    while ($x<sizeof($hypervizors)){
 	$tmp = explode(":", $hypervizors[$x]);
 	$ip=$tmp[0];
 	$port=$tmp[1];

@@ -9,7 +9,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2015-12-23
+2016-05-13
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -56,7 +56,7 @@ set_lang();
 			<option selected value=""><?php echo _("Please select hypervisor");?></option>
 			<?php
 			$x=0;
-			while ($h_reply[$x]['id']){
+			while ($x<sizeof($h_reply)){
 			    echo '<option value="' . $h_reply[$x]['id'] .  '">' . $h_reply[$x]['ip'] . '</option>';
 			    ++$x;
 			}?>
@@ -71,7 +71,7 @@ set_lang();
 			$y=0;
 			echo '<select class="form-control" name="source_volume" id="source_volume">' ."\n";
 			echo '<option selected value="">' . _("Please select source") . '</option>'."\n";
-			while ($v_reply[$y]['id']){
+			while ($y<sizeof($v_reply)){
 			    echo '<option class="' . $v_reply[$y]['machine_type'] . ' hypervisor-' . $v_reply[$y]['hypervisor']  . '" value="' . $v_reply[$y]['id'] .  '">' . $v_reply[$y]['name'] . '</option>' ."\n";
 			    ++$y;
 			}
@@ -104,7 +104,7 @@ set_lang();
 				<option value=""><?php echo _("Select ISO image");?></option>
 			<?php
 			$x=0;
-			while ($h_reply[$x]['id']){
+			while ($x<sizeof($h_reply)){
 			    ssh_connect($h_reply[$x]['ip'].":".$h_reply[$x]['port']);
 			    $files=explode("\n",ssh_command("sudo ls " . $default_iso_path . "|grep -i .iso", true));
 			    foreach ($files as &$value) {
