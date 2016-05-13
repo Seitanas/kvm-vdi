@@ -122,7 +122,38 @@ Start vdi service:
     systemctl start vdi
 
 You should see VDI machine powering up and your thin client displaying VMs monitor output.
+  
+  
+### Our practice
 
+**Source machine:**
+
+Install your favourite OS, which you will use for VDI population. Install all software you will need. Update.  
+Shutdown "source machine".  
+
+**Source machine:**
+
+Create "initial machine" out of "source machine". Use "disk from source". Power on "initial machine". At this point we use sysprep to depersonalise machine, this means, we remove machine name, ip adresses, etc. If it's MS Windowes VM, we make script, that will start on next machine bootup, name machine, reboot, add machine to active directory, shutdown (remember, that after VMs are populated, they are booted without "virtual snapshots" turned on, so configuration will persist). If it's Linux machine, you can provide its name via DHCP.   
+After VMs are shut down, turn on "virtual snapshots", disable "maintenance mode". From this point each time VM is shut down (or rebooted, if libvirt configuration states that), next boot of VM will have its state cleared and you will have clean machine online. Also from this point thin clients can start teir VMs.
+
+**Antivirus/live updates**
+
+You should disable them both. Since machine disk state is cleared each time it is destroyed (shut down/reboot), updates will will be re-downloaded and will consume snapshot space for any use. Updates must be done on "source machine", then "initial machine" must copy "disk from source", then you should run sysprep, populate VDI machines and so on.  
+Also you can use-network based antivirus software, which offloads scanning to external network server and does not use local db.  For example http://www.bitdefender.com/business/virtualization-security.html  
+
+**Hardware**  
+*Our thin clients*
+
+Most of remote display protocols require significant CPU time. This is because they do not utilise clients GPU.  
+Our production environment uses Intel NUC diskless clients with Intel i3 processors (lower grade processors should do fine, but requires further investigation).  
+We use "Debian unstable" distribution, booting it from PXE/NFS on aufs overlayed file system (overlay FS still has uncorrected bug with NFS as backing FS).
+
+*Our hypervisors*
+
+We use two HP bl460c g9 servers to provide 36 VDI clients. Servers are loaded at aproximately 50% on heavy load time. This does not include playing video on VDI, since that sonsumes much more CPU time, but is at a par to VMware horizon without Nvidia GRID.  
+We use SSD drive to store our "initial image" - initial bootup of 18 VDIs on each of hypervisor requires loads of drive read speed.  
+We use second SSD to store temporary ("virtual snapshots"). 
+We store "source machine" image on shared NFS storage, since it must be accesable on each hypervisor to use "copy disk from source" function. One must remember to start "source machine" on single hypervisor, because it will potentially corrupt VMs image if ran on multiple nodes.
 
 
 ![Alt text](http://webjail.ring.lt/vdi/vdi.jpg?raw=true&3)
