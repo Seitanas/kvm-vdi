@@ -15,7 +15,7 @@ if (empty ($snapshot))
 $source_volume=addslashes($_POST['source_volume']);
 $machine_type=addslashes($_POST['machine_type']);
 if ($machine_type=="simplemachine"||$machine_type=="sourcemachine")
-    $sourcevolume="";
+    $source_volume="";
 if (empty($vm)&&empty($hypervisor)){
     header("Location: $serviceurl/dashboard.php");
     exit;

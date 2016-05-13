@@ -24,7 +24,7 @@ if (empty($vm)||empty($hypervisor)){
 }
 $h_reply=get_SQL_line("SELECT * FROM hypervisors WHERE id='$hypervisor'");
 $v_reply=get_SQL_line("SELECT * FROM vms WHERE id='$vm'");
-$initial_machines_reply=get_SQL_array("SELECT * FROM vms WHERE hypervisor='$hypervisor' AND machine_type='initialmachine'  ORDER BY name");
+$source_machines_reply=get_SQL_array("SELECT * FROM vms WHERE hypervisor='$hypervisor' AND machine_type='sourcemachine' AND id<>'$vm'  ORDER BY name");
 set_lang();
 ?>
 <!DOCTYPE html>
@@ -56,15 +56,14 @@ set_lang();
 		</div>
 		 <div class="col-md-5 hide" id="sourcevolume">
 		    <label>Use volume from:</label>
-		    <select class="form-control" name="source_volume" id="source_volume">
-			<?php
+		    <?php if(1){
+		        echo '<select class="form-control" name="source_volume" id="source_volume">';
 			    $x=0;
-			    while ($x<sizeof($initial_machines_reply)){
-				echo '<option value="' . $initial_machines_reply[$x]['id']  . '"> ' . $initial_machines_reply[$x]['name']  . '</option>';
+			    while ($x<sizeof($source_machines_reply)){
+				    echo '<option value="' . $source_machines_reply[$x]['id']  . '"> ' . $source_machines_reply[$x]['name']  . '</option>';
 				++$x;
 			    }
-			?>
-	    	    </select>
+			echo '<select>';}?>
 		</div>		 
 	    </div>
 	    <div class="row">
@@ -81,17 +80,17 @@ set_lang();
     </div>
 </form>
 <script>
-$('#machine_type').on('change', function(){       
-    if ($(this).val() == 'initialmachine' ) {
+$('#machine_type').on('change', function(){
+    if ($(this).val() == 'initialmachine') {
         $('#sourcevolume').removeClass('hide');
     }
-    if ($(this).val() == 'vdimachine' ) {
+    if ($(this).val() == 'vdimachine') {
         $('#sourcevolume').removeClass('hide');
     }
-    if ($(this).val() == 'sourcemachine' ) {
-        $('#sourcevolume').addClass('hide');
+    if ($(this).val() == 'sourcemachine') {
+	$('#sourcevolume').addClass('hide');
     }
-    if ($(this).val() == 'simplemachine' ) {
+    if ($(this).val() == 'simplemachine') {
         $('#sourcevolume').addClass('hide');
     }
 
@@ -99,7 +98,7 @@ $('#machine_type').on('change', function(){
 <?php if (!empty($v_reply[3])){?>
     $("#machine_type").val(<?php echo '"' . $v_reply[3]  . '"'; ?>).change();
 <?php } ?>
-$("#snapshot").prop('checked', <?php echo $v_reply[5]; ?>);
+$("#snapshot").prop('checked', <?php if (!isset($v_reply[5])) echo 0; else echo 1; ?>);
 </script>
 </body>
 </html>
