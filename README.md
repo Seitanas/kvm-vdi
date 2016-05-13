@@ -63,7 +63,7 @@ If installation is successful, you will be redirected to login page. Default cre
 
 ### Hypervisor installation
 
-**On Debian bases systems:**
+**On Debian based systems:**
 
     apt-get install qemu-kvm libvirt-bin sudo python python-requests virtinst
 
@@ -104,7 +104,7 @@ Edit your /etc/sudoers file according to examlpe of hypervisors/sudeors file.
 
 ### Thin client installation
 
-**On Debian bases systems:**
+**On Debian based systems:**
 
     apt-get xdotool x11-utils xwit python python-requests virt-viewer freerdp-x11 pulseaudio xinit
 
