@@ -137,6 +137,6 @@ function populate_db(){
 	if (!$result)
 	    $failure=1;
     }
-    mysql_close($mysql_connection);
+    mysqli_close($mysql_connection);
     return $failure;
 }
