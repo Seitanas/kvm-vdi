@@ -89,6 +89,31 @@ If passwordless connection is established, everythin is fine.
 On each hypervisor create /usr/local/VDI folder. Copy all files from "hypervisors" folder.
 Edit config file accordingly.
 Edit your /etc/sudoers file according to examlpe of hypervisors/sudeors file.
+  
+
+
+### Thin client installation
+
+**On Debian bases systems:**
+
+    apt-get xdotool x11-utils xwit python python-requests virt-viewer freerdp-x11 pulseaudio xinit
+
+Download and install vmware-view viewer from VMware if needed.  
+Copy files from thin_clients/ folder to your clients /usr/local/bin folder.  
+Edit vdi executable, and change dashboard_path variable to fit your configuration.  
+If you are using systemd, copy vdi init script from thin_clients/ folder to systemd script folder:
+
+    cp thin_clients/vdi.service /etc/systemd/system/
+    systemctl daemon-reload
+
+Edit clients.xml file in your dashboard, specify IP address of your thin client, protocol and name of VDI machine it will use.  
+Start vdi service:
+
+    systemctl start vdi
+
+You should see VDI machine powering up and your thin client displaying VMs monitor output.
+
+
 
 ![Alt text](http://webjail.ring.lt/vdi/vdi.jpg?raw=true&3)
 ![Alt text](http://webjail.ring.lt/vdi/vdi2.jpg?raw=true&1)

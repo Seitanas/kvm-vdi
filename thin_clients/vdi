@@ -6,12 +6,17 @@ import urllib2
 import time
 import os
 import ssl
+
+
+dashboard_path="http://dashboard_url/kvm-vdi"
+
+
 context = ssl._create_unverified_context()
 signal=0
 runs=0
 pulseaudio=0
 while (signal==0):
-    reply=json.load(urllib2.urlopen("https://dashboard_address/vdi/client.php", context=context))
+    reply=json.load(urllib2.urlopen(dashboard_path+"/client.php", context=context))
     if reply["status"]=="MAINTENANCE":
 	time.sleep(10)
     if reply["status"]=="BOOTUP":
