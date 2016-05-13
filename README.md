@@ -75,9 +75,7 @@ Failing to do so will disable "virtual snapshots" capabilities. And won't allow 
     service apparmor stop
     update-rc.d -f apparmor remove
     apt-get remove apparmor apparmor-utils
-
-Reboot hypervisor
-
+    reboot
 
 On dashboard servers and hypervisors create VDI user:
 
