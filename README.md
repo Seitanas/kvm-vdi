@@ -65,7 +65,7 @@ If installation is successful, you will be redirected to login page. Default cre
 
 **On Debian bases systems:**
 
-    apt-get install qemu-kvm libvird-bin sudo python python-requests virtinst
+    apt-get install qemu-kvm libvirt-bin sudo python python-requests virtinst
 
 On dashboard servers and hypervisors create VDI user:
 
