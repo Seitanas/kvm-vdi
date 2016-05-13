@@ -9,7 +9,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2015-12-22
+2016-05-13
 */
 ###################Dashboard config##########################
 $hypervizors=array('192.168.10.1:22','192.168.10.2:22');
@@ -33,6 +33,9 @@ $hypervisor_cmdline_path='/usr/local/VDI/';
 $default_bridge='br0';
 $default_imagepath='/data';
 $default_iso_path='/var/lib/libvirt/images';
+
+$libvirt_user='root'; //user, on which libvirtd daemon runs
+$libvirt_group='root'; //group, on which libvirtd daemon runs
 ############################################################
 
 

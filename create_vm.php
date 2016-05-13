@@ -3,7 +3,7 @@
 KVM-VDI
 Tadas Ustinavičius
 tadas at ring.lt
-2016-04-13
+2016-05-13
 Vilnius, Lithuania.
 */
 include ('functions/config.php');
@@ -48,8 +48,10 @@ if ($machine_type=='simplemachine'||$machine_type=='sourcemachine'){
 	$disk=$source_drivepath . '/' . $name . "-" . uniqid() . ".qcow2";
 	$vm_cmd="sudo virt-install --name=" . $name . " --disk path=" . $disk . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . $numcpu . ",cores=" . $numcore . " --ram=" . $numram . " --network bridge=" . $network . ",model=virtio --os-type=" . $os_type . " --os-variant=" . $os_version . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --noreboot " . $cdrom_cmd;
 	$drive_cmd="sudo qemu-img create -f qcow2 -o size=" . $source_drive_size . "G " . $disk;
+	$chown_command="sudo chown $libvirt_user:$libvirt_group $disk";
 	add_SQL_line("INSERT INTO  vms (name,hypervisor,machine_type) VALUES ('$name','$hypervisor','$machine_type')");
 	ssh_command($drive_cmd,true);
+	ssh_command($chown_command,true);
 	ssh_command($vm_cmd,true);
 	++$x;
 
@@ -60,7 +62,9 @@ if ($machine_type=='initialmachine'){
     $disk=$source_drivepath . '/' . $name . "-" . uniqid() . ".qcow2";
     $vm_cmd="sudo virt-install --name=" . $name . " --disk path=" . $disk . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . $numcpu . ",cores=" . $numcore . " --ram=" . $numram . " --network bridge=" . $network . ",model=virtio --os-type=" . $os_type . " --os-variant=" . $os_version . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --import --noreboot";
     $drive_cmd="sudo qemu-img create -f qcow2 -o size=1G " . $disk;
+    $chown_command="sudo chown $libvirt_user:$libvirt_group $disk";
     ssh_command($drive_cmd,true);
+    ssh_command($chown_command,true);
     ssh_command($vm_cmd,true);
     add_SQL_line("INSERT INTO  vms (name,hypervisor,machine_type,source_volume) VALUES ('$name','$hypervisor','$machine_type','$source_volume')");
     $v_reply=get_SQL_line("SELECT id FROM vms WHERE name='$name'");
@@ -79,7 +83,9 @@ if ($machine_type=='vdimachine'){
 	$vm_cmd="sudo virt-install --name=" . $name . " --disk path=" . $disk . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . $numcpu . ",cores=" . $numcore . " --ram=" . $numram . " --network bridge=" . $network . ",model=virtio --os-type=" . $os_type . " --os-variant=" . $os_version . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --noreboot --import";
 	$drive_cmd="sudo qemu-img create -f qcow2 -b " . $source_disk . " " . $disk;
 	$xmledit_cmd="sudo " . $hypervisor_cmdline_path . "/vdi-xmledit -name " . $name;
+	$chown_command="sudo chown $libvirt_user:$libvirt_group $disk";
 	ssh_command($drive_cmd,true);
+	ssh_command($chown_command,true);
 	ssh_command($vm_cmd,true);
 	ssh_command($xmledit_cmd,true);
 	add_SQL_line("INSERT INTO  vms (name,hypervisor,machine_type,source_volume) VALUES ('$name','$hypervisor','$machine_type','$source_volume')");
