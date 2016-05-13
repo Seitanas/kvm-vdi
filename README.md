@@ -55,7 +55,7 @@ Create empty database/user on db server.
     cd kvm-vdi
 
 Edit functions/config.php file to fit your needs.  
-Change permissions on tmp/ folder and config/clients.xml file to give webserver writeable rights.  
+Change permissions on tmp/ folder and functions/clients.xml file to give webserver writeable rights.  
 Go to http://yourservename/kvm-vdi  
 If installation is successful, you will be redirected to login page. Default credentials are: admin/password  
   
