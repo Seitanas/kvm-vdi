@@ -17,16 +17,20 @@ ssh_connect($h_reply[2].":".$h_reply[3]);
 $source_path=str_replace("\n", "",(ssh_command("sudo virsh domblklist $source_reply[0]|grep vda| awk '{print $2}' ",true)));
 if (empty ($source_path))
     $source_path=str_replace("\n", "",(ssh_command("sudo virsh domblklist $source_reply[0]|grep hda| awk '{print $2}' ",true)));
+if (empty ($source_path)||$source_path=='-'||strtolower(substr($source_path, -4))=='.iso')//if we have cd drive, then disk image would be second drive
+    $source_path=str_replace("\n", "",(ssh_command("sudo virsh domblklist $source_reply[0]|grep hdb| awk '{print $2}' ",true)));
 $dest_path=str_replace("\n", "",(ssh_command("sudo virsh domblklist $v_reply[1]|grep vda| awk '{print $2}' ",true)));
 if (empty ($dest_path))
     $dest_path=str_replace("\n", "",(ssh_command("sudo virsh domblklist $v_reply[1]|grep hda| awk '{print $2}' ",true)));
+if (empty ($dest_path)||$dest_path=='-'||strtolower(substr($dest_path, -4))=='.iso')//if we have cd drive, then disk image would be second drive
+    $dest_path=str_replace("\n", "",(ssh_command("sudo virsh domblklist $v_reply[1]|grep hdb| awk '{print $2}' ",true)));
 $filekey= uniqid();
 add_SQL_line("UPDATE vms SET filecopy='$filekey' WHERE id='$vm'");
 add_SQL_line("UPDATE vms SET maintenance='true' WHERE source_volume='$vm'");
 #destroy all runing child vms
 $child_vms=get_SQL_array("SELECT name FROM vms WHERE source_volume='$vm'");
 $x=0;
-while ($child_vms[$x]['name']){
+while ($x<sizeof($child_vms)){
     ssh_command("sudo virsh destroy " . $child_vms[$x]['name'], true);
     ++$x;
 }
