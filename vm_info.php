@@ -24,7 +24,7 @@ if (empty($vm)||empty($hypervisor)){
 }
 $h_reply=get_SQL_line("SELECT * FROM hypervisors WHERE id='$hypervisor'");
 $v_reply=get_SQL_line("SELECT * FROM vms WHERE id='$vm'");
-$initial_machines_reply=get_SQL_array("SELECT * FROM vms WHERE hypervisor='$hypervisor' AND machine_type='initialmachine' AND id<>'$vm' ORDER BY name");
+$initial_machines_reply=get_SQL_array("SELECT * FROM vms WHERE hypervisor='$hypervisor' AND machine_type='initialmachine'  ORDER BY name");
 set_lang();
 ?>
 <!DOCTYPE html>
