@@ -9,7 +9,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2015-12-23
+2016-05-13
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -24,7 +24,7 @@ if (empty($vm)||empty($hypervisor)){
 }
 $h_reply=get_SQL_line("SELECT * FROM hypervisors WHERE id='$hypervisor'");
 $v_reply=get_SQL_line("SELECT * FROM vms WHERE id='$vm'");
-$all_machines_reply=get_SQL_array("SELECT * FROM vms WHERE hypervisor='$hypervisor' ORDER BY name");
+$initial_machines_reply=get_SQL_array("SELECT * FROM vms WHERE hypervisor='$hypervisor' AND machine_type='initialmachine' AND id<>'$vm' ORDER BY name");
 set_lang();
 ?>
 <!DOCTYPE html>
@@ -59,8 +59,8 @@ set_lang();
 		    <select class="form-control" name="source_volume" id="source_volume">
 			<?php
 			    $x=0;
-			    while ($all_machines_reply[$x]['id']){
-				echo '<option value="' . $all_machines_reply[$x]['id']  . '"> ' . $all_machines_reply[$x]['name']  . '</option>';
+			    while ($x<sizeof($initial_machines_reply)){
+				echo '<option value="' . $initial_machines_reply[$x]['id']  . '"> ' . $initial_machines_reply[$x]['name']  . '</option>';
 				++$x;
 			    }
 			?>
@@ -99,7 +99,6 @@ $('#machine_type').on('change', function(){
 <?php if (!empty($v_reply[3])){?>
     $("#machine_type").val(<?php echo '"' . $v_reply[3]  . '"'; ?>).change();
 <?php } ?>
-$("#source_volume").val(<?php echo '"' . $v_reply[4]  . '"'; ?>).change();
 $("#snapshot").prop('checked', <?php echo $v_reply[5]; ?>);
 </script>
 </body>

@@ -118,6 +118,9 @@ while ($x<sizeof($sql_reply)){
                               <span class="glyphicon glyphicon-off" aria-hidden="true"></span></a>
                               <a href="power.php?action=single&state=destroy&vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn btn-danger" aria-label="' . _("Power down") . '" title="Shut down (forced)"  onclick="return confirmBox(' . "'" . _("Are you sure?") . "'" . ');">
                               <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a>';
+                              if ($vms_query[$y]['machine_type']!='simplemachine')
+				    echo' <a href="delete_vm.php?vm=' . $VDI_query[$q]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn btn-danger" aria-label="' . _("Delete VM") . '" title="' . _("Delete VM") .  '"  onclick="return confirmBox(' . "'" . _("Are you sure?") . "'" . ');">
+                            		<span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
 
                         echo    '</td> 
                               </tr>'; 
