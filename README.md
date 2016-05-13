@@ -68,7 +68,7 @@ If installation is successful, you will be redirected to login page. Default cre
     apt-get install qemu-kvm libvirt-bin sudo python python-requests virtinst
 
 **NOTICE: Ubuntu apparmor!**  
-If you are using Ubuntu with apparmor enabled, you MUST allow libvirt to access to VDI binaries.  
+If you are using Ubuntu with apparmor enabled, you MUST allow libvirt execute VDI binaries.  
 Add the wolowing line to /etc/apparmor.d/usr.sbin.libvirtd file:
 
       /usr/local/VDI/* PUx,
