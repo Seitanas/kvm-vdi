@@ -68,7 +68,7 @@ function reload_vm_info(){
 	$sql_reply=get_SQL_line("SELECT id,maintenance FROM hypervisors WHERE ip='$ip'");
 	if ($sql_reply[1]!=1){//do not try to connect to disabled hypervisor
 	    if (empty($sql_reply[0]))
-    		add_SQL_line("INSERT INTO  hypervisors (ip,port) VALUES ('$ip','$port')");
+    		add_SQL_line("INSERT INTO  hypervisors (ip,port,maintenance) VALUES ('$ip','$port','0')");
 	    else
     		add_SQL_line("UPDATE hypervisors SET ip='$ip', port='$port' WHERE id='$sql_reply[0]'");
 	    $sql_reply=get_SQL_line("SELECT id FROM hypervisors WHERE ip='$ip'");
