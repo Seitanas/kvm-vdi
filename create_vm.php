@@ -67,6 +67,8 @@ if ($machine_type=='initialmachine'){
 if ($machine_type=='vdimachine'){
     $source_reply=get_SQL_line("SELECT name FROM vms WHERE id='$source_volume'");
     $source_disk=str_replace("\n", "",(ssh_command("sudo virsh domblklist $source_reply[0]|grep vda| awk '{print $2}' ",true)));
+    if (empty ($source_disk)) //if there is no vda drive, perhaps client uses non virtio controller
+        $source_disk=str_replace("\n", "",(ssh_command("sudo virsh domblklist $source_reply[0]|grep hda| awk '{print $2}' ",true)));
     $x=0;
     while ($x<$machinecount){
 	$name=$machinename.sprintf("%0" . strlen($machinecount) . "s", $x+1);
