@@ -1,7 +1,9 @@
-cat /opt/ltsp/vdi/usr/share/ltsp/screen.d/vdi
 #!/bin/sh
 #
-# Screen script that launches KVM_VDI. Can be called from lts.conf
+#Copy this screen script to /usr/share/ltsp/screen.d/vdi on your LTSP thin or fat client.
+#For more detailed instructions go here: http://jphein.com/kvm-vdi-session-screen-script-for-ltsp-thin-clients-running-under-ubuntu-16-04-xenial/
+
+# This screen script launches KVM_VDI. Can be called from lts.conf
 # like this:
 #   SCREEN_07="vdi"
 #
