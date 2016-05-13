@@ -133,8 +133,13 @@ Shutdown "source machine".
 
 **Initial machine:**
 
-Create "initial machine" out of "source machine". Use "disk from source". Power on "initial machine". At this point we use sysprep to depersonalise machine, this means, we remove machine name, ip adresses, etc. If it's MS Windowes VM, we make script, that will start on next machine bootup, name machine, reboot, add machine to active directory, shutdown (remember, that after VMs are populated, they are booted without "virtual snapshots" turned on, so configuration will persist). If it's Linux machine, you can provide its name via DHCP.   
-After VMs are shut down, turn on "virtual snapshots", disable "maintenance mode". From this point each time VM is shut down (or rebooted, if libvirt configuration states that), next boot of VM will have its state cleared and you will have clean machine online. Also from this point thin clients can start teir VMs.
+Create "initial machine" out of "source machine". Use "disk from source". Power on "initial machine".  
+At this point we use sysprep to depersonalise machine, this means, we remove machine name, ip adresses, etc. If it's MS Windows VM, we use script,  
+that will start on next machine bootup, name machine, reboot, add machine to active directory, shutdown (remember, that after VMs are populated,they are booted without "virtual snapshots" turned on, so configuration will persist).  
+If it's Linux machine, you can provide its name via DHCP.  
+After VMs are shut down, turn on "virtual snapshots", disable "maintenance mode".  
+From this point each time VM is shut down (or rebooted, if libvirt configuration states that), next boot of VM will have its state cleared and you will have clean machine online.  
+Also from this point thin clients can start teir VMs.
 
 **Antivirus/live updates**
 
