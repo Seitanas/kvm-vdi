@@ -146,7 +146,7 @@ Also you can use network-based antivirus software, which offloads scanning to ex
 
 Most of remote display protocols require significant CPU time. This is because they do not utilise client's GPU.  
 Our production environment uses Intel NUC diskless clients with Intel i3 processors (lower grade processors should do fine, but requires further investigation).  
-We use "Debian unstable" distribution, booting it from PXE/NFS on aufs overlayed file system (overlay FS still has uncorrected bug with NFS as backing FS)...
+We use "Debian unstable" distribution, booting it from PXE/NFS on aufs overlayed file system (overlay FS still has uncorrected bug with NFS as backing FS).  
 We are using RPM software to remotely power on/power off our thin clients.  
 You can obtain it from https://github.com/Seitanas/rpm  
 
