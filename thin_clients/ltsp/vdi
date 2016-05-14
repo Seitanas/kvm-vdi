@@ -1,10 +1,11 @@
 #!/bin/sh
 #
-# Screen script that launches KVM_VDI. Can be called from lts.conf
+#Copy this screen script to /usr/share/ltsp/screen.d/vdi on your LTSP thin or fat client.
+#For more detailed instructions go here: http://jphein.com/kvm-vdi-session-screen-script-for-ltsp-thin-clients-running-under-ubuntu-16-04-xenial/
+
+# This screen script launches KVM_VDI. Can be called from lts.conf
 # like this:
-#   SCREEN_07="vdi_init"
-# or like this:
-#   SCREEN_07="vdi_init"
+#   SCREEN_07="vdi"
 #
 # Copyright (c) 2016 Jeffrey Hein <http://jphein.com>
 #
@@ -16,13 +17,13 @@
 export HOME=${HOME:-/root}
 
 # The same screen script can be used for other KVM_VDI viewers too, by just symlinking
-# screen.d/{otherviewer} to screen.d/vdi_init.
+# screen.d/{otherviewer} to screen.d/vdi.
 basename=${0##*/}
 
 if ! type $basename >/dev/null 2>&1; then
     echo "$basename couldn't be found."
-    if [ "$basename" = "vdi_init" ]; then
-        echo "Please make sure you have installed vdi_init into your client chroot."
+    if [ "$basename" = "vdi" ]; then
+        echo "Please make sure you have installed vdi into your client chroot. Instructions here: https://github.com/Seitanas/kvm-vdi/"
     fi
     read nothing
     exit 1
