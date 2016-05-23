@@ -157,7 +157,7 @@ set_lang();
 	    		    <option class="linux" value="debianlenny">Debian Lenny</option>
 	    		    <option class="linux" value="debianetch">Debian Etch</option>
 	    		    <option class="linux" value="ubuntuprecise">Ubuntu 12.04 LTS</option>
-	    		    <option class="linux" value="ubuntusaucy">Ubuntu 13.10</option>
+	    		    <option class="linux" value="ubuntusaucy">Ubuntu 13.10 (or newer)</option>
 	    		    <option class="linux" value="fedora18">Fedora 18</option>
 	    		    <option class="linux" value="fedora19">Fedora 19</option>
 	    		    <option class="linux" value="fedora20">Fedora 20</option>
