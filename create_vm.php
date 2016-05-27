@@ -3,7 +3,7 @@
 KVM-VDI
 Tadas Ustinavičius
 tadas at ring.lt
-2016-05-13
+2016-05-27
 Vilnius, Lithuania.
 */
 include ('functions/config.php');
@@ -36,8 +36,10 @@ if (check_empty($machine_type,$hypervisor,$numcpu,$numcore,$numram,$network,$mac
 }
 $cdrom_cmd="";
 if ($iso_image=='on'){
-    $cdrom_cmd="--cdrom " . $default_iso_path . '/' . $iso_path;
+    $boot_cmd="--noautoconsole --cdrom " . $default_iso_path . '/' . $iso_path;
 }
+else 
+    $boot_cmd="--pxe --noautoconsole";
 $h_reply=get_SQL_line("SELECT ip, port FROM hypervisors WHERE id='$hypervisor'");
 ssh_connect($h_reply[0].":".$h_reply[1]);
 if ($machine_type=='simplemachine'||$machine_type=='sourcemachine'){
@@ -46,7 +48,7 @@ if ($machine_type=='simplemachine'||$machine_type=='sourcemachine'){
     while ($x<$machinecount){
 	$name=$machinename.sprintf("%0" . strlen($machinecount) . "s", $x+1);
 	$disk=$source_drivepath . '/' . $name . "-" . uniqid() . ".qcow2";
-	$vm_cmd="sudo virt-install --name=" . $name . " --disk path=" . $disk . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . $numcpu . ",cores=" . $numcore . " --ram=" . $numram . " --network bridge=" . $network . ",model=virtio --os-type=" . $os_type . " --os-variant=" . $os_version . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --noreboot " . $cdrom_cmd;
+	$vm_cmd="sudo virt-install --name=" . $name . " --disk path=" . $disk . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . $numcpu . ",cores=" . $numcore . " --ram=" . $numram . " --network bridge=" . $network . ",model=virtio --os-type=" . $os_type . " --os-variant=" . $os_version . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --noreboot " . $boot_cmd;
 	$drive_cmd="sudo qemu-img create -f qcow2 -o size=" . $source_drive_size . "G " . $disk;
 	$chown_command="sudo chown $libvirt_user:$libvirt_group $disk";
 	add_SQL_line("INSERT INTO  vms (name,hypervisor,machine_type) VALUES ('$name','$hypervisor','$machine_type')");
