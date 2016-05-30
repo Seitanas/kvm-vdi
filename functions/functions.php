@@ -27,6 +27,7 @@ function get_SQL_line($sql_line){
 }
 //##############################################################################
 function get_SQL_array($sql_line){
+    $query_array=array();
     $mysql_connection=SQL_connect();
     $q_string = mysqli_query($mysql_connection, $sql_line)or die (mysqli_error($mysql_connection));
     while ($row=mysqli_fetch_array($q_string)){

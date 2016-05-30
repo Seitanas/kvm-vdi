@@ -70,7 +70,7 @@ while ($x<sizeof($sql_reply)){
                         <td class="col-md-1">' . ($y+1) . '</td> 
                         <td class="col-md-1"></td> 
                         <td class="col-md-2"><a data-toggle="modal" href="vm_info.php?vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id']  . '" data-target="#vmInfo">' . $vms_query[$y]['name'] . '</a> </td> 
-                        <td class="col-md-2">' . $machine_type[$vms_query[$y]['machine_type']] . '</td>
+                        <td class="col-md-2">', (!empty($vms_query[$y]['machine_type'])) ? $machine_type[$vms_query[$y]['machine_type']]  : "", '</td>
                         <td class="col-md-1">' . $vms_query[$y]['sourcename'] . '</td>
                         <td class="col-md-1"><input type="checkbox" '. $vms_query[$y]['snapshot'] . " onclick='handleSnapshot(this);' " . 'id="' . $vms_query[$y]['id'] .  '"></td>
                         <td class="col-md-1"><input type="checkbox" '. $vms_query[$y]['maintenance']. " onclick='handleMaintenance(this);' " . 'id="' . $vms_query[$y]['id'] .  '">';
