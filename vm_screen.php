@@ -9,7 +9,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2015-12-23
+2016-05-30
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -17,8 +17,9 @@ if (!check_session()){
     header ("Location: $serviceurl/?error=1");
     exit;
 }
-$vm=addslashes($_GET['vm']);
-$hypervisor=addslashes($_GET['hypervisor']);
+slash_vars();
+$vm=$_GET['vm'];
+$hypervisor=$_GET['hypervisor'];
 if (empty($vm)||empty($hypervisor)){
     exit;
 }

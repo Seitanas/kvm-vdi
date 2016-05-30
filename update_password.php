@@ -1,11 +1,11 @@
 <?php
-
 include ('functions/config.php');
 require_once('functions/functions.php');
 if (!check_session()){
     header ("Location: $serviceurl/?error=1");
     exit;
 }
+slash_vars();
 $password1=$_POST['password1'];
 $password2=$_POST['password2'];
 if (!empty($password1)&&!empty($password2)){

@@ -1,8 +1,9 @@
 <?php
 include ("functions/config.php");
 require_once("functions/functions.php");
-$username=addslashes($_POST['username']);
-$password=addslashes($_POST['password']);
+slash_vars();
+$username=$_POST['username'];
+$password=$_POST['password'];
 $sql_reply=get_SQL_line("SELECT id,password FROM users WHERE username LIKE '$username'");
 if (hash_equals($sql_reply[1], crypt($password, $sql_reply[1]))) {
    //echo "Password verified!";

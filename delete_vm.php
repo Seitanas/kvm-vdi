@@ -3,7 +3,7 @@
 KVM-VDI
 Tadas Ustinavičius
 tadas at ring.lt
-2016-05-13
+2016-05-30
 Vilnius, Lithuania.
 */
 include ('functions/config.php');
@@ -12,10 +12,11 @@ if (!check_session()){
     header ("Location: $serviceurl/?error=1");
     exit;
 }
-$vm=addslashes($_GET['vm']);
-$hypervisor=addslashes($_GET['hypervisor']);
+slash_vars();
+$vm=$_GET['vm'];
+$hypervisor=$_GET['hypervisor'];
 if (isset($_GET['action']))
-    $action=addslashes($_GET['action']);
+    $action=$_GET['action'];
 if (empty($vm)||empty($hypervisor)){
     exit;
 }

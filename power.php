@@ -3,7 +3,7 @@
 KVM-VDI
 Tadas Ustinavičius
 tadas at ring.lt
-2015-12-10
+2016-05-30
 Vilnius, Lithuania.
 */
 include ('functions/config.php');
@@ -12,9 +12,10 @@ if (!check_session()){
     header ("Location: $serviceurl/?error=1");
     exit;
 }
-$vm=addslashes($_GET['vm']);
-$hypervisor=addslashes($_GET['hypervisor']);
-$action=addslashes($_GET['action']);
+slash_vars();
+$vm=$_GET['vm'];
+$hypervisor=$_GET['hypervisor'];
+$action=$_GET['action'];
 if (empty($vm)||empty($hypervisor)){
     exit;
 }
@@ -35,7 +36,7 @@ if ($action=="mass_on" || $action == "mass_off" || $action == "mass_destroy"){
 }
 if ($action=="single"){
     $v_reply=get_SQL_line("SELECT name FROM vms WHERE id='$vm'");
-    $state=addslashes($_GET['state']);
+    $state=$_GET['state'];
     if ($state=="up")
 	ssh_command("sudo virsh start " . $v_reply[0], true);
     if ($state=="down")

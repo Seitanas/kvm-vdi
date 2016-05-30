@@ -1,6 +1,7 @@
 <?php
 include("functions/config.php");
 require_once('functions/functions.php');
+slash_vars();
 $pass=$_POST['pass'];
 if ($pass==$backend_pass){
     $tmpname=$_POST['tmpname'];

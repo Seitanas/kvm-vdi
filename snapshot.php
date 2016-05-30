@@ -5,9 +5,10 @@ if (!check_session()){
     header ("Location: $serviceurl/?error=1");
     exit;
 }
-$vm=addslashes($_GET['vm']);
-$hypervisor=addslashes($_GET['hypervisor']);
-$action=addslashes($_GET['action']);
+slash_vars();
+$vm=$_GET['vm'];
+$hypervisor=$_GET['hypervisor'];
+$action=$_GET['action'];
 if (empty($vm)){
     header("Location: $serviceurl/dashboard.php");
     exit;

@@ -3,7 +3,7 @@
 KVM-VDI
 Tadas Ustinavičius
 tadas at ring.lt
-2016-05-13
+2016-05-30
 Vilnius, Lithuania.
 */
 function SQL_connect(){
@@ -139,4 +139,16 @@ function populate_db(){
     }
     mysqli_close($mysql_connection);
     return $failure;
+}
+//###########################################################################
+function slash_vars(){//add slashes to all post variables.
+    $post_array = array();
+    $get_array = array();
+    foreach ($_POST as $p_key => $post_array) {
+	$_POST[$p_key] = addslashes($post_array);
+    }
+    foreach ($_GET as $g_key => $get_array) {
+	$_GET[$g_key] = addslashes($get_array);
+    }
+
 }
