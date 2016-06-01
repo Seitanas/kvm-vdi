@@ -116,13 +116,15 @@ Edit your /etc/sudoers file according to examlpe of hypervisors/sudeors file.
     apt-get xdotool x11-utils xwit python python-requests virt-viewer freerdp-x11 pulseaudio xinit
 
 Download and install vmware-view viewer from VMware if needed.  
-Copy files from thin_clients/ folder to your clients /usr/local/VDI-client/ folder.  
-Edit /usr/local/VDI-client/config file and change dashboard_path variable to fit your configuration.  
-If you are using systemd, copy vdi init script from thin_clients/ folder to systemd script folder:
+Copy files from `thin_clients/` folder to your clients `/usr/local/VDI-client/` folder.  
+Edit `/usr/local/VDI-client/config` file to fit your configuration.  
+If you are using plain thin-clients (without x-window manager), you can use systemd for VDI client startup. Copy vdi init script from `thin_clients/` folder to systemd script folder:
 
     cp thin_clients/vdi.service /etc/systemd/system/
     systemctl daemon-reload
 
+If thin-clients do use some kind of x-window manager, run `/usr/local/VDI-client/vdi` application manually from window manager itself.  
+  
 Edit clients.xml file in your dashboard, specify IP address of your thin client, protocol and name of VDI machine it will use.  
 Start vdi service:
 

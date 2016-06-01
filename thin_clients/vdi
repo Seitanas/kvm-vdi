@@ -17,6 +17,7 @@ tmpname=(''.join(choice(ascii_uppercase+ascii_lowercase+digits) for i in range(1
 config = ConfigParser()
 config.read('/usr/local/VDI-client/config')
 dashboard_path = config.get('server', 'address')
+xsystem = config.get('thin-client', 'xsystem')
 context = ssl._create_unverified_context()
 pulseaudio=0
 while (1):
@@ -30,7 +31,7 @@ while (1):
 	if reply["protocol"]=="SPICE":
 	    tmp=reply["address"].split(":")
 	    spice_password=reply["spice_password"]
-	    if pulseaudio==0:
+	    if pulseaudio==0 and xsystem=="plain":
 		    os.system("/usr/bin/pulseaudio --start")
 		    pulseaudio=1
 	    viewer_config=ConfigParser()
@@ -42,7 +43,10 @@ while (1):
 	    viewer_config.set('virt-viewer', 'password', spice_password)
 	    with open('/tmp/' + tmpname + '.cfg', 'wb') as configfile:
 		viewer_config.write(configfile)
-	    os.system("startx /usr/bin/remote-viewer --kiosk-quit=on-disconnect  --kiosk /tmp/" + tmpname + ".cfg ")
+	    if xsystem=="plain":
+    		os.system("startx /usr/bin/remote-viewer --kiosk-quit=on-disconnect  --kiosk /tmp/" + tmpname + ".cfg ")
+	    else:
+		os.system("/usr/bin/remote-viewer --kiosk-quit=on-disconnect  --kiosk /tmp/" + tmpname + ".cfg ")
 	if reply["protocol"]=="RDP":
 	    os.system("startx /usr/bin/xfreerdp /f /sec:rdp /v:"+reply["address"]+" ")
 	if reply["protocol"]=="vmView":
