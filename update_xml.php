@@ -1,7 +1,6 @@
 <?php
 include ('functions/config.php');
 require_once('functions/functions.php');
-slash_vars();
 if (!check_session()){
     header ("Location: $serviceurl/?error=1");
     exit;
