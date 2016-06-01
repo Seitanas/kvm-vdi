@@ -25,7 +25,7 @@ tree = ET.parse('/tmp/' + vmname+'.xml')
 root = tree.getroot()
 devices=root.find('devices')
 emulator = devices.find('emulator')
-emulator.text='/usr/local/VDI/kvm-snap'
+emulator.text='/usr/local/VDI/vdi-wrapper'
 graphics = devices.find('graphics')
 for item in graphics[::-1]: #need to remove in reverse order
     graphics.remove(item)

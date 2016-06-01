@@ -7,6 +7,7 @@ if ($pass==$backend_pass){
     $tmpname=$_POST['tmpname'];
     $data=$_POST['data'];
     $vm=$_POST['vm'];
+    $spice_password=$_POST['spice_password'];
     if (!empty($tmpname)&&!empty($data)){
         file_put_contents("tmp/".$tmpname.".txt", $data);
 	if ($data==100){
@@ -15,6 +16,7 @@ if ($pass==$backend_pass){
 	}
     }
     if(!empty($vm)){
+	add_SQL_line("UPDATE vms SET spice_password='$spice_password' WHERE name='$vm'");
 	$v_reply=get_SQL_line("SELECT snapshot FROM vms WHERE name='$vm'");
 	echo $v_reply[0];
     }

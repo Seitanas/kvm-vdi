@@ -1,0 +1,43 @@
+#!/usr/bin/env python
+
+from ConfigParser import ConfigParser
+import requests
+import sys
+import os
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+from random import choice
+from string import ascii_uppercase
+from string import ascii_lowercase
+from string import digits
+
+
+spice_password=(''.join(choice(ascii_uppercase+ascii_lowercase+digits) for i in range(26)))
+config = ConfigParser()
+config.read('/usr/local/VDI/config')
+address = config.get('server', 'address')
+password = config.get('server', 'password')
+tmpdir = config.get('hypervisor', 'tmp_snapshots')
+path_to_kvm = config.get('hypervisor', 'path_to_kvm')
+env_vars=dict(TMPDIR=tmpdir)
+x=1
+startup_procedure=0 #define if kvm-snap is executed for vm startup or for other libvirt routine
+y=len(sys.argv)
+sys.argv[0]=path_to_kvm
+while (x != y):
+    namearg=str(sys.argv[x])
+    if (namearg=="-name"):
+	vmname=str(sys.argv[x+1])
+	startup_procedure=1
+    if "-spice" in namearg:
+	sys.argv[x+1]=sys.argv[x+1]+",password="+spice_password
+	sys.argv[x+1]=sys.argv[x+1].replace("disable-ticketing,", "")
+    x += 1
+command_args=sys.argv
+if (startup_procedure):
+    response=requests.post(address+"/backend.php", data={'pass': password, 'vm': vmname, 'spice_password': spice_password}, verify=False)
+    snapshot=(response.text)
+    snapshot = snapshot.replace("\n", "")
+    if (snapshot=="true"):
+	command_args.append("-snapshot")
+os.execve(path_to_kvm, command_args,env_vars)#call kvm via execv() to replace parent process with it

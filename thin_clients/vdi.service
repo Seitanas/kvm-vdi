@@ -5,7 +5,7 @@ Description=vds
 [Service]
 Type=forking
 User=root
-ExecStart=/usr/local/bin/vdi_init
+ExecStart=/usr/local/VDI-client/vdi_init
 Restart=always
 
 [Install]

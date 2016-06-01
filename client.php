@@ -29,7 +29,7 @@ if ($protocol=="vmView"){
 }
 
 if ($protocol=="SPICE"){
-    $vm=get_SQL_line("SELECT hypervisor,maintenance FROM vms WHERE name='$machine_name'");
+    $vm=get_SQL_line("SELECT hypervisor,maintenance,spice_password FROM vms WHERE name='$machine_name'");
     $h_reply=get_SQL_line("SELECT * FROM hypervisors WHERE id='$vm[0]'");
     if ($vm[1]=="true"||$h_reply[4]==1){
         echo json_encode(array('status'=>"MAINTENANCE"));
@@ -48,7 +48,7 @@ if ($protocol=="SPICE"){
     if ($status=="BOOTUP")
 	$json_reply = json_encode(array('status'=>"BOOTUP",'protocol' => $protocol, 'address' => ''));
     else if ($status)
-        $json_reply = json_encode(array('status'=>"OK",'protocol' => $protocol, 'address' => $status));
+        $json_reply = json_encode(array('status'=>"OK",'protocol' => $protocol, 'address' => $status, 'spice_password' => $vm[2]));
     else
 	$json_reply = json_encode(array('status'=>"FAIL",'protocol' => $protocol, 'address' => ''));
 }

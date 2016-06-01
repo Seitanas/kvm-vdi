@@ -1,3 +1,6 @@
 [server]
-address=https://dashboard_address/vdi/
+address=http://dashboard_address/kvm-vdi/
 password=12345
+[hypervisor]
+tmp_snapshots=/data_tmp
+path_to_kvm=/usr/bin/kvm

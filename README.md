@@ -2,6 +2,13 @@
 
 This project aims to provide fully functional VDI solution by using open source virtualization.
 
+**NOTICE: KVM-VDI versions prior to 2016/06/01**  
+  
+Older versions are no longer compatible with new release! Older versions need to be manually upgraded to a new db schema from sql/vdi.sql file  
+Also you must edit you VM to change to the new KVM wrapper script:
+
+     /usr/local/VDI/vdi-xmledit -name yourvmname
+
 **"KVM-VDI"** consists of three parts:
 
 * **Dashboard**. A webservice, which provides virtual machine control.
@@ -96,9 +103,9 @@ To check if everything works, from dashboard server type:
 
 If passwordless connection is established, everythin is fine.
 
-On each hypervisor create /usr/local/VDI folder. Copy all files from "hypervisors" folder.
-Edit config file accordingly.
-Edit your /etc/sudoers file according to examlpe of hypervisors/sudeors file.
+On each hypervisor create /usr/local/VDI folder. Copy all files from "hypervisors/" folder to /usr/local/VDI/ folder.  
+Edit config file accordingly.  
+Edit your /etc/sudoers file according to examlpe of hypervisors/sudeors file.  
   
 
 
@@ -109,8 +116,8 @@ Edit your /etc/sudoers file according to examlpe of hypervisors/sudeors file.
     apt-get xdotool x11-utils xwit python python-requests virt-viewer freerdp-x11 pulseaudio xinit
 
 Download and install vmware-view viewer from VMware if needed.  
-Copy files from thin_clients/ folder to your clients /usr/local/bin folder.  
-Edit vdi executable, and change dashboard_path variable to fit your configuration.  
+Copy files from thin_clients/ folder to your clients /usr/local/VDI-client/ folder.  
+Edit /usr/local/VDI-client/config file and change dashboard_path variable to fit your configuration.  
 If you are using systemd, copy vdi init script from thin_clients/ folder to systemd script folder:
 
     cp thin_clients/vdi.service /etc/systemd/system/

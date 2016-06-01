@@ -6,16 +6,20 @@ import urllib2
 import time
 import os
 import ssl
+from ConfigParser import ConfigParser
+from random import choice
+from string import ascii_uppercase
+from string import ascii_lowercase
+from string import digits
 
 
-dashboard_path="http://dashboard_url/kvm-vdi"
-
-
+tmpname=(''.join(choice(ascii_uppercase+ascii_lowercase+digits) for i in range(13)))
+config = ConfigParser()
+config.read('/usr/local/VDI-client/config')
+dashboard_path = config.get('server', 'address')
 context = ssl._create_unverified_context()
-signal=0
-runs=0
 pulseaudio=0
-while (signal==0):
+while (1):
     reply=json.load(urllib2.urlopen(dashboard_path+"/client.php", context=context))
     if reply["status"]=="MAINTENANCE":
 	time.sleep(10)
@@ -23,13 +27,22 @@ while (signal==0):
 	time.sleep(1)
     if reply["status"]=="OK":
         os.system("/usr/local/bin/numlock_on &")
-	#signal=1
 	if reply["protocol"]=="SPICE":
 	    tmp=reply["address"].split(":")
+	    spice_password=reply["spice_password"]
 	    if pulseaudio==0:
 		    os.system("/usr/bin/pulseaudio --start")
 		    pulseaudio=1
-	    os.system("startx /usr/bin/remote-viewer --kiosk-quit=on-disconnect  --kiosk spice://" +tmp[0] + ":" + tmp[1] + "  ")
+	    viewer_config=ConfigParser()
+	    viewer_config.add_section('virt-viewer')
+	    viewer_config.set('virt-viewer', 'type', 'spice')
+	    viewer_config.set('virt-viewer', 'host', tmp[0])
+	    viewer_config.set('virt-viewer', 'port', tmp[1])
+	    viewer_config.set('virt-viewer', 'delete-this-file', '1')
+	    viewer_config.set('virt-viewer', 'password', spice_password)
+	    with open('/tmp/' + tmpname + '.cfg', 'wb') as configfile:
+		viewer_config.write(configfile)
+	    os.system("startx /usr/bin/remote-viewer --kiosk-quit=on-disconnect  --kiosk /tmp/" + tmpname + ".cfg ")
 	if reply["protocol"]=="RDP":
 	    os.system("startx /usr/bin/xfreerdp /f /sec:rdp /v:"+reply["address"]+" ")
 	if reply["protocol"]=="vmView":
