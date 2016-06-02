@@ -9,7 +9,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-05-30
+2016-06-02
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -76,7 +76,7 @@ while ($x<sizeof($sql_reply)){
                         <td class="col-md-1"><input type="checkbox" '. $vms_query[$y]['maintenance']. " onclick='handleMaintenance(this);' " . 'id="' . $vms_query[$y]['id'] .  '">';
                         if (!empty($vms_query[$y]['filecopy'])){
                     	    echo '<div class="progress">
-                                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="' . $vms_query[$y]['filecopy'] . '">
+                                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="' . $vms_query[$y]['filecopy'] . '" style="width:100%">
                                     </div>
                             	  </div>
                                   <script>
