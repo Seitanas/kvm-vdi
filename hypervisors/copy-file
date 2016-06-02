@@ -10,12 +10,12 @@ config = ConfigParser()
 config.read('/usr/local/VDI/config')
 sourcefile=str(sys.argv[1])
 destfile=str(sys.argv[2])
-tmpname=str(sys.argv[3])
+vm=str(sys.argv[3])
 address = config.get('server', 'address')
 password = config.get('server', 'password')
 bytes_copied=0
 progress=0
-requests.post(address+"/backend.php", data={'pass': password, 'tmpname': tmpname, 'data': '0'}, verify=False)
+requests.post(address+"/backend.php", data={'pass': password, 'vm': vm, 'data': '0'}, verify=False)
 with open(sourcefile,'rb') as f1:
     size = os.path.getsize(sourcefile)
     with open(destfile+".tmp",'wb') as f2:
@@ -29,15 +29,15 @@ with open(sourcefile,'rb') as f1:
 	      progress1=int(round(progress))
 	      progress=int(round(100.0/size*bytes_copied))
 	      if size<bytes_copied: #if file size is less than buffer
-		    requests.post(address+"/backend.php", data={'pass': password, 'tmpname': tmpname, 'data': '100'}, verify=False)
+		    requests.post(address+"/backend.php", data={'pass': password, 'vm': vm, 'data': '100'}, verify=False)
 		    break
 	      if size<3000000000: #if less than 3GB print just at 25/50/75%
     	        if progress1<progress:
 		    if (progress==0) or (progress==25) or (progress==50) or (progress==75) or (progress==100):
-			requests.post(address+"/backend.php", data={'pass': password, 'tmpname': tmpname, 'data': progress}, verify=False)
+			requests.post(address+"/backend.php", data={'pass': password, 'vm': vm, 'data': progress}, verify=False)
 	      else:
 		 if progress1<progress:
-	 	    requests.post(address+"/backend.php", data={'pass': password, 'tmpname': tmpname, 'data': progress}, verify=False)
+	 	    requests.post(address+"/backend.php", data={'pass': password, 'vm': vm, 'data': progress}, verify=False)
           else:
               break
 os.rename(destfile+".tmp", destfile)

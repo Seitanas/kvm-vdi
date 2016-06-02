@@ -25,8 +25,8 @@ if (empty ($dest_path))
     $dest_path=str_replace("\n", "",(ssh_command("sudo virsh domblklist $v_reply[1]|grep hda| awk '{print $2}' ",true)));
 if (empty ($dest_path)||$dest_path=='-'||strtolower(substr($dest_path, -4))=='.iso')//if we have cd drive, then disk image would be second drive
     $dest_path=str_replace("\n", "",(ssh_command("sudo virsh domblklist $v_reply[1]|grep hdb| awk '{print $2}' ",true)));
-$filekey= uniqid();
-add_SQL_line("UPDATE vms SET filecopy='$filekey' WHERE id='$vm'");
+#$filekey= uniqid();
+add_SQL_line("UPDATE vms SET filecopy='0' WHERE id='$vm'");
 add_SQL_line("UPDATE vms SET maintenance='true' WHERE source_volume='$vm'");
 #destroy all runing child vms
 $child_vms=get_SQL_array("SELECT name FROM vms WHERE source_volume='$vm'");
@@ -35,7 +35,7 @@ while ($x<sizeof($child_vms)){
     ssh_command("sudo virsh destroy " . $child_vms[$x]['name'], true);
     ++$x;
 }
-ssh_command("sudo " . $hypervisor_cmdline_path . "copy-file $source_path $dest_path $filekey",false);
+ssh_command("sudo " . $hypervisor_cmdline_path . "copy-file $source_path $dest_path $vm",false);
 header("Location: $serviceurl/dashboard.php");
 exit;
 ?>

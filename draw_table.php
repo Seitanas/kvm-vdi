@@ -74,13 +74,13 @@ while ($x<sizeof($sql_reply)){
                         <td class="col-md-1">' . $vms_query[$y]['sourcename'] . '</td>
                         <td class="col-md-1"><input type="checkbox" '. $vms_query[$y]['snapshot'] . " onclick='handleSnapshot(this);' " . 'id="' . $vms_query[$y]['id'] .  '"></td>
                         <td class="col-md-1"><input type="checkbox" '. $vms_query[$y]['maintenance']. " onclick='handleMaintenance(this);' " . 'id="' . $vms_query[$y]['id'] .  '">';
-                        if (!empty($vms_query[$y]['filecopy'])){
+                        if (is_numeric($vms_query[$y]['filecopy'])){
                     	    echo '<div class="progress">
                                     <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="' . $vms_query[$y]['filecopy'] . '" style="width:100%">
                                     </div>
                             	  </div>
                                   <script>
-                                    countdown("' . $serviceurl . '/tmp/' . $vms_query[$y]['filecopy'] . '.txt","#' . $vms_query[$y]['filecopy'] . '");
+                                    countdown("' . $serviceurl . '/progress.php?vm=' . $vms_query[$y]['id']  . '","#' . $vms_query[$y]['filecopy'] . '");
                                   </script>';
                         }
                         echo  '</td>
