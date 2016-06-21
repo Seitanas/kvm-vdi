@@ -24,9 +24,9 @@ DROP TABLE IF EXISTS `hypervisors`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `hypervisors` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `ip` varchar(255) NOT NULL,
-  `port` varchar(6) NOT NULL,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `ip` varchar(255) NOT NULL DEFAULT '',
+  `port` varchar(6) NOT NULL DEFAULT '',
   `maintenance` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -41,9 +41,9 @@ DROP TABLE IF EXISTS `log`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ip` varchar(255) NOT NULL,
-  `message` text NOT NULL,
-  `date` datetime NOT NULL,
+  `ip` varchar(255) NOT NULL DEFAULT '',
+  `message` text NOT NULL DEFAULT '',
+  `date` datetime NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -57,10 +57,10 @@ DROP TABLE IF EXISTS `users`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `ip` varchar(255) NOT NULL,
-  `lastlogin` datetime NOT NULL,
+  `username` varchar(255) NOT NULL DEFAULT '',
+  `password` varchar(255) NOT NULL DEFAULT '',
+  `ip` varchar(255) NOT NULL DEFAULT '',
+  `lastlogin` datetime NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -74,15 +74,15 @@ DROP TABLE IF EXISTS `vms`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `vms` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `hypervisor` int(11) NOT NULL,
-  `machine_type` varchar(25) NOT NULL,
-  `source_volume` varchar(255) NOT NULL,
-  `snapshot` varchar(11) NOT NULL,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `hypervisor` int(11) NOT NULL DEFAULT 0,
+  `machine_type` varchar(25) NOT NULL DEFAULT '',
+  `source_volume` varchar(255) NOT NULL DEFAULT '',
+  `snapshot` varchar(11) NOT NULL DEFAULT '',
   `maintenance` varchar(11) DEFAULT NULL,
-  `filecopy` varchar(255) NOT NULL,
-  `state` varchar(255) NOT NULL,
-  `spice_password` varchar(255) NOT NULL,
+  `filecopy` varchar(255) NOT NULL DEFAULT '',
+  `state` varchar(255) NOT NULL DEFAULT '',
+  `spice_password` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
