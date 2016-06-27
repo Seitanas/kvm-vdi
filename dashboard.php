@@ -52,8 +52,8 @@ set_lang();
     <script src="inc/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="inc/js/ie10-viewport-bug-workaround.js"></script>
-    <!--clear remote modal forms -->
     <script src="inc/metisMenu/metisMenu.min.js"></script>
+    <!--clear remote modal forms -->
     <script type="text/javascript">
 	$(document).on("hidden.bs.modal", function (e) {
 	    $(e.target).removeData("bs.modal").find(".modal-content").empty();
@@ -185,13 +185,11 @@ set_lang();
 <div class="container-fluid">
     <div class="row">
 	<div class="col-md-2 sidebar">
-    	    <ul class="nav">
+    	    <ul class="metismenu nav" id="left-menu">
     	        <li><a href="showxml.php" data-toggle="modal" data-target="#vmInfo"><i class="fa fa-sitemap fa-fw"></i><?php echo _("Edit clients.xml");?></a></li>
     	        <li><a href="new_vm.php" data-toggle="modal" data-target="#vmInfo"><i class="fa fa-laptop fa-fw"></i><?php echo _("Create VM(s)");?></a></li>
-	    </ul>
-	    <ul class="metisMenu nav" id="left-menu">
-	        <li>
-	    	    <a href="#" aria-expanded="true"><i class="fa fa-user fa-fw"></i><?php echo _("Profile");?></a>
+		<li>
+	    	    <a href="#" aria-expanded="false"><span class="fa arrow"></span><i class="fa fa-user fa-fw"></i><?php echo _("Profile");?></a>
 		    <ul aria-expanded="false">
 			<li class="nav"><a href="change_password.php" data-toggle="modal" data-target="#vmInfo"><i class="fa fa-key fa-fw"></i><?php echo _("Change password");?></a></li>
 	    		<li class="nav"><a href="logout.php"><i class="fa fa-sign-out fa-fw"></i><?php echo _("Logout");?></a></li>
@@ -222,4 +220,5 @@ draw_table();
 <script>
 $("#left-menu").metisMenu();
 </script>
+
 </html>
