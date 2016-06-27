@@ -2,14 +2,13 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-tadas at ring.lt
 
 Vilnius University.
 Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-06-02
+2016-06-27
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -32,6 +31,10 @@ set_lang();
     <link href="inc/css/custom.css" rel="stylesheet">
     <!-- Bootstrap core CSS -->
     <link href="inc/css/bootstrap.min.css" rel="stylesheet">
+    <!-- metisMenu CSS -->
+    <link href="inc/metisMenu/metisMenu.min.css" rel="stylesheet">
+    <!-- Font Awesome-->
+    <link href="inc/font-awesome/css/font-awesome.min.css" rel="stylesheet">
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <link href="inc/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
@@ -42,8 +45,7 @@ set_lang();
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
+    <!-- Bootstrap core JavaScript ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="inc/js/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="inc/js/vendor/jquery.min.js"><\/script>')</script>
@@ -51,6 +53,7 @@ set_lang();
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="inc/js/ie10-viewport-bug-workaround.js"></script>
     <!--clear remote modal forms -->
+    <script src="inc/metisMenu/metisMenu.min.js"></script>
     <script type="text/javascript">
 	$(document).on("hidden.bs.modal", function (e) {
 	    $(e.target).removeData("bs.modal").find(".modal-content").empty();
@@ -158,8 +161,6 @@ set_lang();
 </div>
 <!-- /.modal -->
 
-
-
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
         <div class="navbar-header">
@@ -174,42 +175,51 @@ set_lang();
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             <li><a href="#" onclick="draw_table();"  data-toggle="hover"><button type="button" class="btn btn-info" aria-label="Refresh" title="<?php echo _("Refresh VM info");?>">
-  <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
-</button></a></li>
+		<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button></a>
+	    </li>
           </ul>
         </div>
       </div>
     </nav>
 
-
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-1 col-md-1 sidebar">
-          <ul class="nav nav-sidebar">
-            <li><a href="showxml.php" data-toggle="modal" data-target="#vmInfo"><?php echo _("Edit clients.xml");?></a></li>
-            <li><a href="new_vm.php" data-toggle="modal" data-target="#vmInfo"><?php echo _("Create VM(s)");?></a></li>
-            <li><a href="change_password.php" data-toggle="modal" data-target="#vmInfo"><?php echo _("Change password");?></a></li>
-            <li><a href="logout.php"><?php echo _("Logout");?></a></li>
-	    <li></li>
-          </ul>
-        </div>
-	
-        <div class="col-sm-10 col-sm-offset-3 col-md-11 col-md-offset-1 main">
-<div class="alert alert-info" id="populatealert" style="display:none;">
- <?php echo _("<strong>Please wait!</strong> Populating virtual machines.");?>
-</div>
-<div class="alert alert-info" id="copyalert" style="display:none;">
- <?php echo _("<strong>Please wait!</strong> Copying image.");?>
-</div>
-	<div id="main_table"></div>
-        </div>
-      </div>
+<div class="container-fluid">
+    <div class="row">
+	<div class="col-md-2 sidebar">
+    	    <ul class="nav">
+    	        <li><a href="showxml.php" data-toggle="modal" data-target="#vmInfo"><i class="fa fa-sitemap fa-fw"></i><?php echo _("Edit clients.xml");?></a></li>
+    	        <li><a href="new_vm.php" data-toggle="modal" data-target="#vmInfo"><i class="fa fa-laptop fa-fw"></i><?php echo _("Create VM(s)");?></a></li>
+	    </ul>
+	    <ul class="metisMenu nav" id="left-menu">
+	        <li>
+	    	    <a href="#" aria-expanded="true"><i class="fa fa-user fa-fw"></i><?php echo _("Profile");?></a>
+		    <ul aria-expanded="false">
+			<li class="nav"><a href="change_password.php" data-toggle="modal" data-target="#vmInfo"><i class="fa fa-key fa-fw"></i><?php echo _("Change password");?></a></li>
+	    		<li class="nav"><a href="logout.php"><i class="fa fa-sign-out fa-fw"></i><?php echo _("Logout");?></a></li>
+		    </ul>
+		</li>
+	    </ul>
+	</div>
+	<div class="col-md-offset-2 col-md-10">
+	    <div class="main">
+		<div class="alert alert-info" id="populatealert" style="display:none;">
+		    <?php echo _("<strong>Please wait!</strong> Populating virtual machines.");?>
+		</div>
+		<div class="alert alert-info" id="copyalert" style="display:none;">
+		    <?php echo _("<strong>Please wait!</strong> Copying image.");?>
+		</div>
+		<div id="main_table"></div>
+	    </div>
+	</div>
     </div>
-  </body>
+</div>
+</body>
 <script>
 function draw_table(){
     $( "#main_table" ).load( "draw_table.php" );
 }
 draw_table();
+</script>
+<script>
+$("#left-menu").metisMenu();
 </script>
 </html>
