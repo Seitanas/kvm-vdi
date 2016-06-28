@@ -34,11 +34,19 @@ if ($name=='update-name'){//using x-editable jQuery plugin, which uses different
     $pk=$_POST['pk'];
     $value=$_POST['value'];
     add_SQL_line("UPDATE hypervisors SET name='$value' WHERE id='$pk'");
+    exit;
 }
 if ($name=='update-address'){//using x-editable jQuery plugin, which uses different param naming
     $pk=$_POST['pk'];
     $value=$_POST['value'];
     add_SQL_line("UPDATE hypervisors SET ip='$value' WHERE id='$pk'");
+    exit;
+}
+if ($name=='update-spice'){//using x-editable jQuery plugin, which uses different param naming
+    $pk=$_POST['pk'];
+    $value=$_POST['value'];
+    add_SQL_line("UPDATE hypervisors SET address2='$value' WHERE id='$pk'");
+    exit;
 }
 if ($type=='delete'){
     $hypervisor=$_POST['hypervisor'];

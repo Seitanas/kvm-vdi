@@ -33,17 +33,33 @@ $hypervisors_reply=get_SQL_array("SELECT * FROM hypervisors ORDER BY id");
              <h4 class="modal-title"><?php echo _("Modify hypervisors");?></h4>
         </div>
         <div class="modal-body">
+	    <div class="row">
+        	<div class="col-md-3 hypervisor-line">
+		    Name
+                </div>
+                <div class="col-md-3 hypervisor-line">
+		    Address
+            	</div>
+                <div class="col-md-3 hypervisor-line">
+		    SPICE address
+            	</div>
+                <div class="col-md-3 hypervisor-line">
+            	</div>
+	    </div>
 	<?php
 	$x=0;
 	while ($hypervisors_reply[$x]['id']){
 	    echo '<div class="row hypervisor-list" id="row-name-' . $hypervisors_reply[$x]['id']  . '">
-                    <div class="col-md-4 hypervisor-line name-' . $hypervisors_reply[$x]['id']  . '">
+                    <div class="col-md-3 hypervisor-line name-' . $hypervisors_reply[$x]['id']  . '">
 		    <a href="#" class="hypervisor" data-type="text" data-name="update-name" data-pk="' . $hypervisors_reply[$x]['id']  . '" data-url="update_hypervisors.php">' . $hypervisors_reply[$x]['name'] . '</a>
                     </div>
-                    <div class="col-md-6 hypervisor-line name-' . $hypervisors_reply[$x]['id']  . '">
+                    <div class="col-md-3 hypervisor-line name-' . $hypervisors_reply[$x]['id']  . '">
 		    <a href="#" class="hypervisor" data-type="text" data-name="update-address" data-pk="' . $hypervisors_reply[$x]['id']  . '" data-url="update_hypervisors.php">' . $hypervisors_reply[$x]['ip'] . '</a>
             	    </div>
-                    <div class="col-md-2 hypervisor-line">
+            	    <div class="col-md-3 hypervisor-line">
+		    <a href="#" class="hypervisor" data-type="text" data-name="update-spice" data-pk="' . $hypervisors_reply[$x]['id']  . '" data-url="update_hypervisors.php">' . $hypervisors_reply[$x]['address2'] . '</a>
+            	    </div>
+                    <div class="col-md-3 hypervisor-line">
 			<input class="hide" type="checkbox" name="hypervisor[]" value="' . $hypervisors_reply[$x]['id']  . '" id="hypervisor-' . $hypervisors_reply[$x]['id']  . '">
 			<button type="button" class="btn btn-warning delete"  data-id="' . $hypervisors_reply[$x]['id']  . '">' . _("Delete") . '</button>
             	    </div>
