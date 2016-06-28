@@ -61,7 +61,7 @@ if (check_db()<1){
                                     <input class="form-control" placeholder="Password" name="password" type="password" value="" required>
                                 </div>
                                 <input type="submit" value="Login" class="btn btn-lg btn-success btn-block">
-				<?php if ($_GET['error']==1){?>   
+				<?php if (isset($_GET['error'])){?>
 				    <div class="alert alert-danger" role="alert">Wrong username/password
 	    				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				    </div>
