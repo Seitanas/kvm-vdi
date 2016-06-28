@@ -56,7 +56,7 @@ $hypervisors_reply=get_SQL_array("SELECT * FROM hypervisors ORDER BY id");
                     <div class="col-md-3 hypervisor-line name-' . $hypervisors_reply[$x]['id']  . '">
 		    <a href="#" class="hypervisor" data-type="text" data-name="update-address" data-pk="' . $hypervisors_reply[$x]['id']  . '" data-url="update_hypervisors.php">' . $hypervisors_reply[$x]['ip'] . '</a>
             	    </div>
-            	    <div class="col-md-3 hypervisor-line">
+            	    <div class="col-md-3 hypervisor-line  name-' . $hypervisors_reply[$x]['id']  . '">
 		    <a href="#" class="hypervisor" data-type="text" data-name="update-spice" data-pk="' . $hypervisors_reply[$x]['id']  . '" data-url="update_hypervisors.php">' . $hypervisors_reply[$x]['address2'] . '</a>
             	    </div>
                     <div class="col-md-3 hypervisor-line">
