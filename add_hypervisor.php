@@ -120,11 +120,19 @@ $(document).ready(function(){
 		    paint_danger();
 		}
 		if (data=='SUCCESS'){
+    	    	    setTimeout(function() {
+    			    $("#progress").addClass('hide');;
+		    }, 2000);
     		    $("#progress").removeClass('alert-danger');
 		    $("#progress").removeClass('alert-info');
 		    $("#progress").addClass('alert-success');
+		    $("#address1").val("");
+		    $("#address2").val("");
+		    $("#port").val("");
+		    $("#name").val("");
             	    $("#progress").html("<i class=\"fa fa-thumbs-o-up fa-fw\"></i><?php echo _("Success");?>");
 		    draw_table();
+
 		}
             }
         });
