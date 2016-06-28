@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-06-27
+2016-06-28
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -120,7 +120,7 @@ set_lang();
 ?>
 <body>
 <!-- Modal vm info-->
-<div class="modal fade" id="vmInfo" tabindex="-1" role="dialog" aria-labelledby="vmInfo" aria-hidden="true">
+<div class="modal fade" id="modalWm" tabindex="-1" role="dialog" aria-labelledby="modalWm" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -184,14 +184,21 @@ set_lang();
 
 <div class="container-fluid">
     <div class="row">
-	<div class="col-md-2 sidebar">
+	<div class="col-md-2 sidebar nopadding">
     	    <ul class="metismenu nav" id="left-menu">
-    	        <li><a href="showxml.php" data-toggle="modal" data-target="#vmInfo"><i class="fa fa-sitemap fa-fw"></i><?php echo _("Edit clients.xml");?></a></li>
-    	        <li><a href="new_vm.php" data-toggle="modal" data-target="#vmInfo"><i class="fa fa-laptop fa-fw"></i><?php echo _("Create VM(s)");?></a></li>
+    	        <li><a href="showxml.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-sitemap fa-fw"></i><?php echo _("Edit clients.xml");?></a></li>
+    	        <li><a href="new_vm.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-laptop fa-fw"></i><?php echo _("Create Virtual Machines");?></a></li>
+		<li>
+	    	    <a href="#" aria-expanded="false"><span class="fa arrow"></span><i class="fa fa-cogs fa-fw"></i><?php echo _("Configuration");?></a>
+		    <ul aria-expanded="false">
+			<li class="nav"><a href="add_hypervisor.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-database fa-fw"></i><?php echo _("Add hypervisor");?></a></li>
+	    		<li class="nav"><a href="list_hypervisors.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-cloud fa-fw"></i><?php echo _("Modify hypervisors");?></a></li>
+		    </ul>
+		</li>
 		<li>
 	    	    <a href="#" aria-expanded="false"><span class="fa arrow"></span><i class="fa fa-user fa-fw"></i><?php echo _("Profile");?></a>
 		    <ul aria-expanded="false">
-			<li class="nav"><a href="change_password.php" data-toggle="modal" data-target="#vmInfo"><i class="fa fa-key fa-fw"></i><?php echo _("Change password");?></a></li>
+			<li class="nav"><a href="change_password.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-key fa-fw"></i><?php echo _("Change password");?></a></li>
 	    		<li class="nav"><a href="logout.php"><i class="fa fa-sign-out fa-fw"></i><?php echo _("Logout");?></a></li>
 		    </ul>
 		</li>

@@ -28,6 +28,7 @@ CREATE TABLE `hypervisors` (
   `ip` varchar(255) NOT NULL DEFAULT '',
   `port` varchar(6) NOT NULL DEFAULT '',
   `maintenance` tinyint(4) DEFAULT NULL,
+  `address2` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;

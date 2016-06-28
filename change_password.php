@@ -2,14 +2,13 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-tadas at ring.lt
 
 Vilnius University.
 Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-05-30
+2016-06-28
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -24,7 +23,6 @@ set_lang();
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <title>Change password</title>  
 </head>
 <body>
 <form method="POST" action="update_password.php" id="passwordForm">

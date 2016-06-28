@@ -2,8 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-tadas at ring.lt
-2016-05-30
+2016-06-27
 Vilnius, Lithuania.
 */
 function SQL_connect(){
@@ -44,7 +43,11 @@ function ssh_connect($address){
     $port=$tmp[1];
     global $connection;
     $connection = ssh2_connect($ip, $port, array('hostkey'=>'ssh-rsa'));
-    ssh2_auth_pubkey_file($connection, $ssh_user, $ssh_key_path.'id_rsa.pub',$ssh_key_path.'id_rsa');
+    if (!$connection)
+	return 'BAD_SSH_ADDRESS';
+    if (!ssh2_auth_pubkey_file($connection, $ssh_user, $ssh_key_path.'id_rsa.pub',$ssh_key_path.'id_rsa'))
+	return 'BAD_SSH_CREDENTIALS';
+
 }
 function ssh_command($command,$blocking){
     global $connection;
@@ -60,20 +63,12 @@ function ssh_command($command,$blocking){
 }
 //#############################################################################
 function reload_vm_info(){
-    include ('config.php');
     $x=0;
-    while ($x<sizeof($hypervizors)){
-	$tmp = explode(":", $hypervizors[$x]);
-	$ip=$tmp[0];
-	$port=$tmp[1];
-	$sql_reply=get_SQL_line("SELECT id,maintenance FROM hypervisors WHERE ip='$ip'");
-	if ($sql_reply[1]!=1){//do not try to connect to disabled hypervisor
-	    if (empty($sql_reply[0]))
-    		add_SQL_line("INSERT INTO  hypervisors (ip,port,maintenance) VALUES ('$ip','$port','0')");
-	    else
-    		add_SQL_line("UPDATE hypervisors SET ip='$ip', port='$port' WHERE id='$sql_reply[0]'");
-	    $sql_reply=get_SQL_line("SELECT id FROM hypervisors WHERE ip='$ip'");
-	    $hyper_id=$sql_reply[0];
+    $sql_reply=get_SQL_array("SELECT * FROM hypervisors WHERE maintenance=0");
+    while ($sql_reply[$x]['id']){
+	$ip=$sql_reply[$x]['ip'];
+	$port=$sql_reply[$x]['port'];
+	    $hyper_id=$sql_reply[$x]['id'];
     	    ssh_connect($ip . ":" . $port);
     	    $output = ssh_command("sudo virsh list --all |tail -n +3|head -n -1|awk '{print $2" . '" "' . "$3}'",true);
 	    $vms=array();
@@ -81,15 +76,14 @@ function reload_vm_info(){
 	    $vms=explode(" ",$output);
 	    $y=0;
 	    while ($vms[$y]){
-    		$sql_reply=get_SQL_line("SELECT id FROM vms WHERE name='$vms[$y]' AND hypervisor='$hyper_id'");
+    		$vms_reply=get_SQL_line("SELECT id FROM vms WHERE name='$vms[$y]' AND hypervisor='$hyper_id'"); 
         	$state=$vms[$y+1];
-    		if (empty($sql_reply[0]))
+    		if (empty($vms_reply[0]))//New VM is found
             	    add_SQL_line("INSERT INTO  vms (name,hypervisor,state) VALUES ('$vms[$y]','$hyper_id','$state')");
     		else
-            	    add_SQL_line("UPDATE vms SET name='$vms[$y]', hypervisor='$hyper_id', state='$state' WHERE id='$sql_reply[0]'");
+            	    add_SQL_line("UPDATE vms SET name='$vms[$y]', hypervisor='$hyper_id', state='$state' WHERE id='$vms_reply[0]'");
         	$y=$y+2;
 	    }
-	}
 	++$x;
     }
 }
@@ -145,11 +139,10 @@ function populate_db(){
 function slash_vars(){//add slashes to all post variables.
     $post_array = array();
     $get_array = array();
-    foreach ($_POST as $p_key => $post_array) {
-	$_POST[$p_key] = addslashes($post_array);
-    }
-    foreach ($_GET as $g_key => $get_array) {
-	$_GET[$g_key] = addslashes($get_array);
-    }
-
+    array_walk_recursive($_POST, function(&$item, $key) {
+	$item = addslashes($item);
+    });
+    array_walk_recursive($_GET, function(&$item, $key) {
+	$item = addslashes($item);
+    });
 }

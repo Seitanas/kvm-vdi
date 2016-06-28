@@ -31,3 +31,15 @@
     margin-left: 0 !important;
     margin-right: 0 !important;
 }
+.hypervisor-list {
+    border-radius: 5px;
+    margin: 5px;
+    border:1pt solid lightgrey;
+}
+.hypervisor-line{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.hypervisor-deleted{
+    text-decoration: line-through;
+}

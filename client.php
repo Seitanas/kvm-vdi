@@ -39,7 +39,7 @@ if ($protocol=="SPICE"){
     $status=ssh_command("sudo virsh domdisplay ".$machine_name,true);
     $status=str_replace("spice://","",$status);
     $status=str_replace("\n","",$status);
-    $status=str_replace("localhost",$h_reply[2],$status);
+    $status=str_replace("localhost",$h_reply[5],$status);
     if (empty($status)){
 	$status='BOOTUP';
         ssh_command("sudo virsh start ".$machine_name,true);

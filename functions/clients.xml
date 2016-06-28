@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <thin-clients>
-    <client ip="192.168.1.1">
+    <client ip="192.168.122.1">
 	<protocol>SPICE</protocol>
-	<machine-name>PCa01</machine-name>
+	<machine-name>ddd1</machine-name>
     </client>
 
 

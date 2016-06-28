@@ -1,0 +1,38 @@
+#!/bin/sh
+#
+# Screen script that launches KVM_VDI. Can be called from lts.conf
+# like this:
+#   SCREEN_07="vdi_init"
+# or like this:
+#   SCREEN_07="vdi_init"
+#
+# Copyright (c) 2016 Jeffrey Hein <http://jphein.com>
+#
+# This software is licensed under the GNU General Public License version 2,
+# the full text of which can be found in the COPYING file.
+
+. /usr/share/ltsp/screen-x-common
+# segfaults if HOME is unset.
+export HOME=${HOME:-/root}
+
+# The same screen script can be used for other KVM_VDI viewers too, by just symlinking
+# screen.d/{otherviewer} to screen.d/vdi_init.
+basename=${0##*/}
+
+if ! type $basename >/dev/null 2>&1; then
+    echo "$basename couldn't be found."
+    if [ "$basename" = "vdi_init" ]; then
+        echo "Please make sure you have installed vdi_init into your client chroot."
+    fi
+    read nothing
+    exit 1
+fi
+
+# Make XINITRC_DAEMON default to "True", to prevent X from restarting after
+# logout. If you don't want that, force XINITRC_DAEMON=False in lts.conf.
+export XINITRC_DAEMON="${XINITRC_DAEMON-True}"
+
+COMMAND="$basename $*"
+
+# The following logic is described at the top of xinitrc.
+exec xinit /usr/share/ltsp/xinitrc "$COMMAND" -- "$DISPLAY" "vt${TTY}" -nolisten tcp $X_ARGS >/dev/null

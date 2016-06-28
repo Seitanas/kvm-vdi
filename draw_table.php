@@ -2,14 +2,13 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-tadas at ring.lt
 
 Vilnius University.
 Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-06-02
+2016-06-28
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -21,11 +20,25 @@ set_lang();
 reload_vm_info();
 $sql_reply=get_SQL_array("SELECT * FROM hypervisors");
 $x=0;
+if (sizeof($sql_reply)<1){
+    ?>
+    <div class="row">
+	<div class="col-md-6 col-md-offset-2" style="margin-top:200px;text-align:center;">
+	    <div class="alert alert-success" role="alert"><?php echo _("Congratulations! Installation was successfull. Now you should add hypervisors to your dashboard.");?></div>
+	    <i class="fa fa-hand-o-up fa-5x text-info"></i>
+	</div>
+    </div>
+<?php
+}
 while ($x<sizeof($sql_reply)){
     $table_status="";
     $vms_query=get_SQL_array("SELECT vms.id,vms.name,vms.hypervisor,vms.machine_type,vms.source_volume,vms.snapshot,vms.maintenance,vms.filecopy,vms.state,vms_tmp.name AS sourcename  FROM vms LEFT JOIN vms AS vms_tmp ON vms.source_volume=vms_tmp.id WHERE vms.hypervisor='{$sql_reply[$x]['id']}' AND vms.machine_type <> 'vdimachine' ORDER BY vms.name");
+    if (!empty($sql_reply[$x]['name']))
+	$hypervisor_name=$sql_reply[$x]['name'];
+    else
+	$hypervisor_name=$sql_reply[$x]['ip'];
 ?>
-    <h1 class="sub-header"><?php echo _("Hypervisor: ") . $sql_reply[$x]['ip']; ?> 
+    <h1 class="sub-header"><?php echo _("Hypervisor: ") . $hypervisor_name; ?> 
     <?php
     if (!$sql_reply[$x]['maintenance']) echo '<a href="hypervisor.php?maintenance=1&id=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn glyphicon glyphicon-ok-circle btn-success"> ' . _("Enabled") . '</a>';
     else {
@@ -69,7 +82,7 @@ while ($x<sizeof($sql_reply)){
                 echo '<tr class=" table-stripe-bottom-line"> 
                         <td class="col-md-1">' . ($y+1) . '</td> 
                         <td class="col-md-1"></td> 
-                        <td class="col-md-2"><a data-toggle="modal" href="vm_info.php?vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id']  . '" data-target="#vmInfo">' . $vms_query[$y]['name'] . '</a> </td> 
+                        <td class="col-md-2"><a data-toggle="modal" href="vm_info.php?vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id']  . '" data-target="#modalWm">' . $vms_query[$y]['name'] . '</a> </td> 
                         <td class="col-md-2">', (!empty($vms_query[$y]['machine_type'])) ? $machine_type[$vms_query[$y]['machine_type']]  : "", '</td>
                         <td class="col-md-1">' . $vms_query[$y]['sourcename'] . '</td>
                         <td class="col-md-1"><input type="checkbox" '. $vms_query[$y]['snapshot'] . " onclick='handleSnapshot(this);' " . 'id="' . $vms_query[$y]['id'] .  '"></td>
@@ -154,7 +167,7 @@ while ($x<sizeof($sql_reply)){
 				echo '<tr class="table-stripe-ani vdi-font"> 
                     		<td class="col-md-1 table-stripe-clear"></td> 
                     		<td class="col-md-1">' . ($y+1) . "-" . ($q+1) . '</td> 
-                    		<td class="col-md-2"><a data-toggle="modal" href="vm_info.php?vm=' . $VDI_query[$q]['id'] . '&hypervisor=' . $sql_reply[$x]['id']  . '" data-target="#vmInfo">' . $VDI_query[$q]['name'] . '</a> </td> 
+                    		<td class="col-md-2"><a data-toggle="modal" href="vm_info.php?vm=' . $VDI_query[$q]['id'] . '&hypervisor=' . $sql_reply[$x]['id']  . '" data-target="#modalWm">' . $VDI_query[$q]['name'] . '</a> </td> 
                     		<td class="col-md-2">' . $machine_type[$VDI_query[$q]['machine_type']] . '</td>
                     		<td class="col-md-1">' . $VDI_query[$q]['sourcename'] . '</td>
                     		<td class="col-md-1"><input type="checkbox" '. $VDI_query[$q]['snapshot'] . " onclick='handleSnapshot(this);' " . 'id="' . $VDI_query[$q]['id'] .  '"></td>
