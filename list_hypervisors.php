@@ -48,7 +48,7 @@ $hypervisors_reply=get_SQL_array("SELECT * FROM hypervisors ORDER BY id");
 	    </div>
 	<?php
 	$x=0;
-	while ($hypervisors_reply[$x]['id']){
+	while ($x<sizeof($hypervisors_reply)){
 	    echo '<div class="row hypervisor-list" id="row-name-' . $hypervisors_reply[$x]['id']  . '">
                     <div class="col-md-3 hypervisor-line name-' . $hypervisors_reply[$x]['id']  . '">
 		    <a href="#" class="hypervisor" data-type="text" data-name="update-name" data-pk="' . $hypervisors_reply[$x]['id']  . '" data-url="update_hypervisors.php">' . $hypervisors_reply[$x]['name'] . '</a>

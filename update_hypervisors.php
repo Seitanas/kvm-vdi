@@ -6,29 +6,39 @@ if (!check_session()){
     exit;
 }
 slash_vars();
-$address1=$_POST['address1'];
-$type=$_POST['type'];
-$address2=$_POST['address2'];
-$name=$_POST['name'];
-$port=$_POST['port'];
-if (empty($address2))
-    $address2=$address1;
-if (empty($port))
-    $port=22;
+$name='';
+$type='';
+if (isset($_POST['type']))
+    $type=$_POST['type'];
+if (isset($_POST['name']))
+    $name=$_POST['name'];
 if ($type=='new'){
-    $reply=ssh_connect($address1 . ":" . $port);
-    if (empty ($reply))
-	$reply='SUCCESS';
-    if (!isset($address1)){
+    if (empty($_POST['address1'])){
 	echo 'EMPTY_ADDRESS';
 	exit;
     }
+    else $address1=$_POST['address1'];
+    if (!empty($_POST['address2']))
+        $address2=$_POST['address2'];
+    else
+	$address2=$address1;
+    if (!empty($_POST['port']))
+	$port=$_POST['port'];
+    else
+	$port=22;
     $existing=get_SQL_line("SELECT id FROM hypervisors WHERE ip = '$address1'");
     if (!empty($existing[0])){
 	echo 'EXISTS';
 	exit;
     }
+    $reply=ssh_connect($address1 . ":" . $port);
+    if (empty ($reply))
+	$reply='SUCCESS';
+    else 
+	exit;
     add_SQL_line("INSERT INTO hypervisors (name,ip, port, maintenance,address2) VALUES ('$name','$address1','$port',0,'$address2')");
+    echo $reply;
+    exit;
 }
 if ($name=='update-name'){//using x-editable jQuery plugin, which uses different param naming
     $pk=$_POST['pk'];
@@ -55,6 +65,4 @@ if ($type=='delete'){
 	add_SQL_line("DELETE FROM vms WHERE hypervisor='$id'");
     }
 }
-echo $reply;
-exit;
 ?>

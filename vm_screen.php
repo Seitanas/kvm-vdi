@@ -11,7 +11,6 @@ Center of Information Technology Development.
 Vilnius,Lithuania.
 2016-06-01
 */
-include ('functions/config.php');
 require_once('functions/functions.php');
 if (!check_session()){
     header ("Location: $serviceurl/?error=1");
@@ -27,7 +26,7 @@ $h_reply=get_SQL_line("SELECT * FROM hypervisors WHERE id='$hypervisor'");
 $v_reply=get_SQL_line("SELECT * FROM vms WHERE id='$vm'");
 ssh_connect($h_reply[2].":".$h_reply[3]);
 $address=ssh_command("sudo virsh domdisplay " . $v_reply[1], true);
-$address=str_replace("localhost",$remote_spice_substitute[$h_reply[2]],$address);
+$address=str_replace("localhost",$h_reply[5],$address);
 $address=$address . "?password=" . $v_reply[9];
 $rnd=uniqid();
 set_lang();

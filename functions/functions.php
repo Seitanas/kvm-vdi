@@ -40,7 +40,7 @@ function ssh_connect($address){
     include ('config.php');
     $tmp = explode(":", $address);
     $ip=$tmp[0];
-    $port=$tmp[1];
+    $port=(int)$tmp[1];
     global $connection;
     $connection = ssh2_connect($ip, $port, array('hostkey'=>'ssh-rsa'));
     if (!$connection)
@@ -65,7 +65,7 @@ function ssh_command($command,$blocking){
 function reload_vm_info(){
     $x=0;
     $sql_reply=get_SQL_array("SELECT * FROM hypervisors WHERE maintenance=0");
-    while ($sql_reply[$x]['id']){
+    while ($x<sizeof($sql_reply)){
 	$ip=$sql_reply[$x]['ip'];
 	$port=$sql_reply[$x]['port'];
 	    $hyper_id=$sql_reply[$x]['id'];
