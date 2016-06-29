@@ -33,11 +33,12 @@ if ($type=='new'){
     }
     $reply=ssh_connect($address1 . ":" . $port);
     if (empty ($reply))
-	$reply='SUCCESS';
-    else 
+	echo 'SUCCESS';
+    else {
+	echo $reply;
 	exit;
+	}
     add_SQL_line("INSERT INTO hypervisors (name,ip, port, maintenance,address2) VALUES ('$name','$address1','$port',0,'$address2')");
-    echo $reply;
     exit;
 }
 if ($name=='update-name'){//using x-editable jQuery plugin, which uses different param naming
