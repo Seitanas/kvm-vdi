@@ -193,6 +193,9 @@ set_lang();
 		    <ul aria-expanded="false">
 			<li class="nav"><a href="add_hypervisor.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-database fa-fw"></i><?php echo _("Add hypervisor");?></a></li>
 	    		<li class="nav"><a href="list_hypervisors.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-cloud fa-fw"></i><?php echo _("Modify hypervisors");?></a></li>
+			<li class="nav-divider"></li>
+			<li class="nav"><a href="add_user.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-user-plus fa-fw"></i><?php echo _("Add user");?></a></li>
+			<li class="nav"><a href="list_users.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-users fa-fw"></i><?php echo _("Modify users");?></a></li>
 		    </ul>
 		</li>
 		<li>

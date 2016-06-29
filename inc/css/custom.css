@@ -43,3 +43,16 @@
 .hypervisor-deleted{
     text-decoration: line-through;
 }
+.users-list {
+    border-radius: 5px;
+    margin: 5px;
+    border:1pt solid lightgrey;
+}
+.users-line{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.users-deleted{
+    text-decoration: line-through;
+}
+
