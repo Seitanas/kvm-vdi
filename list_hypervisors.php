@@ -93,8 +93,9 @@ $(document).ready(function(){
 	var to_delete = [];
 	if (question){
 	$(":checked").each(function() {
-	to_delete.push($(this).val());
-	$("#row-name-"+$(this).val()).addClass('hide');
+	    if ($(this).val()!='on')
+		to_delete.push($(this).val());
+	    $("#row-name-"+$(this).val()).remove();
 	});
         $.ajax({
             type : 'POST',
