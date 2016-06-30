@@ -1,4 +1,4 @@
 #!/bin/bash
 
-/usr/local/bin/vdi &
+/usr/local/VDI-client/vdi &
 
