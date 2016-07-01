@@ -43,6 +43,9 @@ Configure "clients.xml" file, to provide thin clients with it's own VDI VM.
 
 
 ### Dashboard installation
+  
+**NOTICE: Dashboard requitres PHP version 5.6 or higher.**  
+
 
 **On Debian based systems:**
 
@@ -51,9 +54,9 @@ Ubuntu 16
 
     apt-get install mariadb-server apache2 php git libapache2-mod-php php-mbstring php-gettext php-ssh2 php-imagick php-mysql
 
-Debian, Ubuntu 15 and earlier.
+Debian, Ubuntu 15.
 
-    apt-get install mariadb-server apache2 php5 git libapache2-mod-php5 php-gettext php5-ssh2 php5-imagick php5-mysql
+    apt-get install mariadb-server apache2 php5 git libapache2-mod-php5 php-gettext php5-ssh php5-imagick php5-mysql
 
 Create empty database/user on db server.
 
