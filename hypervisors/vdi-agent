@@ -1,0 +1,73 @@
+#!/usr/bin/env python
+import time
+import socket
+import os, os.path
+import json
+import select
+import subprocess
+import re
+from threading import Thread
+
+sockfile = "/usr/local/VDI/kvm-vdi.sock"
+sockfile = "./kvm-vdi.sock"
+
+if os.path.exists( sockfile ):
+  os.remove( sockfile )
+
+
+
+server = socket.socket( socket.AF_UNIX, socket.SOCK_STREAM )
+server.bind(sockfile)
+server.listen(5)
+
+def vm_routine(vmname, username, password):
+    data = ""
+    print "Starting machine" + vmname
+    err=socket_path = subprocess.Popen("virsh start " + vmname, shell=True, stdout=subprocess.PIPE).communicate()
+    socket_path = subprocess.Popen("virsh dumpxml " + vmname + "| xpath -q -e /domain/devices/channel/source/@path", shell=True, stdout=subprocess.PIPE).communicate()#get current spice channel path. Path changes on each VM startup
+    socket_path = re.findall(r'"([^"]*)"', socket_path[0]) #remove everythig outside double quotes
+    virtio_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    virtio_socket.connect(socket_path[0])
+    ready = select.select([virtio_socket], [], [], 60) #Read VMs spice channel for 60 seconds. We asume that VM must boot in 60s and start ovirt-agent.
+    if ready[0]:
+	data = virtio_socket.recv(32)
+    if data:
+#	print "agent is running"
+	serial_message= '{"__name__":"login","username": "' + username + '","password": "' + password + '"}'+"\n"
+	virtio_socket.sendall(serial_message)
+	virtio_socket.close()
+    else:
+#	print "timeout"
+	virtio_socket.close()
+
+
+while True:
+  conn, addr = server.accept()
+  while True: 
+    data = conn.recv( 1024 )
+    if not data:
+        break
+    else:
+	command=json.loads(data)
+	fail=0
+	try:
+	    vmname=command[0]['vmname']
+	except:
+	    fail=1
+	try:
+	    username=command[0]['username']
+	except:
+	    fail=1
+	try:
+	    password=command[0]['password']
+	except:
+	    fail=1
+	if fail==1:
+	    print "Illegal json"
+	else:
+	    t = Thread(target=vm_routine, args=(vmname,username,password))
+	    t.start()
+        break
+
+server.close()
+os.remove( sockfile )
