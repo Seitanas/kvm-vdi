@@ -95,6 +95,13 @@ function check_session(){
     else return 0;
 }
 //##############################################################################
+function check_client_session(){
+    session_start();
+    if ($_SESSION['client_logged'])
+	return $_SESSION['client_logged'];
+    else return 0;
+}
+//##############################################################################
 function close_session(){
     session_start();
     session_unset();

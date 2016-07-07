@@ -50,6 +50,7 @@ set_lang();
     <script src="inc/js/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="inc/js/vendor/jquery.min.js"><\/script>')</script>
     <script src="inc/js/bootstrap.min.js"></script>
+    <script src="inc/js/multiselect.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="inc/js/ie10-viewport-bug-workaround.js"></script>
     <script src="inc/metisMenu/metisMenu.min.js"></script>
@@ -59,6 +60,7 @@ set_lang();
 	    $(e.target).removeData("bs.modal").find(".modal-content").empty();
 	});
     </script>
+
     <script>
 	function countdown(filepath,container) {
 	    var $container = $(container);
@@ -186,7 +188,16 @@ set_lang();
     <div class="row">
 	<div class="col-md-2 sidebar nopadding">
     	    <ul class="metismenu nav" id="left-menu">
-    	        <li><a href="showxml.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-sitemap fa-fw"></i><?php echo _("Edit clients.xml");?></a></li>
+		<li>
+		    <a href="#" aria-expanded="false"><span class="fa arrow"></span><i class="fa fa-user fa-fw"></i><?php echo _("Clients");?></a>
+		    <ul aria-expanded="false">
+    	    		<li class="nav"><a href="add_client.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-sitemap fa-fw"></i><?php echo _("Add client");?></a></li>
+			<li class="nav-divider"></li>
+			<li class="nav"><a href="add_pool.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-sitemap fa-fw"></i><?php echo _("Add pool");?></a></li>
+			<li class="nav"><a href="manage_vm_pool.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-sitemap fa-fw"></i><?php echo _("Add VMs to pool");?></a></li>
+			<li class="nav"><a href="manage_client_pool.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-sitemap fa-fw"></i><?php echo _("Add clients to pool");?></a></li>
+		    </ul>
+		</li>
     	        <li><a href="new_vm.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-laptop fa-fw"></i><?php echo _("Create Virtual Machines");?></a></li>
 		<li>
 	    	    <a href="#" aria-expanded="false"><span class="fa arrow"></span><i class="fa fa-cogs fa-fw"></i><?php echo _("Configuration");?></a>
@@ -194,8 +205,8 @@ set_lang();
 			<li class="nav"><a href="add_hypervisor.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-database fa-fw"></i><?php echo _("Add hypervisor");?></a></li>
 	    		<li class="nav"><a href="list_hypervisors.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-cloud fa-fw"></i><?php echo _("Modify hypervisors");?></a></li>
 			<li class="nav-divider"></li>
-			<li class="nav"><a href="add_user.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-user-plus fa-fw"></i><?php echo _("Add user");?></a></li>
-			<li class="nav"><a href="list_users.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-users fa-fw"></i><?php echo _("Modify users");?></a></li>
+			<li class="nav"><a href="add_user.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-user-plus fa-fw"></i><?php echo _("Add administrator");?></a></li>
+			<li class="nav"><a href="list_users.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-users fa-fw"></i><?php echo _("Modify administrator");?></a></li>
 		    </ul>
 		</li>
 		<li>
@@ -220,6 +231,7 @@ set_lang();
 	</div>
     </div>
 </div>
+
 </body>
 <script>
 function draw_table(){

@@ -28,7 +28,7 @@ set_lang();
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-             <h4 class="modal-title"><?php echo _("Add new administrator");?></h4>
+             <h4 class="modal-title"><?php echo _("Add new client");?></h4>
         </div>
         <div class="modal-body">
 	    <div class="row">
@@ -90,7 +90,7 @@ $(document).ready(function(){
 	
         $.ajax({
             type : 'POST',
-            url : 'update_users.php',
+            url : 'update_clients.php',
             data: {
 		type : 'new',
                 username : $('#username').val(),
