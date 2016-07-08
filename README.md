@@ -75,7 +75,7 @@ If installation is successful, you will be redirected to login page. Default cre
 
 **On Debian based systems:**
 
-    apt-get install qemu-kvm libvirt-bin sudo python python-requests virtinst
+    apt-get install qemu-kvm libvirt-bin sudo python python-requests virtinst libxml-xpath-perl
 
 **NOTICE: Ubuntu apparmor!**  
 

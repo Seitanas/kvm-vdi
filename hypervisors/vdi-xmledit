@@ -24,6 +24,12 @@ os.system("virsh dumpxml " + vmname + " > /tmp/" + vmname + ".xml")
 tree = ET.parse('/tmp/' + vmname+'.xml')
 root = tree.getroot()
 devices=root.find('devices')
+spicechannel = ET.Element("channel",{'type': 'unix'})
+devices.append(spicechannel)
+spicechannel.append(ET.Element("source",{'mode': 'bind'}))
+spicechannel.append(ET.Element("target",{'type': 'virtio', 'name': 'com.kvm-vdi.0'}))
+spicechannel.append(ET.Element("address",{'type': 'virtio-serial', 'controller': '0', 'bus': '0', 'port': '2'}))
+
 emulator = devices.find('emulator')
 emulator.text='/usr/local/VDI/vdi-wrapper'
 graphics = devices.find('graphics')
