@@ -68,7 +68,7 @@ set_lang();
     while ($x<sizeof($pool_reply)){
 	    $vm_count=get_SQL_array("SELECT COUNT(*) FROM poolmap_vm WHERE poolid='{$pool_reply[$x]['id']}'");
 	    $vm_count_available=get_SQL_array("SELECT COUNT(*) FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id WHERE poolmap_vm.poolid='{$pool_reply[$x]['id']}' AND vms.lastused < DATE_SUB(NOW(), INTERVAL 5 MINUTE) ");
-	    $already_have=get_SQL_array("SELECT COUNT(*) FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id WHERE poolmap_vm.poolid='{$pool_reply[$x]['id']}' AND vms.clientname='$username' AND vms.lastused > DATE_SUB(NOW(), INTERVAL 5 MINUTE)");
+	    $already_have=get_SQL_array("SELECT COUNT(*) FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id WHERE poolmap_vm.poolid='{$pool_reply[$x]['id']}' AND vms.clietid='$userid' AND vms.lastused > DATE_SUB(NOW(), INTERVAL 5 MINUTE)");
 	    $vm_image="text-warning";
 	    if ($already_have[0][0]==1)
 		$vm_image="text-success";
