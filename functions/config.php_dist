@@ -8,16 +8,22 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-06-28
+2016-07-08
 */
 ###################Dashboard config##########################
 $serviceurl='https://dashboardaddress/vdi';
 $language='en_EN';
 ############################################################
 
-##################vmWare Horizon config (if used)###########
-$vmView_server='view.someadress.tld';
+
+##################VM config#################################
+#Enable this if you want to reset VMs each time they are provided
+#to client. This will not affect machines, whic are taken over by
+#another thin client.
+$reset_vm=0;
 ############################################################
+
+
 
 ##################Hypervisor config#########################
 $temp_folder='/data_tmp/tmp';
@@ -39,4 +45,9 @@ $mysql_host='localhost';
 $mysql_db='vdi';
 $mysql_user='user';
 $mysql_pass='password';
+############################################################
+
+
+##################vmWare Horizon config (if used)###########
+$vmView_server='view.someadress.tld';
 ############################################################

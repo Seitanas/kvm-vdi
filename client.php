@@ -2,9 +2,20 @@
 
 include("functions/config.php");
 require_once('functions/functions.php');
-
 $client=$_SERVER['REMOTE_ADDR'];
-$xml=simplexml_load_file("functions/clients.xml") or die("Error: Cannot create object");
+slash_vars();
+if (!check_client_session()){
+    header ("Location: $serviceurl/client_index.php?error=1");
+    exit;
+}
+if (isset($_GET['protocol']))
+    $protocol=$_GET['protocol'];
+if (isset($_GET['pool']))
+    $pool=$_GET['pool'];
+$userid=$_SESSION['userid'];
+$username="test";
+$password="test";
+/*$xml=simplexml_load_file("functions/clients.xml") or die("Error: Cannot create object");
 
 $x=0;
 while ($xml->client[$x]['ip']){
@@ -19,6 +30,8 @@ while ($xml->client[$x]['ip']){
     }
     ++$x;
 }
+*/
+
 if ($protocol=="RDP"){
     $json_reply = json_encode(array('status'=>"OK",'protocol' => $protocol, 'address' => $machine_rdp_address));
 
@@ -29,26 +42,45 @@ if ($protocol=="vmView"){
 }
 
 if ($protocol=="SPICE"){
-    $vm=get_SQL_line("SELECT hypervisor,maintenance,spice_password FROM vms WHERE name='$machine_name'");
-    $h_reply=get_SQL_line("SELECT * FROM hypervisors WHERE id='$vm[0]'");
-    if ($vm[1]=="true"||$h_reply[4]==1){
+    $reset=0;
+
+    //First lets check if theres already machine provided for this user and it was last acessed within 5mins (takeover from another thin client).
+    $suggested_vm=get_SQL_array("SELECT * FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id WHERE poolmap_vm.poolid='$pool' AND vms.lastused > DATE_SUB(NOW(), INTERVAL 5 MINUTE) AND vms.clientid='$userid' LIMIT 1");
+    if (empty($suggested_vm)){//if there's no VMs to take over, get new available VM (the one which was accesed more than 5 minutes ago).
+	//we update first available machine first (to avoid race conditions)
+	add_SQL_line("UPDATE vms JOIN (SELECT poolmap_vm.vmid FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id WHERE poolmap_vm.poolid='$pool' AND vms.lastused < DATE_SUB(NOW(), INTERVAL 5 MINUTE) LIMIT 1) tmp ON vms.id=tmp.vmid SET vms.clientid='$userid',vms.lastused=NOW()");
+	$suggested_vm=get_SQL_array("SELECT * FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id WHERE poolmap_vm.poolid='$pool' AND vms.lastused > DATE_SUB(NOW(), INTERVAL 5 MINUTE) AND vms.clientid='$userid'");
+	$reset=1;
+    }
+    if (empty($suggested_vm)){//if there are no available VMs in pool, return error and exit
+        echo json_encode(array('status'=>"NO_FREE_VMS"));
+	exit;
+    }
+    add_SQL_line("UPDATE vms SET clientid='$userid',lastused=NOW() WHERE id='{$suggested_vm[0]['id']}'");
+    $machine_name=$suggested_vm[0]['name'];
+    $vm=get_SQL_array("SELECT hypervisor,maintenance,spice_password FROM vms WHERE name='$machine_name'");
+    $h_reply=get_SQL_array("SELECT * FROM hypervisors WHERE id='{$vm[0]['hypervisor']}'");
+    if ($vm[0]['maintenance']=="true"||$h_reply[0]['maintenance']==1){
         echo json_encode(array('status'=>"MAINTENANCE"));
 	exit;
     }
-    ssh_connect($h_reply[2].":".$h_reply[3]);
+    ssh_connect($h_reply[0]['ip'].":".$h_reply[0]['port']);
     $status=ssh_command("sudo virsh domdisplay ".$machine_name,true);
     $status=str_replace("spice://","",$status);
     $status=str_replace("\n","",$status);
-    $status=str_replace("localhost",$h_reply[5],$status);
+    $status=str_replace("localhost",$h_reply[0]['address2'],$status);
+    if ($reset_vm&&$reset)
+	ssh_command("sudo virsh reset ".$machine_name,true);
     if (empty($status)){
+	$agent_command=json_encode(array('vmname' => $machine_name, 'username' => $username, 'password' => $password));
 	$status='BOOTUP';
-        ssh_command("sudo virsh start ".$machine_name,true);
+        ssh_command('echo "' . addslashes($agent_command) . '"| socat /usr/local/VDI/kvm-vdi.sock - ',true);
 	reload_vm_info();	
     }
     if ($status=="BOOTUP")
 	$json_reply = json_encode(array('status'=>"BOOTUP",'protocol' => $protocol, 'address' => ''));
     else if ($status)
-        $json_reply = json_encode(array('status'=>"OK",'protocol' => $protocol, 'address' => $status, 'spice_password' => $vm[2]));
+        $json_reply = json_encode(array('status'=>"OK",'protocol' => $protocol, 'address' => $status, 'spice_password' => $vm[0]['spice_password']));
     else
 	$json_reply = json_encode(array('status'=>"FAIL",'protocol' => $protocol, 'address' => ''));
 }
