@@ -27,7 +27,10 @@ sys.argv[0]=path_to_kvm
 while (x != y):
     namearg=str(sys.argv[x])
     if (namearg=="-name"):
-	vmname=str(sys.argv[x+1])
+	vmname_tmp=str(sys.argv[x+1])
+	vmname_tmp=vmname_tmp.split(",")
+	vmname=vmname_tmp[0]
+	vmname=vmname.replace("guest=", "")
 	startup_procedure=1
     if "-spice" in namearg:
 	sys.argv[x+1]=sys.argv[x+1]+",password="+spice_password
