@@ -8,13 +8,15 @@ if (!check_client_session()){
     header ("Location: $serviceurl/client_index.php?error=1");
     exit;
 }
-if (isset($_GET['protocol']))
-    $protocol=$_GET['protocol'];
-if (isset($_GET['pool']))
-    $pool=$_GET['pool'];
+if (isset($_POST['protocol']))
+    $protocol=$_POST['protocol'];
+if (isset($_POST['pool']))
+    $pool=$_POST['pool'];
+if (isset($_POST['username']))
+    $username=$_POST['username'];
+if (isset($_POST['password']))
+    $password=$_POST['password'];
 $userid=$_SESSION['userid'];
-$username="test";
-$password="test";
 
 if ($protocol=="RDP"){
     $json_reply = json_encode(array('status'=>"OK",'protocol' => $protocol, 'address' => $machine_rdp_address));
