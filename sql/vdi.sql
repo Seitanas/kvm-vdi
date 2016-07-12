@@ -141,7 +141,7 @@ CREATE TABLE `vms` (
   `machine_type` varchar(25) NOT NULL DEFAULT '',
   `source_volume` varchar(255) NOT NULL DEFAULT '',
   `snapshot` varchar(11) NOT NULL DEFAULT '',
-  `maintenance` varchar(11) DEFAULT NULL,
+  `maintenance` varchar(11) NOT NULL DEFAULT '',
   `filecopy` varchar(255) NOT NULL DEFAULT '',
   `state` varchar(255) NOT NULL DEFAULT '',
   `spice_password` varchar(255) NOT NULL DEFAULT '',

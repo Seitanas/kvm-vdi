@@ -82,11 +82,11 @@ set_lang();
 		$pm_icons='<a href="#" class="shutdown"  id="' . $provided_vm[0]['id'] . '"><i class="pull-left fa fa-stop-circle-o text-danger" title="Shutdown machine"></i></a>';
 		$pm_icons=$pm_icons.'<a href="#" class="terminate"  id="' . $provided_vm[0]['id'] . '"><i class="pull-left fa fa-times-circle-o text-danger" title="Terminate machine"></i></a>';
 	    }
-	    echo'<div class="col-md-2">';
-		echo '<div class="pool_placeholder"></div>';
+	    echo'<div class="col-md-2">
+		    <div class="pool_placeholder"></div>';
 		echo '<div class="row text-info">
 		    <div class="pool_square">
-			<div><small>' . $pm_icons . $provided_vm[0]['name'] . '<small></div>
+			<div><small>' . $pm_icons . $provided_vm[0]['name'] . '</small></div>
 			<div>
 		    	    <a href="#" id="' . $pool_reply[$x]['id'] . '" class="pools">
 	    <span class="fa-stack fa-4x">

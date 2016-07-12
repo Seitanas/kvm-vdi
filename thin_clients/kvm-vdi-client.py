@@ -30,7 +30,8 @@ sw.add(v)
 w.maximize()
 w.connect("destroy", lambda q: gtk.main_quit())
 http_session = requests.session()
-
+username=""
+password=""
 
 class Login(QtGui.QDialog):
     def __init__(self, parent=None):
@@ -44,9 +45,14 @@ class Login(QtGui.QDialog):
         layout.addWidget(self.User)
         layout.addWidget(self.Pass)
         layout.addWidget(self.buttonLogin)
+
     def handleLogin(self):
+	global username
+	global password
 	reply=http_session.post(dashboard_path+"client_pools.php", data={'username': str(self.User.text()), 'password': str(self.Pass.text())}, verify=False)
 	if reply.text!='LOGIN_FAILURE':
+	    username=str(self.User.text())
+	    password=str(self.Pass.text())
 	    v.connect("notify::title", pool_click)
 	    v.load_html_string(str(reply.text),dashboard_path)
 	    self.accept()
@@ -74,7 +80,6 @@ class vm_heartbeat(threading.Thread):
 	    hb_reply=http_session.post(dashboard_path+"client_hb.php", data={'vmname': self.vmname}, verify=False)
             time.sleep(25)
 
-
 def dashboard_reload():
     page=http_session.get(dashboard_path+"client_pools.php", verify=False)
     v.load_html_string(str(page.text),dashboard_path)
@@ -94,15 +99,15 @@ def pool_click(v, param):
 	    dashboard_reload()
 	else:
 	    poolid=vdi_message
-	    print poolid
-	    reply=http_session.get(dashboard_path+"client.php?protocol=SPICE&pool="+poolid,verify=False);
+	    reply=http_session.post(dashboard_path+"client.php", data={'pool': poolid, 'protocol': "SPICE", 'username': username, 'password': password} ,verify=False);
+	    print reply.text
 	    data=json.loads(reply.text)
 	    if data['status']=='MAINTENANCE':
 		QtGui.QMessageBox.information(login, 'Information', 'This pool is in maintenance mode')
 	    retries=0
 	    while data['status']=="BOOTUP" and retries < 10 :
 		print "BOOTUP, waiting"
-		reply=http_session.get(dashboard_path+"client.php?protocol=SPICE&pool="+poolid);
+		reply=http_session.post(dashboard_path+"client.php", data={'pool': poolid, 'protocol': "SPICE", 'username': username, 'password': password} ,verify=False);
 		data=json.loads(reply.text)
 		time.sleep(1)
 	    if data['status']=='OK':
