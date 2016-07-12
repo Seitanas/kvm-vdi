@@ -15,22 +15,6 @@ if (isset($_GET['pool']))
 $userid=$_SESSION['userid'];
 $username="test";
 $password="test";
-/*$xml=simplexml_load_file("functions/clients.xml") or die("Error: Cannot create object");
-
-$x=0;
-while ($xml->client[$x]['ip']){
-    if ($xml->client[$x]['ip']==$client){
-	$protocol=$xml->client[$x]->{'protocol'};
-	$protocol=str_replace("\n","",$protocol);
-	$machine_name=$xml->client[$x]->{'machine-name'};
-	$machine_rdp_address=$xml->client[$x]->{'machine-rdp-address'};
-	$machine_rdp_address=str_replace("\n","",$machine_rdp_address);
-	$pool=$xml->client[$x]->{'pool'};
-	$pool=str_replace("\n","",$pool);
-    }
-    ++$x;
-}
-*/
 
 if ($protocol=="RDP"){
     $json_reply = json_encode(array('status'=>"OK",'protocol' => $protocol, 'address' => $machine_rdp_address));
@@ -58,7 +42,7 @@ if ($protocol=="SPICE"){
     }
     add_SQL_line("UPDATE vms SET clientid='$userid',lastused=NOW() WHERE id='{$suggested_vm[0]['id']}'");
     $machine_name=$suggested_vm[0]['name'];
-    $vm=get_SQL_array("SELECT hypervisor,maintenance,spice_password FROM vms WHERE name='$machine_name'");
+    $vm=get_SQL_array("SELECT hypervisor,maintenance,spice_password,name FROM vms WHERE name='$machine_name'");
     $h_reply=get_SQL_array("SELECT * FROM hypervisors WHERE id='{$vm[0]['hypervisor']}'");
     if ($vm[0]['maintenance']=="true"||$h_reply[0]['maintenance']==1){
         echo json_encode(array('status'=>"MAINTENANCE"));
@@ -80,7 +64,7 @@ if ($protocol=="SPICE"){
     if ($status=="BOOTUP")
 	$json_reply = json_encode(array('status'=>"BOOTUP",'protocol' => $protocol, 'address' => ''));
     else if ($status)
-        $json_reply = json_encode(array('status'=>"OK",'protocol' => $protocol, 'address' => $status, 'spice_password' => $vm[0]['spice_password']));
+        $json_reply = json_encode(array('status'=>"OK",'protocol' => $protocol, 'address' => $status, 'spice_password' => $vm[0]['spice_password'], 'name' => $vm[0]['name']));
     else
 	$json_reply = json_encode(array('status'=>"FAIL",'protocol' => $protocol, 'address' => ''));
 }
