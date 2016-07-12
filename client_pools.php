@@ -37,6 +37,7 @@ if (!check_client_session()){
     header ("Location: $serviceurl/client_index.php?error=1");
     exit;
 }
+reload_vm_info();
 set_lang();
 ?>
 <!DOCTYPE html>
@@ -66,18 +67,26 @@ set_lang();
     $pool_reply=get_SQL_array("SELECT pool.id, pool.name FROM poolmap  LEFT JOIN pool ON poolmap.poolid=pool.id WHERE clientid='$userid'");
     $x=0;
     while ($x<sizeof($pool_reply)){
-	    $vm_count=get_SQL_array("SELECT COUNT(*) FROM poolmap_vm WHERE poolid='{$pool_reply[$x]['id']}'");
-	    $vm_count_available=get_SQL_array("SELECT COUNT(*) FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id WHERE poolmap_vm.poolid='{$pool_reply[$x]['id']}' AND vms.lastused < DATE_SUB(NOW(), INTERVAL 5 MINUTE) ");
-	    $already_have=get_SQL_array("SELECT COUNT(*) FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id WHERE poolmap_vm.poolid='{$pool_reply[$x]['id']}' AND vms.clientid='$userid' AND vms.lastused > DATE_SUB(NOW(), INTERVAL 5 MINUTE)");
+	    $vm_count=get_SQL_array("SELECT COUNT(*) FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id LEFT JOIN hypervisors ON vms.hypervisor=hypervisors.id WHERE poolmap_vm.poolid='{$pool_reply[$x]['id']}' AND vms.maintenance!='true' AND hypervisors.maintenance!=1");
+	    $vm_count_available=get_SQL_array("SELECT COUNT(*) FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id LEFT JOIN hypervisors ON vms.hypervisor=hypervisors.id  WHERE poolmap_vm.poolid='{$pool_reply[$x]['id']}' AND vms.maintenance!='true'  AND hypervisors.maintenance!=1 AND vms.lastused < DATE_SUB(NOW(), INTERVAL 5 MINUTE) ");
+	    $already_have=get_SQL_array("SELECT COUNT(*) FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id LEFT JOIN hypervisors ON vms.hypervisor=hypervisors.id  WHERE poolmap_vm.poolid='{$pool_reply[$x]['id']}'AND vms.maintenance!='true' AND hypervisors.maintenance!=1 AND vms.clientid='$userid' AND vms.lastused > DATE_SUB(NOW(), INTERVAL 5 MINUTE)");
 	    $vm_image="text-warning";
-	    if ($already_have[0][0]==1)
+	    $provided_vm[0]['name']="none";
+	    if ($already_have[0][0]==1){
 		$vm_image="text-success";
+		$provided_vm=get_SQL_array("SELECT vms.name,vms.state,vms.id FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id LEFT JOIN hypervisors ON vms.hypervisor=hypervisors.id  WHERE poolmap_vm.poolid='{$pool_reply[$x]['id']}'AND vms.maintenance!='true' AND hypervisors.maintenance!=1 AND vms.clientid='$userid' AND vms.lastused > DATE_SUB(NOW(), INTERVAL 5 MINUTE)");
+	    }
 	    if ($vm_count_available[0][0]==0)
 		$vm_image="text-muted";
+	    if ($provided_vm[0]['state']=='running'){
+		$pm_icons='<a href="#" class="shutdown"  id="' . $provided_vm[0]['id'] . '"><i class="pull-left fa fa-stop-circle-o text-danger" title="Shutdown machine"></i></a>';
+		$pm_icons=$pm_icons.'<a href="#" class="terminate"  id="' . $provided_vm[0]['id'] . '"><i class="pull-left fa fa-times-circle-o text-danger" title="Terminate machine"></i></a>';
+	    }
 	    echo'<div class="col-md-2">';
 		echo '<div class="pool_placeholder"></div>';
 		echo '<div class="row text-info">
 		    <div class="pool_square">
+			<div><small>' . $pm_icons . $provided_vm[0]['name'] . '<small></div>
 			<div>
 		    	    <a href="#" id="' . $pool_reply[$x]['id'] . '" class="pools">
 	    <span class="fa-stack fa-4x">
@@ -108,8 +117,27 @@ set_lang();
 <script>
 $(document).ready(function(){
     $('.pools').click(function() {
+	document.title = ""
 	document.title = "kvm-vdi-msg:" + $(this).attr('id')
     })
+    $('.shutdown').click(function() {
+	document.title = ""
+	document.title = "kvm-vdi-msg:PM:shutdown:" + $(this).attr('id')
+    })
+    $('.terminate').click(function() {
+	document.title = ""
+	document.title = "kvm-vdi-msg:PM:destroy:" + $(this).attr('id')
+    })
+    function PM(vmid,action){
+    $.ajax({
+            type : 'POST',
+            url : 'client_power.php',
+            data: {
+                vm : vmid,
+                action : action,
+            },
+	})
+    }
 })
 </script>
   </body>

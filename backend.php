@@ -10,7 +10,6 @@ if (isset($_POST['spice_password']))
 if ($pass==$backend_pass){
     $data=$_POST['data'];
     if (isset($vm)&&isset($data)){
-#        file_put_contents("tmp/".$tmpname.".txt", $data);
 	if ($data<100)
 	    add_SQL_line("UPDATE vms SET filecopy='$data' WHERE id='$vm'");
 	else
