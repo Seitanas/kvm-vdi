@@ -1,0 +1,9 @@
+
+#pragma once
+
+// {82D99859-33A8-438b-8B83-3988A20089DD}
+DEFINE_GUID(CLSID_OVirtProvider, 0x82d99859, 0x33a8, 0x438b, 0x8b, 0x83, 0x39, 0x88, 0xa2, 0x0, 0x89, 0xdd);
+
+void DllAddRef();
+
+void DllRelease();

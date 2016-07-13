@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2012 for Windows Desktop
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OVirtCredProv", "OVirtCredProv.vcxproj", "{3FA043C2-E5CF-4652-86FB-C3D985C9F1AA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		64bit|Win32 = 64bit|Win32
+		64bit|x64 = 64bit|x64
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3FA043C2-E5CF-4652-86FB-C3D985C9F1AA}.64bit|Win32.ActiveCfg = 64bit|Win32
+		{3FA043C2-E5CF-4652-86FB-C3D985C9F1AA}.64bit|Win32.Build.0 = 64bit|Win32
+		{3FA043C2-E5CF-4652-86FB-C3D985C9F1AA}.64bit|x64.ActiveCfg = 64bit|Win32
+		{3FA043C2-E5CF-4652-86FB-C3D985C9F1AA}.Debug|Win32.ActiveCfg = Release|x64
+		{3FA043C2-E5CF-4652-86FB-C3D985C9F1AA}.Debug|Win32.Build.0 = Release|x64
+		{3FA043C2-E5CF-4652-86FB-C3D985C9F1AA}.Debug|x64.ActiveCfg = Debug|Win32
+		{3FA043C2-E5CF-4652-86FB-C3D985C9F1AA}.Release|Win32.ActiveCfg = Release|Win32
+		{3FA043C2-E5CF-4652-86FB-C3D985C9F1AA}.Release|Win32.Build.0 = Release|Win32
+		{3FA043C2-E5CF-4652-86FB-C3D985C9F1AA}.Release|x64.ActiveCfg = Release|x64
+		{3FA043C2-E5CF-4652-86FB-C3D985C9F1AA}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
