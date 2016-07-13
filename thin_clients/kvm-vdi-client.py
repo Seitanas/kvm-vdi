@@ -18,8 +18,8 @@ import os
 import time
 
 config = ConfigParser()
-config.read('/usr/local/VDI-client/config')
-#config.read('/home/seitan/projects/kvm-vdi-client/config')
+#config.read('/usr/local/VDI-client/config')
+config.read('/home/seitan/projects/kvm-vdi-client/config')
 dashboard_path = config.get('server', 'address')
 
 
@@ -135,13 +135,13 @@ def pool_click(v, param):
 		    viewer_config.write(configfile)
 		os.system("/usr/bin/remote-viewer --kiosk-quit=on-disconnect  --kiosk /tmp/" + tmpname + ".cfg ")
 		print "Exiting virt-viewer"
-		w.set_title("kvm-vdi-msg:")
 		t.stop()
 		t.join(1)
 
 app = QtGui.QApplication(sys.argv)
 login = Login()
 if login.exec_() == QtGui.QDialog.Accepted:
+    w.set_title("KVM-VDI client")
     w.show_all()
     gtk.main()
 
