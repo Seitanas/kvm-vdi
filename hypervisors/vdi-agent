@@ -7,6 +7,7 @@ import select
 import subprocess
 import re
 from threading import Thread
+from ConfigParser import ConfigParser
 
 sockfile = "/usr/local/VDI/kvm-vdi.sock"
 
@@ -19,6 +20,9 @@ server = socket.socket( socket.AF_UNIX, socket.SOCK_STREAM )
 server.bind(sockfile)
 os.chmod(sockfile, 0o777)
 server.listen(5)
+config = ConfigParser()
+config.read('/usr/local/VDI/config')
+socket_timeout = config.get('agent', 'socket_timeout')
 
 def vm_routine(vmname, username, password):
     data = ""
@@ -29,7 +33,7 @@ def vm_routine(vmname, username, password):
     try:
 	virtio_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 	virtio_socket.connect(socket_path[0])
-	ready = select.select([virtio_socket], [], [], 60) #Read VMs spice channel for 60 seconds. We asume that VM must boot in 60s and start ovirt-agent.
+	ready = select.select([virtio_socket], [], [], socket_timeout) #Read VMs spice channel for n seconds. We asume that VM must boot in n seconds and start ovirt-agent.
 	if ready[0]:
 	    data = virtio_socket.recv(32)
 	if data:

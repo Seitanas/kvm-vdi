@@ -1,6 +1,9 @@
 [server]
-address=http://dashboard_address/kvm-vdi/
+address=http://192.168.0.20/kvm-vdi/
 password=12345
 [hypervisor]
-tmp_snapshots=/data_tmp
+tmp_snapshots=/tmp
 path_to_kvm=/usr/bin/kvm
+[agent]
+#Guest agent socket timeout in seconds
+socket_timeout=60
