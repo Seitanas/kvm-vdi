@@ -1,0 +1,10 @@
+#ifndef OVIRT_AGENT_CREDPROV_AFXRES_H_INCLUDED
+#define OVIRT_AGENT_CREDPROV_AFXRES_H_INCLUDED
+
+#include <windows.h>
+
+#ifndef IDC_STATIC
+#   define IDC_STATIC (-1)
+#endif
+
+#endif //OVIRT_AGENT_CREDPROV_AFXRES_H_INCLUDED

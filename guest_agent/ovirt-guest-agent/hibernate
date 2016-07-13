@@ -1,0 +1,24 @@
+#!/bin/sh
+
+usage() {
+    echo "usage: $0 disk|mem"
+    exit 1
+}
+
+state="$1"
+
+if [ "x$state" = "xdisk" ]; then
+    param="hibernate"
+elif [ "x$state" = "xmem" ]; then
+    param="suspend"
+else
+    usage
+fi
+
+pm=`which pm-$param`
+
+if [ -x $pm ]; then
+    $pm
+else
+    echo $state > /sys/power/state
+fi

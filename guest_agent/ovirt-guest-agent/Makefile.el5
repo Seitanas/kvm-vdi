@@ -1,0 +1,41 @@
+#
+# Copyright (C) 2010-2012 Red Hat, Inc. All rights reserved.
+# Use is subject to license terms.
+#
+
+FILES=ovirt-guest-agent.py OVirtAgentLogic.py VirtIoChannel.py \
+	GuestAgentLinux2.py hibernate bytesio.py ../configurations/default.conf \
+	../configurations/default-logger.conf ../scripts/diskmapper/diskmapper.el5
+
+AGENTDIR=/usr/share/ovirt-guest-agent
+CONFDIR=/etc
+
+all:
+
+install:
+	mkdir -p $(DESTDIR)$(AGENTDIR)
+	mkdir -p $(DESTDIR)$(CONFDIR)/init.d
+	mkdir -p $(DESTDIR)$(CONFDIR)/udev/rules.d
+	mkdir -p $(DESTDIR)$(CONFDIR)/pam.d
+	mkdir -p $(DESTDIR)$(CONFDIR)/security/console.apps
+	cp $(FILES) $(DESTDIR)$(AGENTDIR)
+	cp ../configurations/ovirt-guest-agent.conf $(DESTDIR)$(CONFDIR)
+	cp ovirt-guest-agent $(DESTDIR)$(CONFDIR)/init.d
+	cp ovirt-guest-agent.el5.rules $(DESTDIR)$(CONFDIR)/udev/rules.d/55-ovirt-guest-agent.rules
+	cp pam/ovirt-shutdown $(DESTDIR)$(CONFDIR)/pam.d
+	cp pam/ovirt-hibernate $(DESTDIR)$(CONFDIR)/pam.d
+	cp consoleapps/ovirt-shutdown $(DESTDIR)$(CONFDIR)/security/console.apps
+	cp consoleapps/ovirt-hibernate $(DESTDIR)$(CONFDIR)/security/console.apps
+
+uninstall:
+	$(RM) $(DESTDIR)$(CONFDIR)/security/console.apps/ovirt-shutdown
+	$(RM) $(DESTDIR)$(CONFDIR)/security/console.apps/ovirt-hibernate
+	$(RM) $(DESTDIR)$(CONFDIR)/pam.d/ovirt-shutdown
+	$(RM) $(DESTDIR)$(CONFDIR)/pam.d/ovirt-hibernate
+	$(RM) $(DESTDIR)$(CONFDIR)/udev/rules.d/55-ovirt-guest-agent.rules
+	$(RM) $(DESTDIR)$(CONFDIR)/init.d/ovirt-guest-agent
+	$(RM) $(DESTDIR)$(CONFDIR)/ovirt-guest-agent.conf
+	(cd $(DESTDIR)$(AGENTDIR); $(RM) $(FILES); cd ..; rmdir $(DESTDIR)$(AGENTDIR))
+
+clean:
+	$(RM) -f *~ *.pyc

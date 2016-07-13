@@ -1,0 +1,14 @@
+.gitattributes export-ignore
+logoff export-ignore
+shutdown.exe export-ignore
+pyVdsAgentService.vcproj export-ignore
+UsbClient.py export-ignore
+setup.py export-ignore
+setupSendMessage.py export-ignore
+sendMessage.py export-ignore
+guestVdsAgentService.py export-ignore
+qGuestAgentWin32.py export-ignore
+vdsAgentInitiator.py export-ignore
+vdsAgentUtils.py export-ignore
+windows_support.py export-ignore
+*.bat export-ignore
