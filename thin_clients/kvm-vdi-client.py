@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import gtk
 import webkit
 import json
@@ -16,8 +18,8 @@ import os
 import time
 
 config = ConfigParser()
-#config.read('/usr/local/VDI-client/config')
-config.read('/home/seitan/projects/kvm-vdi-client/config')
+config.read('/usr/local/VDI-client/config')
+#config.read('/home/seitan/projects/kvm-vdi-client/config')
 dashboard_path = config.get('server', 'address')
 
 
@@ -131,7 +133,7 @@ def pool_click(v, param):
     		viewer_config.set('virt-viewer', 'password', spice_password)
     		with open('/tmp/' + tmpname + '.cfg', 'wb') as configfile:
 		    viewer_config.write(configfile)
-		os.system("/usr/bin/remote-viewer /tmp/" + tmpname + ".cfg ")
+		os.system("/usr/bin/remote-viewer --kiosk-quit=on-disconnect  --kiosk /tmp/" + tmpname + ".cfg ")
 		print "Exiting virt-viewer"
 		w.set_title("kvm-vdi-msg:")
 		t.stop()
