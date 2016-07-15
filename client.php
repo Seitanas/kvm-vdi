@@ -71,5 +71,5 @@ if ($protocol=="SPICE"){
 	$json_reply = json_encode(array('status'=>"FAIL",'protocol' => $protocol, 'address' => ''));
 }
 echo $json_reply;
-add_sql_line("INSERT INTO log (ip,message) VALUES ('$client','$json_reply')");
+add_sql_line("INSERT INTO log (ip,message, date) VALUES ('$client','$json_reply', NOW())");
 ?>
