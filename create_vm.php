@@ -47,7 +47,10 @@ if ($machine_type=='simplemachine'||$machine_type=='sourcemachine'){
     echo $h_reply[0]."ddd";
     $x=0;
     while ($x<$machinecount){
-	$name=$machinename.sprintf("%0" . strlen($machinecount) . "s", $x+1);
+	if ($machinecount>1)
+	    $name=$machinename.sprintf("%0" . strlen($machinecount) . "s", $x+1);
+	else
+    	    $name=$machinename;
 	$disk=$source_drivepath . '/' . $name . "-" . uniqid() . ".qcow2";
 	$vm_cmd="sudo virt-install --name=" . $name . " --disk path=" . $disk . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . $numcpu . ",cores=" . $numcore . " --ram=" . $numram . " --network bridge=" . $network . ",model=virtio --os-type=" . $os_type . " --os-variant=" . $os_version . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --noreboot " . $boot_cmd;
 	$drive_cmd="sudo qemu-img create -f qcow2 -o size=" . $source_drive_size . "G " . $disk;

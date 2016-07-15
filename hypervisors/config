@@ -7,3 +7,29 @@ path_to_kvm=/usr/bin/kvm
 [agent]
 #Guest agent socket timeout in seconds
 socket_timeout=60
+
+
+
+[loggers]
+keys=root
+
+[handlers]
+keys=VDIconsoleHandler
+
+[formatters]
+keys=VDIformatter
+
+[logger_root]
+level=DEBUG
+handlers=VDIconsoleHandler
+
+[handler_VDIconsoleHandler]
+#class=StreamHandler
+class=handlers.RotatingFileHandler
+args=('/var/log/VDI/vdi-agent.log', 'a+', 100*1024, 5)
+level=INFO
+formatter=VDIformatter
+#args=(sys.stderr,)
+
+[formatter_VDIformatter]
+format=%(asctime)s %(name)-12s %(levelname)-8s %(message)s

@@ -70,3 +70,4 @@
     text-align:center;
     padding-top:calc(10% - 20px);
 }
+.top-buffer { margin-top:20px; }
