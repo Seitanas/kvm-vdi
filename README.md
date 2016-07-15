@@ -106,6 +106,10 @@ If passwordless connection is established, everythin is fine.
 On each hypervisor create /usr/local/VDI folder. Copy all files from "hypervisors/" folder to /usr/local/VDI/ folder.  
 Edit config file accordingly.  
 Edit your /etc/sudoers file according to examlpe of hypervisors/sudeors file.  
+Copy systemd init script `vdi-agent.service` to your `/etc/systemd/system`.  
+Reload systemd: `systemctl daemon-reload`  
+Enable vdi-agent: `systemctl enable vdi-agent`  
+Start vdi-agent: `systemctl start vdi-agent`  
   
 
 
@@ -113,24 +117,14 @@ Edit your /etc/sudoers file according to examlpe of hypervisors/sudeors file.
 
 **On Debian based systems:**
 
-    apt-get xdotool x11-utils xwit python python-requests virt-viewer freerdp-x11 pulseaudio xinit
+    apt-get python python-requests virt-viewer python-qt4 python-webkit python-urllib3 python-gtk2
 
 Download and install vmware-view viewer from VMware if needed.  
 Copy files from `thin_clients/` folder to your clients `/usr/local/VDI-client/` folder.  
 Edit `/usr/local/VDI-client/config` file to fit your configuration.  
-If you are using plain thin-clients (without x-window manager), you can use systemd for VDI client startup. Copy vdi init script from `thin_clients/` folder to systemd script folder:
 
-    cp thin_clients/vdi.service /etc/systemd/system/
-    systemctl daemon-reload
-
-If thin-clients do use some kind of x-window manager, run `/usr/local/VDI-client/vdi` application manually from window manager itself.  
   
-Edit clients.xml file in your dashboard, specify IP address of your thin client, protocol and name of VDI machine it will use.  
-Start vdi service:
-
-    systemctl start vdi
-
-You should see VDI machine powering up and your thin client displaying VMs monitor output.
+run /usr/local/VDI-client/kvm-vdi-client
   
   
 ### Our practice

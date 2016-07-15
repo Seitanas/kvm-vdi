@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-
-import gtk
+import gtk, glib
 import webkit
 import json
 from ConfigParser import ConfigParser
@@ -16,10 +15,13 @@ from string import ascii_lowercase
 from string import digits
 import os
 import time
+import logging
+import logging.config
 
 config = ConfigParser()
-#config.read('/usr/local/VDI-client/config')
-config.read('/home/seitan/projects/kvm-vdi-client/config')
+config.read('/usr/local/VDI-client/config')
+logging.config.fileConfig('/usr/local/VDI-client/config')
+logger = logging.getLogger('root')
 dashboard_path = config.get('server', 'address')
 
 
@@ -64,27 +66,46 @@ class Login(QtGui.QDialog):
 
 
 class vm_heartbeat(threading.Thread):
-
     def __init__(self, vmname):
         super(vm_heartbeat, self).__init__()
         self._stop = threading.Event()
 	self.vmname = vmname
-
     def stop(self):
         self._stop.set()
-
     def stopped(self):
         return self._stop.isSet()
-    
     def run(self):
+        seconds=0
         while not self.stopped():
-            print self.vmname
-	    hb_reply=http_session.post(dashboard_path+"client_hb.php", data={'vmname': self.vmname}, verify=False)
-            time.sleep(25)
+	    if seconds==30:
+		hb_reply=http_session.post(dashboard_path+"client_hb.php", data={'vmname': self.vmname}, verify=False)
+		logger.debug("VM heartbeat")
+		seconds=0
+	    if not self.stopped() and seconds < 30: #sleep for one second. Longer sleep times cause thread to wait on exit.
+        	time.sleep(1)
+		seconds += 1
 
 def dashboard_reload():
-    page=http_session.get(dashboard_path+"client_pools.php", verify=False)
-    v.load_html_string(str(page.text),dashboard_path)
+    try:
+	page=http_session.get(dashboard_path+"client_pools.php", verify=False)
+	glib.idle_add(v.load_html_string,str(page.text),dashboard_path)
+    except:
+	logger.debug ("Dashboard timeout")
+
+class refresh_timer(threading.Thread):
+    def __init__(self):
+        super(refresh_timer, self).__init__()
+        self._stop = threading.Event()
+    def stop(self):
+        self._stop.set()
+    def stopped(self):
+        return self._stop.isSet()
+    def run(self):
+        while not self.stopped():
+            time.sleep(5)
+	    logger.debug ("Dashboard reload")
+	    dashboard_reload()
+
 
 def pool_click(v, param):
     if not v.get_title():
@@ -102,21 +123,18 @@ def pool_click(v, param):
 	else:
 	    poolid=vdi_message
 	    reply=http_session.post(dashboard_path+"client.php", data={'pool': poolid, 'protocol': "SPICE", 'username': username, 'password': password} ,verify=False);
-	    print reply.text
 	    data=json.loads(reply.text)
 	    if data['status']=='MAINTENANCE':
 		QtGui.QMessageBox.information(login, 'Information', 'This pool is in maintenance mode')
 	    retries=0
 	    while data['status']=="BOOTUP" and retries < 10 :
-		print "BOOTUP, waiting"
+		logger.info("BOOTUP, waiting")
 		reply=http_session.post(dashboard_path+"client.php", data={'pool': poolid, 'protocol': "SPICE", 'username': username, 'password': password} ,verify=False);
 		data=json.loads(reply.text)
 		time.sleep(1)
 	    if data['status']=='OK':
-#		page=http_session.get(dashboard_path+"client_pools.php", verify=False)
-#		v.load_html_string(str(page.text),dashboard_path)
 		dashboard_reload()
-		print "OK, starting HB thread & viewer"
+		logger.info("OK, starting HB thread & viewer")
 		vmname=data['name']
 		t = vm_heartbeat(vmname)
 		t.daemon=True
@@ -134,15 +152,22 @@ def pool_click(v, param):
     		with open('/tmp/' + tmpname + '.cfg', 'wb') as configfile:
 		    viewer_config.write(configfile)
 		os.system("/usr/bin/remote-viewer --kiosk-quit=on-disconnect  --kiosk /tmp/" + tmpname + ".cfg ")
-		print "Exiting virt-viewer"
+		#os.system("/usr/bin/remote-viewer /tmp/" + tmpname + ".cfg ")
+		logger.info("Exiting virt-viewer")
 		t.stop()
-		t.join(1)
+		t.join()
 
 app = QtGui.QApplication(sys.argv)
 login = Login()
 if login.exec_() == QtGui.QDialog.Accepted:
+    r_t=refresh_timer()
+    r_t.start()
     w.set_title("KVM-VDI client")
     w.show_all()
     gtk.main()
 
-
+r_t.stop()
+r_t.join()
+#t.stop()
+#r_t.join()
+#t.join()

@@ -1,9 +1,23 @@
 [server]
-address=http://dashboard_address/kvm-vdi/
-[thin-client]
-#Define, what kind of x-window environment thin clients use:
-#Thin client without any window manager, - just xorg+xinit, use:
-#xsystem=plain
-#If thin client is using some kind of window manager and x-window system starts up automatically, use:
-#xsystem=xwindow
-xsystem=plain
+address=http://192.168.0.20/kvm-vdi/
+
+[loggers]
+keys=root
+
+[handlers]
+keys=VDIconsoleHandler
+
+[formatters]
+keys=VDIformatter
+
+[logger_root]
+handlers=VDIconsoleHandler
+level=INFO
+
+[handler_VDIconsoleHandler]
+class=StreamHandler
+level=INFO
+formatter=VDIformatter
+args=(sys.stderr,)
+[formatter_VDIformatter]
+format=%(asctime)s %(name)-12s %(levelname)-8s %(message)s

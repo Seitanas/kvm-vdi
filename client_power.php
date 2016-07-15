@@ -31,6 +31,6 @@ if ($action=="shutdown"){
 if ($action=="destroy"){
     ssh_command("sudo virsh destroy " . $v_reply[0]['name'], true);
 }
-#reload_vm_info();
+reload_vm_info();
 exit;
 ?>

@@ -37,7 +37,6 @@ if (!check_client_session()){
     header ("Location: $serviceurl/client_index.php?error=1");
     exit;
 }
-reload_vm_info();
 set_lang();
 ?>
 <!DOCTYPE html>
@@ -60,7 +59,7 @@ set_lang();
   </head>
   <body>
     <div class="container">
-	<div class="row">
+	<div class="row top-buffer">
 <?php 
     $userid=$_SESSION['userid'];
     $username=$_SESSION['username'];
@@ -80,7 +79,7 @@ set_lang();
 	    $pm_icons="";
 	    if ($vm_count_available[0][0]==0)
 		$vm_image="text-muted";
-	    if ($provided_vm[0]['state']=='running'){
+	    if ($provided_vm[0]['state']=='running'||$provided_vm[0]['state']=='pmsuspended'){
 		$pm_icons='<a href="#" class="shutdown"  id="' . $provided_vm[0]['id'] . '"><i class="pull-left fa fa-stop-circle-o text-danger" title="Shutdown machine"></i></a>';
 		$pm_icons=$pm_icons.'<a href="#" class="terminate"  id="' . $provided_vm[0]['id'] . '"><i class="pull-left fa fa-times-circle-o text-danger" title="Terminate machine"></i></a>';
 	    }
@@ -109,7 +108,7 @@ set_lang();
 </div>'."\n";
 	    ++$x;
 	    if ((($x % 3) / 3)==0)
-		echo '</div>' . "\n". '<div class="row">' . "\n";
+		echo '</div>' . "\n". '<div class="row top-buffer">' . "\n";
 
     }?>
 	</div>
