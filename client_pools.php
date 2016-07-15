@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-07-05
+2016-07-15
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -89,7 +89,7 @@ set_lang();
 	    $pm_icons="";
 	    if ($vm_count_available[0][0]==0)
 		$vm_image="text-muted";
-	    if ($provided_vm[0]['state']=='running'||$provided_vm[0]['state']=='pmsuspended'){
+	    if ($provided_vm[0]['state']=='running'||$provided_vm[0]['state']=='pmsuspended'||$provided_vm[0]['state']=='paused'){
 		$pm_icons='<a href="#" class="shutdown"  id="' . $provided_vm[0]['id'] . '"><i class="pull-left fa fa-stop-circle-o text-danger" title="Shutdown machine"></i></a>';
 		$pm_icons=$pm_icons.'<a href="#" class="terminate"  id="' . $provided_vm[0]['id'] . '"><i class="pull-left fa fa-times-circle-o text-danger" title="Terminate machine"></i></a>';
 	    }
