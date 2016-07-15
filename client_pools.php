@@ -58,11 +58,21 @@ set_lang();
     <![endif]-->
   </head>
   <body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+        <?php
+	$userid=$_SESSION['userid'];
+	$username=$_SESSION['username'];
+	echo '<a class="navbar-brand">' . $username . '</a>';
+	?>
+    </div>
+  </div>
+</nav>
     <div class="container">
-	<div class="row top-buffer">
+	<div class="row">
 <?php 
-    $userid=$_SESSION['userid'];
-    $username=$_SESSION['username'];
+
     $pool_reply=get_SQL_array("SELECT pool.id, pool.name FROM poolmap  LEFT JOIN pool ON poolmap.poolid=pool.id WHERE clientid='$userid'");
     $x=0;
     while ($x<sizeof($pool_reply)){
@@ -83,32 +93,47 @@ set_lang();
 		$pm_icons='<a href="#" class="shutdown"  id="' . $provided_vm[0]['id'] . '"><i class="pull-left fa fa-stop-circle-o text-danger" title="Shutdown machine"></i></a>';
 		$pm_icons=$pm_icons.'<a href="#" class="terminate"  id="' . $provided_vm[0]['id'] . '"><i class="pull-left fa fa-times-circle-o text-danger" title="Terminate machine"></i></a>';
 	    }
-	    echo'<div class="col-md-2">
-		    <div class="pool_placeholder"></div>';
+	    echo'<div class="col-md-2">';
 		echo '<div class="row text-info">
-		    <div class="pool_square">
-			<div><small>' . $pm_icons . $provided_vm[0]['name'] . '</small></div>
-			<div>
-		    	    <a href="#" id="' . $pool_reply[$x]['id'] . '" class="pools">
-	    <span class="fa-stack fa-4x">
-		<i class="fa fa-square-o fa-stack-2x"></i>
-		<i class="fa fa-power-off fa-stack-1x ' . $vm_image . '"></i>
-	    </span>
-	    </a>
+		    <div class="panel panel-default">
+			<div class="panel-heading">
+			    <div class="row">
+				<div class="col-xs-4">
+				    <small>' . $pm_icons  . '</small>
+				</div>
+				<div class="col-xs-8">
+				    <small>' . $provided_vm[0]['name'] . '</small>
+				</div>
+			    </div>
+			    <div class="row">	
+				<div class="text-center">
+		    		    <a href="#" id="' . $pool_reply[$x]['id'] . '" class="pools">
+					<span class="fa-stack fa-4x">
+					    <i class="fa fa-square-o fa-stack-2x"></i>
+					    <i class="fa fa-power-off fa-stack-1x ' . $vm_image . '"></i>
+					</span>
+				    </a>
+				</div>
+			    </div>
+			    <div class="row text-center">
+				<div>
+				    <span>' . $pool_reply[$x]['name'] . '</span>
+				</div>
+			    </div>
 			</div>
-			<div>
-			    <span>' . $pool_reply[$x]['name'] . '</span>
-    		</div>
-			<div>
-			    <span class="text-muted pull-left"><small>Pool size: ' . $vm_count[0][0] . '</small></span>
-			    <span class="text-muted pull-right"><small>Available: ' . $vm_count_available[0][0] . '</small></span>
-    		</div>
+			<div class="panel-footer">
+		    	    <span class="pull-left"><small>Pool size: ' . $vm_count[0][0] . '</small></span>
+			    <span class="pull-right"><small>Available: ' . $vm_count_available[0][0] . '</small></span>
+			    <div class="clearfix"></div>
+			</div>
+
+			    
 		</div>
 	</div>
 </div>'."\n";
 	    ++$x;
 	    if ((($x % 3) / 3)==0)
-		echo '</div>' . "\n". '<div class="row top-buffer">' . "\n";
+		echo '</div>' . "\n". '<div class="row">' . "\n";
 
     }?>
 	</div>
