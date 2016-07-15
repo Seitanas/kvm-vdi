@@ -119,6 +119,7 @@ Start vdi-agent: `systemctl start vdi-agent`
 
     apt-get python python-requests virt-viewer python-qt4 python-webkit python-urllib3 python-gtk2
 
+Download and install vmware-view viewer from VMware if needed.  
 Copy files from `thin_clients/` folder to your clients `/usr/local/VDI-client/` folder.  
 Edit `/usr/local/VDI-client/config` file to fit your configuration.  
 
