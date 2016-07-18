@@ -10,7 +10,7 @@ $side=$_GET['side'];
 $poolid=$_GET['poolid'];
 $client_array=get_SQL_array("SELECT vms.id, vms.name FROM vms LEFT JOIN poolmap_vm ON vms.id=poolmap_vm.vmid WHERE poolmap_vm.poolid='$poolid' ORDER BY id");
 if ($side=="from"){
-    $client_array_full=get_SQL_array("SELECT vms.id,vms.name FROM vms LEFT JOIN poolmap_vm ON vms.id=poolmap_vm.vmid WHERE vms.id NOT IN (SELECT poolmap_vm.vmid FROM (poolmap_vm)) ORDER BY id");
+    $client_array_full=get_SQL_array("SELECT vms.id,vms.name FROM vms LEFT JOIN poolmap_vm ON vms.id=poolmap_vm.vmid WHERE vms.id NOT IN (SELECT poolmap_vm.vmid FROM (poolmap_vm)) AND vms.machine_type='vdimachine' ORDER BY id");
     if (!empty ($client_array)){
 	$clients= array_diff ($client_array_full,$client_array);
 	foreach($client_array_full as $aV){
