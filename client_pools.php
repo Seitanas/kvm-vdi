@@ -72,7 +72,11 @@ set_lang();
     <div class="container">
 	<div class="row">
 <?php 
-
+    $last_reload=get_SQL_line ("SELECT id FROM config WHERE name='lastreload' AND valuedate > DATE_SUB(NOW(), INTERVAL 30 SECOND) LIMIT 1"); //if there was no reload of VM list in 30 seconds, initiate reload.
+    if (!$last_reload[0]['id']){
+	add_SQL_line("INSERT INTO config (name,valuedate) VALUES ('lastreload',NOW()) ON DUPLICATE KEY UPDATE valuedate=NOW()");
+	reload_vm_info();
+    }
     $pool_reply=get_SQL_array("SELECT pool.id, pool.name FROM poolmap  LEFT JOIN pool ON poolmap.poolid=pool.id WHERE clientid='$userid'");
     $x=0;
     while ($x<sizeof($pool_reply)){
