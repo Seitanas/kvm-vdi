@@ -39,7 +39,7 @@ def vm_routine(vmname, username, password):
     try:
 	virtio_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 	virtio_socket.connect(socket_path[0])
-	ready = select.select([virtio_socket], [], [], 60) #Read VMs spice channel for n seconds. We asume that VM must boot in n seconds and start ovirt-agent.
+	ready = select.select([virtio_socket], [], [], socket_timeout) #Read VMs spice channel for n seconds. We asume that VM must boot in n seconds and start ovirt-agent.
 	if ready[0]:
 	    data = virtio_socket.recv(32)
 	if data:
@@ -52,6 +52,7 @@ def vm_routine(vmname, username, password):
 	    virtio_socket.close()
     except:
 	logger.warning ("Virtio socket failure for VM: %s", vmname)
+    logger.debug ("Closing vm %s, login thread", vmname)
 
 
 logger.info("Starting KVM-VDI hypervisor agent")
@@ -80,6 +81,7 @@ while True:
 	    logger.info ("Illegal json")
 	    logger.debug ("Illegal json: %s", data)
 	else:
+	    logger.debug("Starting login thread for vm: %s", vmname)
 	    t = Thread(target=vm_routine, args=(vmname,username,password))
 	    t.start()
         break
