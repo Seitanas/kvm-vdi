@@ -119,6 +119,10 @@ $(document).ready(function(){
             	    $("#progress").html("<i class=\"fa fa-minus-circle fa-fw\"></i><?php echo _("Hypervisor already exists.");?>");
 		    paint_danger();
 		}
+		if (data=='SUDO_FAILURE'){
+            	    $("#progress").html("<i class=\"fa fa-minus-circle fa-fw\"></i><?php echo _("sudo failed. Please check your configuration.");?>");
+		    paint_danger();
+		}
 		if (data=='SUCCESS'){
     	    	    setTimeout(function() {
     			    $("#progress").addClass('hide');;

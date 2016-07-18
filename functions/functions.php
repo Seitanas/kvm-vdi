@@ -70,7 +70,7 @@ function reload_vm_info(){
 	$port=$sql_reply[$x]['port'];
 	    $hyper_id=$sql_reply[$x]['id'];
     	    ssh_connect($ip . ":" . $port);
-    	    $output = ssh_command("sudo virsh list --all |tail -n +3|head -n -1|awk '{print $2" . '" "' . "$3}'",true);
+    	    $output=ssh_command("sudo virsh list --all |tail -n +3|head -n -1|awk '{print $2" . '" "' . "$3}'",true);
 	    $vms=array();
     	    $output=str_replace("\n"," ",$output);
 	    $vms=explode(" ",$output);

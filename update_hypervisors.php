@@ -32,13 +32,19 @@ if ($type=='new'){
 	exit;
     }
     $reply=ssh_connect($address1 . ":" . $port);
-    if (empty ($reply))
-	echo 'SUCCESS';
-    else {
+    if (!empty($reply)) {
 	echo $reply;
 	exit;
+    }
+    else {
+	$output=ssh_command("sudo virsh list --all",true);
+	if (strpos($output, 'sudo:')!== false){ //check if sudo is configured
+	    echo 'SUDO_FAILURE';
+	    exit;
 	}
-    add_SQL_line("INSERT INTO hypervisors (name,ip, port, maintenance,address2) VALUES ('$name','$address1','$port',0,'$address2')");
+	add_SQL_line("INSERT INTO hypervisors (name,ip, port, maintenance,address2) VALUES ('$name','$address1','$port',0,'$address2')");
+	echo 'SUCCESS';
+    }
     exit;
 }
 if ($name=='update-name'){//using x-editable jQuery plugin, which uses different param naming
