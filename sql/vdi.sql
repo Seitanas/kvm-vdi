@@ -44,12 +44,14 @@ CREATE TABLE `config` (
   `name` varchar(255) NOT NULL,
   `valueint` int(11) NOT NULL,
   `valuechar` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `valuedate` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 INSERT INTO `config` (`id`, `name`, `valueint`, `valuechar`) VALUES
-(1, 'dbversion', 0, '20160718001');
+(1, 'dbversion', 0, '20160718001', '0000-00-00 00:00:00');
 
 --
 -- Table structure for table `hypervisors`
@@ -66,7 +68,7 @@ CREATE TABLE `hypervisors` (
   `maintenance` tinyint(4) DEFAULT NULL,
   `address2` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -82,7 +84,7 @@ CREATE TABLE `log` (
   `message` text NOT NULL,
   `date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=294 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=294 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
