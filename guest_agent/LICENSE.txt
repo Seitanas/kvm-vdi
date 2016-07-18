@@ -1,0 +1,31 @@
+Copyright 2009-2012 Red Hat, Inc. and/or its affiliates.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+In addition, as a special exception, Red Hat, Inc. and its affiliates
+give you permission to distribute this program, or a work based on it,
+linked or combined with the OpenSSL project's OpenSSL library (or a
+modified version of that library) to the extent that the library, or
+modified version, is covered by the terms of the OpenSSL or SSLeay
+licenses.  Corresponding source code for the object code form of such
+a combination shall include source code for the parts of OpenSSL
+contained in the combination.
+
+If you modify this program, you may extend this exception to your
+version, but you are not obligated to do so.  If you do not wish to do
+so, delete this exception statement from your version. 
+
+The named copyright holder of the file vdsm/tunctl.c, Jeff Dike,
+indicated his assent to permitting combinations of this code with
+OpenSSL code covered by the OpenSSL and SSLeay licenses, in an e-mail
+sent to Red Hat counsel Richard Fontana dated 29 Jan 2009. 
