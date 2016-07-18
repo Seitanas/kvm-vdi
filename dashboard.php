@@ -200,19 +200,21 @@ set_lang();
 		</li>
     	        <li><a href="new_vm.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-laptop fa-fw"></i><?php echo _("Create Virtual Machines");?></a></li>
 		<li>
-	    	    <a href="#" aria-expanded="false"><span class="fa arrow"></span><i class="fa fa-cogs fa-fw"></i><?php echo _("Configuration");?></a>
+	    	    <a href="#" aria-expanded="false"><span class="fa arrow"></span><i class="fa fa-cogs fa-fw"></i><?php echo _("System");?></a>
 		    <ul aria-expanded="false">
 			<li class="nav"><a href="add_hypervisor.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-database fa-fw"></i><?php echo _("Add hypervisor");?></a></li>
 	    		<li class="nav"><a href="list_hypervisors.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-cloud fa-fw"></i><?php echo _("Modify hypervisors");?></a></li>
 			<li class="nav-divider"></li>
 			<li class="nav"><a href="add_user.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-user-plus fa-fw"></i><?php echo _("Add administrator");?></a></li>
 			<li class="nav"><a href="list_users.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-users fa-fw"></i><?php echo _("Modify administrator");?></a></li>
+			<li class="nav-divider"></li>
+			<li class="nav"><a data-target="#modalWm" data-toggle="modal" href="about.php"><i class="fa fa-star-o fa-fw"></i>About</a></li>
 		    </ul>
 		</li>
 		<li>
 	    	    <a href="#" aria-expanded="false"><span class="fa arrow"></span><i class="fa fa-user fa-fw"></i><?php echo _("Profile");?></a>
 		    <ul aria-expanded="false">
-			<li class="nav"><a href="change_password.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-key fa-fw"></i><?php echo _("Change password");?></a></li>
+			<li class="nav"><a href="change_password.php" data-toggle="modal" data-target="#modalWinMedium"><i class="fa fa-key fa-fw"></i><?php echo _("Change password");?></a></li>
 	    		<li class="nav"><a href="logout.php"><i class="fa fa-sign-out fa-fw"></i><?php echo _("Logout");?></a></li>
 		    </ul>
 		</li>
