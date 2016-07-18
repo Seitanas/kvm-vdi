@@ -20,7 +20,7 @@ keys=VDIconsoleHandler
 keys=VDIformatter
 
 [logger_root]
-level=DEBUG
+level=INFO
 handlers=VDIconsoleHandler
 
 [handler_VDIconsoleHandler]
