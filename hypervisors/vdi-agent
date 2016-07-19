@@ -12,14 +12,15 @@ import logging
 import logging.config
 
 
-logging.config.fileConfig('/usr/local/VDI/config')
-logger = logging.getLogger('root')
+
 sockfile = "/usr/local/VDI/kvm-vdi.sock"
 logdir = "/var/log/VDI";
 if not os.path.exists(logdir):
     os.makedirs(logdir)
 if os.path.exists( sockfile ):
     os.remove( sockfile )
+logging.config.fileConfig('/usr/local/VDI/config')
+logger = logging.getLogger('root')
 
 server = socket.socket( socket.AF_UNIX, socket.SOCK_STREAM )
 server.bind(sockfile)
