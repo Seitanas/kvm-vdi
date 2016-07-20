@@ -26,7 +26,7 @@ $h_reply=get_SQL_line("SELECT * FROM hypervisors WHERE id='$hypervisor'");
 $v_reply=get_SQL_line("SELECT * FROM vms WHERE id='$vm'");
 ssh_connect($h_reply[2].":".$h_reply[3]);
 $address=ssh_command("sudo virsh domdisplay " . $v_reply[1], true);
-$address=str_replace("localhost",$h_reply[5],$address);
+$address=str_replace("localhost",$h_reply[2],$address);
 $address=$address . "?password=" . $v_reply[9];
 $rnd=uniqid();
 set_lang();
