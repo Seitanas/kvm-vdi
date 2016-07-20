@@ -27,6 +27,7 @@ CREATE TABLE `clients` (
   `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `ip` varchar(255) NOT NULL,
+  `isdomain` INT(11) NOT NULL DEFAULT '0',
   `lastlogin` datetime DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -51,7 +52,7 @@ CREATE TABLE `config` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 INSERT INTO `config` (`id`, `name`, `valueint`, `valuechar`, `valuedate`) VALUES
-(1, 'dbversion', 0, '20160718001', '0000-00-00 00:00:00');
+(1, 'dbversion', 0, '20160720001', '0000-00-00 00:00:00');
 
 --
 -- Table structure for table `hypervisors`

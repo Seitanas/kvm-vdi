@@ -1,4 +1,5 @@
-<?php
+<?php 
+
 /*
 KVM-VDI
 Tadas Ustinavičius
@@ -17,6 +18,15 @@ if (!check_session()){
     exit;
 }
 set_lang();
+while ($upgradedfrom=check_upgrade()){
+    echo '<div class="row">
+	    <div class="col-md-6 col-md-offset-2 text-center">
+		<div class="alert alert-info" role="alert">' . _("Database upgraded from: $upgradedfrom") . '
+    		    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		</div>
+	    </div>
+	</div>';
+    }
 reload_vm_info();
 $sql_reply=get_SQL_array("SELECT * FROM hypervisors");
 $x=0;
