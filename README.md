@@ -110,6 +110,15 @@ Copy systemd init script `vdi-agent.service` to your `/etc/systemd/system`.
 Reload systemd: `systemctl daemon-reload`  
 Enable vdi-agent: `systemctl enable vdi-agent`  
 Start vdi-agent: `systemctl start vdi-agent`  
+Ensure that vdi-agent is running: `systemctl status vdi-agent`  
+  
+
+### Guest OS installation
+  
+**On Windows**
+  
+Ensure, that you have installed `spice-guest-tools` from http://www.spice-space.org/download.html
+Afterwards, use this guide, to install oVirt related binaries: https://github.com/Seitanas/kvm-vdi/tree/master/guest_agent
   
 
 
