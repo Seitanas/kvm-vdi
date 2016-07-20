@@ -153,3 +153,18 @@ function slash_vars(){//add slashes to all post variables.
 	$item = addslashes($item);
     });
 }
+//##########################################################################
+function check_upgrade(){
+    $sql_reply=get_SQL_array("SELECT valuechar FROM config WHERE name='dbversion'");
+    $sql_file=dirname(__FILE__) . '/../sql/' . $sql_reply[0]['valuechar'] . ".sql";
+    if(file_exists($sql_file)){
+	$lines=explode(';', file_get_contents($sql_file));
+	foreach($lines as $line)
+	    if (!empty($line))
+		add_SQL_line($line);
+	return $sql_reply[0]['valuechar'];
+	exit;
+	}
+    return 0;
+    exit;
+}
