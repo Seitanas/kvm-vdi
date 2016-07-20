@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-06-28
+2016-07-20
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -46,8 +46,8 @@ while ($x<sizeof($sql_reply)){
         $table_status="disabled";
     }?>
     </h1>
-    <div class="table-responsive <?php echo $table_status;?>"  style="overflow: inherit;">
-        <table class="table table-striped table-hover">
+    <div class="table-responsive"  style="overflow: inherit;">
+        <table class="table table-striped table-hover <?php echo $table_status;?>">
           <thead>
             <tr>
               <th>#</th>
