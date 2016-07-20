@@ -46,6 +46,8 @@ def vm_routine(vmname, username, password):
 	if data:
 	    logger.info ("Client agent is running")
 	    serial_message= '{"__name__":"login","username": "' + username + '","password": "' + password + '"}'+"\n"
+	    time.sleep(2)#wait for winlogon to showup
+	    logger.debug("Sending credentials for %s to VM: %s", username, vmname)
 	    virtio_socket.sendall(serial_message)
 	    virtio_socket.close()
 	else:
