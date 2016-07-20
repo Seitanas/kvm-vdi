@@ -38,7 +38,7 @@ set_lang();
 	    </div>
 	    <div class="col-md-10">
 	    <h5><a href="http://www.vu.lt" target="_new" class="text-warning"><?php echo _("Vilnius University.");?></a><br><a href="http://www.ittc.vu.lt" class="text-warning" target="_new"><?php echo _("Center of Information Technology Development.");?></a></h5><br>
-	    <h6><div class="text-warning"><?php echo _("Updates can be found on here");?>&#58;<a href="https://github.com/Seitanas/kvm-vdi" target="_new"> github</a></div></h6>
+	    <h6><div class="text-warning"><?php echo _("Updates can be found here");?>&#58;<a href="https://github.com/Seitanas/kvm-vdi" target="_new"> github</a></div></h6>
 	    <h6><div class="text-right text-muted"><?php echo _("Vilnius, Litnuania");?> 2016</div></h6>
 	    </div>
 	</div>
