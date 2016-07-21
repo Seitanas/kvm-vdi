@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-07-15
+2016-07-21
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -17,18 +17,81 @@ if (isset ($_POST['username'])){
     $username=$_POST['username'];
     $password=$_POST['password'];
     $sql_reply=get_SQL_line("SELECT id,password FROM clients WHERE username LIKE '$username'");
-    if (password_verify($password, $sql_reply[1])){
-	session_start();
-	$_SESSION['client_logged']='yes';
-	$_SESSION['userid']=$sql_reply[0];
-	$_SESSION['username']=$username;
-	$ip = $_SERVER['REMOTE_ADDR'];
-	add_SQL_line("UPDATE clients SET lastlogin=now(), ip='$ip' WHERE id='$sql_reply[0]'");
-	header("Location: $serviceurl/client_pools.php");
-	exit;
+    if(!empty($sql_reply[1])){
+	if (password_verify($password, $sql_reply[1])){
+	    session_start();
+	    $_SESSION['client_logged']='yes';
+	    $_SESSION['userid']=$sql_reply[0];
+	    $_SESSION['username']=$username;
+	    $ip = $_SERVER['REMOTE_ADDR'];
+	    add_SQL_line("UPDATE clients SET lastlogin=now(), ip='$ip' WHERE id='$sql_reply[0]'");
+	    header("Location: $serviceurl/client_pools.php");
+	    exit;
+	}
+    }
+    else if ($ad_enabled){
+	$query_user =$username."@".$ad_name;
+	$ldap_login_err=0;
+	$ldap = ldap_connect($ad_host) or $ldap_login_err=1;
+	ldap_bind($ldap,$query_user,$password) or  $ldap_login_err=1;
+	if ($ldap_login_err){
+	    echo 'LOGIN_FAILURE';
+	    exit;
+	}
+	else {
+	    $results = ldap_search($ldap,$ldap_dn,"(samaccountname=$username)",array("memberof","primarygroupid","displayname"));
+	    $entries = ldap_get_entries($ldap, $results);
+	}
+	if($entries['count'] == 0) {
+        }
+	$output = $entries[0]['memberof'];
+	$token = $entries[0]['primarygroupid'][0];
+	$fullname= $entries[0]['displayname'][0];
+	array_shift($output);
+	$results2 = ldap_search($ldap,$ldap_dn,"(objectcategory=group)",array("distinguishedname","primarygrouptoken"));
+        $entries2 = ldap_get_entries($ldap, $results2);
+        array_shift($entries2);
+	foreach($entries2 as $e) {
+    	    if($e['primarygrouptoken'][0] == $token) {
+		$output[] = $e['distinguishedname'][0];
+		break;
+	    }
+	}
+	$group_count=0;
+	foreach ($output as &$value) {
+	    $tmp_CN=explode(",",$value);
+	    $tmp_CN[0]=str_replace("CN=","",$tmp_CN[0]);
+	    if (!empty($tmp_CN[0]))
+		++$group_count;
+	    $group_array="" . $group_array . "','" . $tmp_CN[0];
+	#if (strpos($value, $rpm_admin_group)) {$_SESSION['admin']=1;$allowed=1;}
+	#if (strpos($value, $rpm_user_group)) {$_SESSION['admin']=0;$allowed=1;}
+	}
+	if($group_count){
+	    $group_array = substr($group_array, 2); 
+	    $group_array=$group_array."'";
+	    $ad_groups_validate=get_SQL_array("SELECT * FROM ad_groups WHERE name IN ($group_array)");
+	    $ip = $_SERVER['REMOTE_ADDR'];
+	    add_SQL_line("INSERT INTO clients (username,ip,isdomain,lastlogin) VALUES ('$query_user','$ip','1',NOW()) ON DUPLICATE KEY UPDATE ip='$ip', lastlogin=NOW()");
+	    $sql_reply=get_SQL_line("SELECT id FROM clients WHERE username LIKE '$query_user'");
+	    session_start();
+	    $_SESSION['ad_user']='yes';
+	    $_SESSION['client_logged']='yes';	    
+	    $_SESSION['userid']=$sql_reply[0];
+	    $_SESSION['username']=$query_user;
+	    $type='ad';
+
+	}
+	else {
+	    echo 'LOGIN_FAILURE';
+	    exit;
+	}
+	if(empty($ad_groups_validate[0]['id'])){//there are no groups mapped
+	    echo 'LOGIN_FAILURE';
+	    exit;
+	}
     }
     else {
-	//header("Location: $serviceurl/client_index.php?error=1");
 	echo 'LOGIN_FAILURE';
 	exit;
     }
@@ -77,7 +140,11 @@ set_lang();
 	add_SQL_line("INSERT INTO config (name,valuedate) VALUES ('lastreload',NOW()) ON DUPLICATE KEY UPDATE valuedate=NOW()");
 	reload_vm_info();
     }
-    $pool_reply=get_SQL_array("SELECT pool.id, pool.name FROM poolmap  LEFT JOIN pool ON poolmap.poolid=pool.id WHERE clientid='$userid'");
+    if ($type=='ad')
+	$pool_reply=get_SQL_array("SELECT DISTINCT(pool.id), pool.name FROM poolmap_ad  LEFT JOIN pool ON poolmap_ad.poolid=pool.id LEFT JOIN ad_groups ON poolmap_ad.groupid=ad_groups.id WHERE ad_groups.name IN ($group_array)");
+    else
+	$pool_reply=get_SQL_array("SELECT pool.id, pool.name FROM poolmap  LEFT JOIN pool ON poolmap.poolid=pool.id WHERE clientid='$userid'");
+//    print_r($pool_reply);
     $x=0;
     while ($x<sizeof($pool_reply)){
 	    $vm_count=get_SQL_array("SELECT COUNT(*) FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id LEFT JOIN hypervisors ON vms.hypervisor=hypervisors.id WHERE poolmap_vm.poolid='{$pool_reply[$x]['id']}' AND vms.maintenance!='true' AND hypervisors.maintenance!=1");

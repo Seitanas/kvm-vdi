@@ -8,9 +8,17 @@ if (!check_session()){
 slash_vars();
 $side=$_GET['side'];
 $poolid=$_GET['poolid'];
-$client_array=get_SQL_array("SELECT clients.id, clients.username FROM `clients` LEFT JOIN poolmap ON clients.id=poolmap.clientid WHERE poolmap.poolid='$poolid' ORDER BY id");
+if (isset($_GET['type']));
+    $type=$_GET['type'];
+if ($type=='ad')
+    $client_array=get_SQL_array("SELECT ad_groups.id, ad_groups.name AS username FROM `ad_groups` LEFT JOIN poolmap_ad ON ad_groups.id=poolmap_ad.groupid WHERE poolmap_ad.poolid='$poolid' ORDER BY id");
+else
+    $client_array=get_SQL_array("SELECT clients.id, clients.username FROM `clients` LEFT JOIN poolmap ON clients.id=poolmap.clientid WHERE poolmap.poolid='$poolid' ORDER BY id");
 if ($side=="from"){
-    $client_array_full=get_SQL_array("SELECT clients.id,clients.username FROM `clients` ORDER BY id");
+    if ($type=='ad')
+        $client_array_full=get_SQL_array("SELECT ad_groups.id,ad_groups.name AS username FROM `ad_groups` ORDER BY id");
+    else
+	$client_array_full=get_SQL_array("SELECT clients.id,clients.username FROM `clients` ORDER BY id");
     if (!empty ($client_array)){
 	$clients= array_diff ($client_array_full,$client_array);
 	foreach($client_array_full as $aV){

@@ -9,6 +9,8 @@ if (!check_session()){
 }
 slash_vars();
 set_lang();
+if (isset($_GET['type']))
+    $type=$_GET['type'];
 ?>
 <!DOCTYPE html>
 <html>
@@ -44,8 +46,9 @@ set_lang();
     <div class="row">
 	<div class="col-md-4">
 	    <label for="poollist" class="text-muted"><?php echo _("Pool");?></label>
-	    <select class="input-small form-control" id="poollist" name="poollist">
-    	    <?php $group_array=get_SQL_array("SELECT * FROM pool ORDER BY name");
+	    <select class="input-small form-control" id="poollist" name="poollist" data-type="<?php echo $type;?>">
+    	    <?php 
+	    $group_array=get_SQL_array("SELECT * FROM pool ORDER BY name");
 	    $x=0;
 	    while ($group_array[$x]['id']){
 	        echo '<option value="' . $group_array[$x]['id'] . '">' . $group_array[$x]['name'] . '</option>';
@@ -66,14 +69,14 @@ set_lang();
 </body>
 
 <script>
-function load_list(poolid){
-    $.getJSON("clients_in_pool.php?side=from&poolid="+poolid, {},  function(json){
+function load_list(poolid,type){
+    $.getJSON("clients_in_pool.php?side=from&poolid="+poolid+"&type="+type, {},  function(json){
 	    $('#multiselect').empty();
             $.each(json, function(i, obj){
                      $('#multiselect').append($('<option>').text(obj.username).attr('value', obj.id));
             });
     });
-    $.getJSON("clients_in_pool.php?side=to&poolid="+poolid, {},  function(json){
+    $.getJSON("clients_in_pool.php?side=to&poolid="+poolid+"&type="+type, {},  function(json){
 	    $('#multiselect_to').empty();
             $.each(json, function(i, obj){
                     $('#multiselect_to').append($('<option>').text(obj.username).attr('value', obj.id));
@@ -83,15 +86,17 @@ function load_list(poolid){
 </script>
 <script>
 $('#poollist').on('change', function(){
-    $poolid=$('#poollist').val();
-    load_list($poolid);
+    poolid=$('#poollist').val();
+    var type=$('#poollist').data("type");
+    load_list(poolid,type);
 });
 </script>
 <script>
 $(document).ready(function(){
     $('#multiselect').multiselect();
-    $poolid=$('#poollist').val();
-    load_list($poolid);
+    poolid=$('#poollist').val();
+    var type=$('#poollist').data("type");
+    load_list(poolid,type);
     $("#submit").click(function(){
 	var multivalues="";
 	$("#multiselect_to option").each(function(){
@@ -100,6 +105,7 @@ $(document).ready(function(){
         $.post("manage_clientmaps_do.php",
         {
           poolid: $('#poollist').val(),
+	  type: type,
           clientlist: multivalues
         });
         $(function () {

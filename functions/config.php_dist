@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-07-13
+2016-07-21
 */
 ###################Dashboard config##########################
 $serviceurl='http://192.168.0.20/kvm-vdi';
@@ -21,11 +21,20 @@ $return_to_pool_after=5;
 
 ##################VM config#################################
 #Enable this if you want to reset VMs each time they are provided
-#to client. This will not affect machines, which are taken over by
-#another thin client with the same client username.
+#to client. This will not affect machines, whic are taken over by
+#another thin client.
 $reset_vm=0;
 ############################################################
 
+
+####################Active Directory logins#################
+$ad_enabled=0;
+$ad_host="somehost.domain.tld";
+$ad_name="domain.tld";
+$ldap_dn = "ou=People,DC=domain,DC=tld";
+$rpm_admin_group="rpm_admins";
+$rpm_user_group="rpm_users";
+############################################################
 
 
 ##################Hypervisor config#########################
@@ -37,6 +46,7 @@ $hypervisor_cmdline_path='/usr/local/VDI/';
 $default_bridge='br0';
 $default_imagepath='/data';
 $default_iso_path='/var/lib/libvirt/images';
+
 $libvirt_user='root'; //user, on which libvirtd daemon runs
 $libvirt_group='root'; //group, on which libvirtd daemon runs
 ############################################################
