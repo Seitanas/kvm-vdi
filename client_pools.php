@@ -204,7 +204,7 @@ set_lang();
 	</div>
 </div>'."\n";
 	    ++$x;
-	    if ((($x % 3) / 3)==0)
+	    if ((($x % 4) / 4)==0)//number of columns
 		echo '</div>' . "\n". '<div class="row">' . "\n";
 
     }?>
