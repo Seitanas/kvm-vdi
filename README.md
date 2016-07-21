@@ -175,4 +175,4 @@ We store "source machine" image on shared NFS storage, since it must be accesabl
 ![Alt text](http://webjail.ring.lt/vdi/vdi1.jpg?raw=true&2)
 ![Alt text](http://webjail.ring.lt/vdi/vdi2.jpg?raw=true&1)
 ![Alt text](http://webjail.ring.lt/vdi/vdi3.jpg?raw=true&1)
-![Alt text](http://webjail.ring.lt/vdi/vdi4.png?raw=true&1)
+![Alt text](http://webjail.ring.lt/vdi/vdi4.jpg?raw=true&1)
