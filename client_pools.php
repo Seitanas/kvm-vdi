@@ -79,8 +79,7 @@ if (isset ($_POST['username'])){
 	    $_SESSION['client_logged']='yes';	    
 	    $_SESSION['userid']=$sql_reply[0];
 	    $_SESSION['username']=$query_user;
-	    $type='ad';
-
+	    $_SESSION['group_array']=$group_array;
 	}
 	else {
 	    echo 'LOGIN_FAILURE';
@@ -140,8 +139,10 @@ set_lang();
 	add_SQL_line("INSERT INTO config (name,valuedate) VALUES ('lastreload',NOW()) ON DUPLICATE KEY UPDATE valuedate=NOW()");
 	reload_vm_info();
     }
-    if ($type=='ad')
+    if ($_SESSION['ad_user']=='yes'){
+	$group_array=$_SESSION['group_array'];
 	$pool_reply=get_SQL_array("SELECT DISTINCT(pool.id), pool.name FROM poolmap_ad  LEFT JOIN pool ON poolmap_ad.poolid=pool.id LEFT JOIN ad_groups ON poolmap_ad.groupid=ad_groups.id WHERE ad_groups.name IN ($group_array)");
+    }
     else
 	$pool_reply=get_SQL_array("SELECT pool.id, pool.name FROM poolmap  LEFT JOIN pool ON poolmap.poolid=pool.id WHERE clientid='$userid'");
 //    print_r($pool_reply);
