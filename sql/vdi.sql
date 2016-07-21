@@ -43,7 +43,8 @@ CREATE TABLE `clients` (
   `ip` varchar(255) NOT NULL,
   `isdomain` int(11) NOT NULL DEFAULT '0',
   `lastlogin` datetime DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
