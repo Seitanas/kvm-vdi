@@ -248,7 +248,7 @@ function draw_table(){
 draw_table();
 </script>
 <script>
-$("#left-menu").metisMenu();
+$("#left-menu").metisMenu({ toggle: false });
 </script>
 
 </html>
