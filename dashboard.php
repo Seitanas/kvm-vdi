@@ -196,6 +196,12 @@ set_lang();
 			<li class="nav"><a href="add_pool.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-cloud fa-fw"></i><?php echo _("Add pool");?></a></li>
 			<li class="nav"><a href="manage_vm_pool.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-desktop fa-fw"></i><?php echo _("Add VMs to pool");?></a></li>
 			<li class="nav"><a href="manage_client_pool.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-group fa-fw"></i><?php echo _("Add clients to pool");?></a></li>
+			<?php if ($ad_enabled){
+				    echo '<li class="nav-divider"></li>';
+				    echo '<li class="nav"><a href="add_ad_group.php" data-toggle="modal" data-target="#modalWm"><i class="glyphicon glyphicon-folder-close fa-fw"></i>' .  _("Add AD group") . '</a></li>';
+				    echo '<li class="nav"><a href="manage_client_pool.php?type=ad" data-toggle="modal" data-target="#modalWm"><i class="fa fa-group fa-fw"></i>' .  _("Add AD group to pool") . '</a></li>';
+			}
+			?>
 		    </ul>
 		</li>
     	        <li><a href="new_vm.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-laptop fa-fw"></i><?php echo _("Create Virtual Machines");?></a></li>
