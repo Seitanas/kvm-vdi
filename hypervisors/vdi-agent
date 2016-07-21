@@ -12,15 +12,14 @@ import logging
 import logging.config
 
 
-
+logging.config.fileConfig('/usr/local/VDI/config')
+logger = logging.getLogger('root')
 sockfile = "/usr/local/VDI/kvm-vdi.sock"
 logdir = "/var/log/VDI";
 if not os.path.exists(logdir):
     os.makedirs(logdir)
 if os.path.exists( sockfile ):
     os.remove( sockfile )
-logging.config.fileConfig('/usr/local/VDI/config')
-logger = logging.getLogger('root')
 
 server = socket.socket( socket.AF_UNIX, socket.SOCK_STREAM )
 server.bind(sockfile)
@@ -35,7 +34,7 @@ def vm_routine(vmname, username, password):
     data = ""
     logger.info("Starting machine %s", vmname)
     err = subprocess.Popen("virsh start " + vmname, shell=True, stdout=subprocess.PIPE).communicate()
-    socket_path = subprocess.Popen("virsh dumpxml " + vmname + "| xpath -q -e /domain/devices/channel/source/@path", shell=True, stdout=subprocess.PIPE).communicate()#get current spice channel path. Path changes on each VM startup
+    socket_path = subprocess.Popen("virsh dumpxml " + vmname + "| xpath -q -e /domain/devices/channel/source/@path|grep kvm-vdi", shell=True, stdout=subprocess.PIPE).communicate()#get current spice channel path. Path changes on each VM startup
     socket_path = re.findall(r'"([^"]*)"', socket_path[0]) #remove everythig outside double quotes
     try:
 	virtio_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -46,8 +45,6 @@ def vm_routine(vmname, username, password):
 	if data:
 	    logger.info ("Client agent is running")
 	    serial_message= '{"__name__":"login","username": "' + username + '","password": "' + password + '"}'+"\n"
-	    time.sleep(2)#wait for winlogon to showup
-	    logger.debug("Sending credentials for %s to VM: %s", username, vmname)
 	    virtio_socket.sendall(serial_message)
 	    virtio_socket.close()
 	else:
