@@ -17,6 +17,8 @@ if (isset($_POST['username']))
 if (isset($_POST['password']))
     $password=$_POST['password'];
 $userid=$_SESSION['userid'];
+if ($_SESSION['ad_user']=='yes')
+    $username=$username."@".$ad_name;
 
 if ($protocol=="RDP"){
     $json_reply = json_encode(array('status'=>"OK",'protocol' => $protocol, 'address' => $machine_rdp_address));
