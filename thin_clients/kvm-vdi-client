@@ -142,8 +142,8 @@ class remote_viewer(threading.Thread):
     	viewer_config.set('virt-viewer', 'password', spice_password)
     	with open('/tmp/' + tmpname + '.cfg', 'wb') as configfile:
 	    viewer_config.write(configfile)
-	#os.system("/usr/bin/remote-viewer --kiosk-quit=on-disconnect  --kiosk /tmp/" + tmpname + ".cfg ")
-	os.system("/usr/bin/remote-viewer /tmp/" + tmpname + ".cfg ")
+	os.system("/usr/bin/remote-viewer --kiosk-quit=on-disconnect  --kiosk /tmp/" + tmpname + ".cfg ")
+	#os.system("/usr/bin/remote-viewer /tmp/" + tmpname + ".cfg ")
 	dashboard_reload();
 	logger.info("Exiting virt-viewer")
 	refresh_run=1
