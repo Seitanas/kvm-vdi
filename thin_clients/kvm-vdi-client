@@ -36,6 +36,7 @@ w.connect("destroy", lambda q: gtk.main_quit())
 http_session = requests.session()
 username=""
 password=""
+refresh_run=1
 
 class Login(QtGui.QDialog):
     def __init__(self, parent=None):
@@ -101,10 +102,55 @@ class refresh_timer(threading.Thread):
     def stopped(self):
         return self._stop.isSet()
     def run(self):
+	global refresh_run
+	seconds=0
         while not self.stopped():
-            time.sleep(5)
-	    logger.debug ("Dashboard reload")
-	    dashboard_reload()
+	    if seconds==5:
+		if refresh_run==1:
+		    logger.debug ("Dashboard reload")
+		    dashboard_reload()
+		seconds=0
+	    if not self.stopped() and seconds < 5: #sleep for one second. Longer sleep times cause thread to wait on exit.
+        	time.sleep(1)
+		seconds += 1
+
+
+class remote_viewer(threading.Thread):
+    def __init__(self,data):
+        super(remote_viewer, self).__init__()
+        self._stop = threading.Event()
+	self.data = data
+    def stop(self):
+        self._stop.set()
+    def stopped(self):
+        return self._stop.isSet()
+    def run(self):
+	global refresh_run
+	vmname=self.data['name']
+	t = vm_heartbeat(vmname)
+	t.daemon=True
+	t.start()
+	tmp=self.data["address"].split(":")
+    	spice_password=self.data["spice_password"]
+	tmpname=(''.join(choice(ascii_uppercase+ascii_lowercase+digits) for i in range(13)))
+	viewer_config=ConfigParser()
+    	viewer_config.add_section('virt-viewer')
+    	viewer_config.set('virt-viewer', 'type', 'spice')
+    	viewer_config.set('virt-viewer', 'host', tmp[0])
+    	viewer_config.set('virt-viewer', 'port', tmp[1])
+    	viewer_config.set('virt-viewer', 'delete-this-file', '1')
+    	viewer_config.set('virt-viewer', 'password', spice_password)
+    	with open('/tmp/' + tmpname + '.cfg', 'wb') as configfile:
+	    viewer_config.write(configfile)
+	#os.system("/usr/bin/remote-viewer --kiosk-quit=on-disconnect  --kiosk /tmp/" + tmpname + ".cfg ")
+	os.system("/usr/bin/remote-viewer /tmp/" + tmpname + ".cfg ")
+	dashboard_reload();
+	logger.info("Exiting virt-viewer")
+	refresh_run=1
+	t.stop()
+	t.join()
+	self.stop()
+
 
 
 def pool_click(v, param):
@@ -121,11 +167,17 @@ def pool_click(v, param):
 		PM_reply=http_session.post(dashboard_path+"client_power.php", data={'vm': vdi_PM[1], 'action': "destroy"}, verify=False)
 	    dashboard_reload()
 	else:
+	    global refresh_run
+	    refresh_run=0;
 	    poolid=vdi_message
 	    reply=http_session.post(dashboard_path+"client.php", data={'pool': poolid, 'protocol': "SPICE", 'username': username, 'password': password} ,verify=False);
 	    data=json.loads(reply.text)
 	    if data['status']=='MAINTENANCE':
-		QtGui.QMessageBox.information(login, 'Information', 'This pool is in maintenance mode')
+		dashboard_reload()
+		refresh_run=1
+	    if data['status']=='NO_FREE_VMS':
+		dashboard_reload()
+		refresh_run=1
 	    retries=0
 	    while data['status']=="BOOTUP" and retries < 10 :
 		logger.info("BOOTUP, waiting")
@@ -133,29 +185,11 @@ def pool_click(v, param):
 		data=json.loads(reply.text)
 		time.sleep(1)
 	    if data['status']=='OK':
-		dashboard_reload()
+		#dashboard_reload()
 		logger.info("OK, starting HB thread & viewer")
-		vmname=data['name']
-		t = vm_heartbeat(vmname)
-		t.daemon=True
-		t.start()
-		tmp=data["address"].split(":")
-    		spice_password=data["spice_password"]
-		tmpname=(''.join(choice(ascii_uppercase+ascii_lowercase+digits) for i in range(13)))
-		viewer_config=ConfigParser()
-    		viewer_config.add_section('virt-viewer')
-    		viewer_config.set('virt-viewer', 'type', 'spice')
-    		viewer_config.set('virt-viewer', 'host', tmp[0])
-    		viewer_config.set('virt-viewer', 'port', tmp[1])
-    		viewer_config.set('virt-viewer', 'delete-this-file', '1')
-    		viewer_config.set('virt-viewer', 'password', spice_password)
-    		with open('/tmp/' + tmpname + '.cfg', 'wb') as configfile:
-		    viewer_config.write(configfile)
-		os.system("/usr/bin/remote-viewer --kiosk-quit=on-disconnect  --kiosk /tmp/" + tmpname + ".cfg ")
-		#os.system("/usr/bin/remote-viewer /tmp/" + tmpname + ".cfg ")
-		logger.info("Exiting virt-viewer")
-		t.stop()
-		t.join()
+		viewer=remote_viewer(data)
+		viewer.start()
+
 
 app = QtGui.QApplication(sys.argv)
 login = Login()
