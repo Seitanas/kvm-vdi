@@ -16,7 +16,7 @@ slash_vars();
 if (isset ($_POST['username'])){
     $username=$_POST['username'];
     $password=$_POST['password'];
-    $sql_reply=get_SQL_line("SELECT id,password FROM clients WHERE username LIKE '$username'");
+    $sql_reply=get_SQL_line("SELECT id,password FROM clients WHERE username LIKE '$username' AND isdomain=0");
     if(!empty($sql_reply[1])){
 	if (password_verify($password, $sql_reply[1])){
 	    session_start();
