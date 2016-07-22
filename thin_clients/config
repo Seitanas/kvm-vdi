@@ -20,4 +20,4 @@ level=INFO
 formatter=VDIformatter
 args=(sys.stderr,)
 [formatter_VDIformatter]
-format=%(asctime)s %(name)-12s %(levelname)-8s %(message)s
+format= %(threadName)s %(asctime)s %(name)-12s %(levelname)-8s %(message)s
