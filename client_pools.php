@@ -120,6 +120,29 @@ set_lang();
     <![endif]-->
   </head>
   <body>
+
+<!-- Modal -->
+<div class="modal fade" id="loadingVM" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    <span class="glyphicon glyphicon-time">
+                    </span><?php echo _("Please wait");?>
+                 </h4>
+            </div>
+            <div class="modal-body">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-info progress-bar-striped active" style="width: 100%">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal end -->
+
+
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -215,6 +238,7 @@ set_lang();
 <script>
 $(document).ready(function(){
     $('.pools').click(function() {
+	$('#loadingVM').modal('show');
 	document.title = ""
 	document.title = "kvm-vdi-msg:" + $(this).attr('id')
     })
