@@ -104,7 +104,7 @@ To check if everything works, from dashboard server type:
 If passwordless connection is established, everythin is fine.
 
 On each hypervisor create /usr/local/VDI folder. Copy all files from "hypervisors/" folder to /usr/local/VDI/ folder.  
-Edit config file accordingly.  
+Edit config file accordingly. Note: `password` parameter in `hypervisors/config` file must match `$backend_pass` parameter in dashboard `functions/config.php`  
 Edit your /etc/sudoers file according to examlpe of hypervisors/sudeors file.  
 Copy systemd init script `vdi-agent.service` to your `/etc/systemd/system`.  
 Reload systemd: `systemctl daemon-reload`  
