@@ -24,6 +24,11 @@ x=1
 startup_procedure=0 #define if kvm-snap is executed for vm startup or for other libvirt routine
 y=len(sys.argv)
 sys.argv[0]=path_to_kvm
+if not os.path.isfile(path_to_kvm): #if kvm binary from config file does not exist, try finding it in default paths:
+    kvm_paths = ['/usr/libexec/qemu-kvm', '/usr/bin/qemu-kvm', '/usr/bin/qemu-system-x86_64']
+    for kvm in kvm_paths:
+	if os.path.isfile(kvm):
+	    path_to_kvm=kvm
 while (x != y):
     namearg=str(sys.argv[x])
     if (namearg=="-name"):
