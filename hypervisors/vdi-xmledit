@@ -9,6 +9,7 @@
 import xml.etree.ElementTree as ET
 import sys
 import os
+import platform
 
 x=0
 y=len(sys.argv)
@@ -46,8 +47,11 @@ gr=ET.SubElement(graphics, 'mouse')
 gr.set('mode', 'client')
 gr=ET.SubElement(graphics, 'clipboard')
 gr.set('copypaste', 'no')
-gr=ET.SubElement(graphics, 'filetransfer')
-gr.set('enable', 'no')
+#we need to determine OS distro, because Redat does not have "filetransfer" option:
+distribution=platform.dist()
+if 'centos' not in distribution and 'redhat' not in distribution and 'fedora' not in distribution:
+    gr=ET.SubElement(graphics, 'filetransfer')
+    gr.set('enable', 'no')
 tree.write('/tmp/' + vmname + '_new.xml')
 os.system("virsh define /tmp/" + vmname + "_new.xml")
 os.remove("/tmp/" + vmname + ".xml")
