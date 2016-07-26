@@ -65,6 +65,22 @@ Rename functions/config.php_dist to functions/config.php Edit config.php to fit 
 Change permissions on tmp/ folder and functions/clients.xml file to give webserver writeable rights.  
 Go to http://yourservename/kvm-vdi  
 If installation is successful, you will be redirected to login page. Default credentials are: admin/password  
+
+**Centos specific information**  
+  
+  
+Since Centos uses too old php version, we must install newer one from different repository:  
+`rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm  
+rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm  
+yum install php56w php56w-pecl-imagick php56w-devel libssh2-devel gcc  
+pecl install ssh2  
+echo "extension=ssh2.so" > /etc/php.d/ssh2.ini  
+systemctl restart httpd.service`  
+  
+  
+Comment out `Defaults    requiretty` in `/etc/sudoers`
+  
+  
   
 
 
