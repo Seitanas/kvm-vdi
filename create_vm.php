@@ -44,7 +44,6 @@ else
 $h_reply=get_SQL_line("SELECT ip, port FROM hypervisors WHERE id='$hypervisor'");
 ssh_connect($h_reply[0].":".$h_reply[1]);
 if ($machine_type=='simplemachine'||$machine_type=='sourcemachine'){
-    echo $h_reply[0]."ddd";
     $x=0;
     while ($x<$machinecount){
 	if ($machinecount>1)
