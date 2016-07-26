@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2016-06-27
+2016-07-26
 Vilnius, Lithuania.
 */
 function SQL_connect(){
@@ -167,4 +167,10 @@ function check_upgrade(){
 	}
     return 0;
     exit;
+}
+//#########################################################################
+function write_log($message){
+    include (dirname(__FILE__).'/config.php');
+    if ($write_debug_log)
+	error_log($message);
 }

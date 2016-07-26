@@ -10,4 +10,4 @@ CREATE TABLE `poolmap_ad` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 UPDATE `config` SET `valuechar`='20160721001' WHERE `name`='dbversion';
-ALTER TABLE `clients` ADD UNIQUE(`username`);
+ALTER TABLE `users` ADD UNIQUE(`username`);

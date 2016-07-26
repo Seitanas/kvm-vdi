@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-07-21
+2016-07-08
 */
 ###################Dashboard config##########################
 $serviceurl='http://192.168.0.20/kvm-vdi';
@@ -16,6 +16,8 @@ $language='en_EN';
 #Time in minutes, after which VM will return to pool if
 #thin client disconnects:
 $return_to_pool_after=5;
+#write debug log to web server error.log file.
+$write_debug_log=false;
 ############################################################
 
 
