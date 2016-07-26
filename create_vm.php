@@ -70,7 +70,7 @@ if ($machine_type=='simplemachine'||$machine_type=='sourcemachine'){
 if ($machine_type=='initialmachine'){
     $name=$machinename;
     $disk=$source_drivepath . '/' . $name . "-" . uniqid() . ".qcow2";
-    $vm_cmd="sudo virt-install --name=" . $name . " --disk path=" . $disk . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . $numcpu . ",cores=" . $numcore . " --ram=" . $numram . " --network bridge=" . $network . ",model=virtio --os-type=" . $os_type . " --os-variant=" . $os_version . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --import --noreboot --import";
+    $vm_cmd="sudo virt-install --name=" . $name . " --disk path=" . $disk . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . $numcpu . ",cores=" . $numcore . " --ram=" . $numram . " --network bridge=" . $network . ",model=virtio --os-type=" . $os_type . " --os-variant=" . $os_version . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --import --noreboot";
     $drive_cmd="sudo qemu-img create -f qcow2 -o size=1G " . $disk;
     $chown_command="sudo chown $libvirt_user:$libvirt_group $disk";
     $xmledit_cmd="sudo " . $hypervisor_cmdline_path . "/vdi-xmledit -name " . $name;
