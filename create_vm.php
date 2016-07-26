@@ -51,18 +51,20 @@ if ($machine_type=='simplemachine'||$machine_type=='sourcemachine'){
 	    $name=$machinename.sprintf("%0" . strlen($machinecount) . "s", $x+1);
 	else
     	    $name=$machinename;
+	$spice_pw=$randomString = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 13);
 	$disk=$source_drivepath . '/' . $name . "-" . uniqid() . ".qcow2";
-	$vm_cmd="sudo virt-install --name=" . $name . " --disk path=" . $disk . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . $numcpu . ",cores=" . $numcore . " --ram=" . $numram . " --network bridge=" . $network . ",model=virtio --os-type=" . $os_type . " --os-variant=" . $os_version . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --noreboot --wait=0 " . $boot_cmd;
+	$vm_cmd="sudo virt-install --name=" . $name . " --disk path=" . $disk . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . $numcpu . ",cores=" . $numcore . " --ram=" . $numram . " --network bridge=" . $network . ",model=virtio --os-type=" . $os_type . " --os-variant=" . $os_version . " --graphics spice,listen=0.0.0.0,password=" . $spice_pw . " --redirdev usb,type=spicevmc --video qxl --noreboot --wait=0 " . $boot_cmd;
 	$drive_cmd="sudo qemu-img create -f qcow2 -o size=" . $source_drive_size . "G " . $disk;
 	$chown_command="sudo chown $libvirt_user:$libvirt_group $disk";
 	$xmledit_cmd="sudo " . $hypervisor_cmdline_path . "/vdi-xmledit -name " . $name;
 	write_log("command: $vm_cmd");
 	write_log(ssh_command($drive_cmd,true));
 	$vm_reply=ssh_command($vm_cmd,true);
-	if (mb_substr($vm_reply, 0, 5 ) !== "ERROR")
-	    add_SQL_line("INSERT INTO  vms (name,hypervisor,machine_type) VALUES ('$name','$hypervisor','$machine_type')");
+	if (mb_substr($vm_reply, 0, 5 ) !== "ERROR"&&mb_substr($vm_reply, 0, 5 ) !== "usage"){//if return begins with following strings, - something failed
+	    add_SQL_line("INSERT INTO  vms (name,hypervisor,machine_type,spice_password) VALUES ('$name','$hypervisor','$machine_type','$spice_pw')");
+	    write_log(ssh_command($xmledit_cmd,true));
+	}
 	write_log($vm_reply);
-	write_log(ssh_command($xmledit_cmd,true));
 	++$x;
 
     }
@@ -81,6 +83,7 @@ if ($machine_type=='initialmachine'){
     add_SQL_line("INSERT INTO  vms (name,hypervisor,machine_type,source_volume) VALUES ('$name','$hypervisor','$machine_type','$source_volume')");
     $v_reply=get_SQL_line("SELECT id FROM vms WHERE name='$name'");
     header("Location: $serviceurl/copy_disk.php?vm=" . $v_reply[0] . "&hypervisor=" . $hypervisor);
+    exit;
 }
 
 if ($machine_type=='vdimachine'){
