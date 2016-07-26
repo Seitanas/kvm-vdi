@@ -70,13 +70,14 @@ If installation is successful, you will be redirected to login page. Default cre
   
   
 Since Centos uses too old php version, we must install newer one from different repository:  
-`rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm  
-rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm  
-yum install php56w php56w-pecl-imagick php56w-devel libssh2-devel gcc  
-pecl install ssh2  
-echo "extension=ssh2.so" > /etc/php.d/ssh2.ini  
-systemctl restart httpd.service`  
-  
+
+    rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
+    yum install php56w php56w-pecl-imagick php56w-devel libssh2-devel gcc
+    pecl install ssh2
+    echo "extension=ssh2.so" > /etc/php.d/ssh2.ini
+    systemctl restart httpd.service
+
   
 Comment out `Defaults    requiretty` in `/etc/sudoers`
   
