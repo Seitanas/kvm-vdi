@@ -52,14 +52,16 @@ if ($machine_type=='simplemachine'||$machine_type=='sourcemachine'){
 	else
     	    $name=$machinename;
 	$disk=$source_drivepath . '/' . $name . "-" . uniqid() . ".qcow2";
-	$vm_cmd="sudo virt-install --name=" . $name . " --disk path=" . $disk . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . $numcpu . ",cores=" . $numcore . " --ram=" . $numram . " --network bridge=" . $network . ",model=virtio --os-type=" . $os_type . " --os-variant=" . $os_version . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --noreboot --noautoconsole " . $boot_cmd;
+	$vm_cmd="sudo virt-install --name=" . $name . " --disk path=" . $disk . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . $numcpu . ",cores=" . $numcore . " --ram=" . $numram . " --network bridge=" . $network . ",model=virtio --os-type=" . $os_type . " --os-variant=" . $os_version . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --noreboot " . $boot_cmd;
 	$drive_cmd="sudo qemu-img create -f qcow2 -o size=" . $source_drive_size . "G " . $disk;
 	$chown_command="sudo chown $libvirt_user:$libvirt_group $disk";
 	$xmledit_cmd="sudo " . $hypervisor_cmdline_path . "/vdi-xmledit -name " . $name;
 	add_SQL_line("INSERT INTO  vms (name,hypervisor,machine_type) VALUES ('$name','$hypervisor','$machine_type')");
 	ssh_command($drive_cmd,true);
-        ssh_command($chown_command,true);
-	ssh_command($vm_cmd,true);
+	if ($os_type=='windows'&&$iso_image!='on')// this is perhaps virt-inst bug. If os==windows and boot==pxe, then virt-install ignores "noauthconsole". We should then go for non-blocking query
+	    ssh_command($vm_cmd,false);
+	else
+    	    ssh_command($vm_cmd,true);
 	ssh_command($xmledit_cmd,true);
 	++$x;
 
@@ -68,7 +70,7 @@ if ($machine_type=='simplemachine'||$machine_type=='sourcemachine'){
 if ($machine_type=='initialmachine'){
     $name=$machinename;
     $disk=$source_drivepath . '/' . $name . "-" . uniqid() . ".qcow2";
-    $vm_cmd="sudo virt-install --name=" . $name . " --disk path=" . $disk . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . $numcpu . ",cores=" . $numcore . " --ram=" . $numram . " --network bridge=" . $network . ",model=virtio --os-type=" . $os_type . " --os-variant=" . $os_version . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --import --noreboot --noautoconsole";
+    $vm_cmd="sudo virt-install --name=" . $name . " --disk path=" . $disk . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . $numcpu . ",cores=" . $numcore . " --ram=" . $numram . " --network bridge=" . $network . ",model=virtio --os-type=" . $os_type . " --os-variant=" . $os_version . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --import --noreboot --import";
     $drive_cmd="sudo qemu-img create -f qcow2 -o size=1G " . $disk;
     $chown_command="sudo chown $libvirt_user:$libvirt_group $disk";
     $xmledit_cmd="sudo " . $hypervisor_cmdline_path . "/vdi-xmledit -name " . $name;
