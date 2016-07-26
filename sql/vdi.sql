@@ -16,6 +16,20 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `ad_groups`
+--
+
+DROP TABLE IF EXISTS `ad_groups`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ad_groups` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `clients`
 --
 
@@ -27,9 +41,10 @@ CREATE TABLE `clients` (
   `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `ip` varchar(255) NOT NULL,
-  `isdomain` INT(11) NOT NULL DEFAULT '0',
+  `isdomain` int(11) NOT NULL DEFAULT '0',
   `lastlogin` datetime DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -42,8 +57,8 @@ DROP TABLE IF EXISTS `config`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `config` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8_general_ci NOT NULL,
-  `valueint` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `valueint` int(11) DEFAULT NULL,
   `valuechar` varchar(255) NOT NULL,
   `valuedate` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
@@ -51,8 +66,9 @@ CREATE TABLE `config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
 INSERT INTO `config` (`id`, `name`, `valueint`, `valuechar`, `valuedate`) VALUES
-(1, 'dbversion', 0, '20160720001', '0000-00-00 00:00:00');
+(1, 'dbversion', 0, '20160721001', '0000-00-00 00:00:00');
 
 --
 -- Table structure for table `hypervisors`
@@ -118,6 +134,21 @@ CREATE TABLE `poolmap` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `poolmap_ad`
+--
+
+DROP TABLE IF EXISTS `poolmap_ad`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `poolmap_ad` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `poolid` int(11) NOT NULL,
+  `groupid` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `poolmap_vm`
 --
 
@@ -145,7 +176,8 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL DEFAULT '',
   `ip` varchar(255) NOT NULL DEFAULT '',
   `lastlogin` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -182,4 +214,4 @@ CREATE TABLE `vms` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-07-18 10:16:50
+-- Dump completed on 2016-07-21 10:37:08
