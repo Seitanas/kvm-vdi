@@ -64,13 +64,12 @@ def vm_routine(vmname, username, password):
 		    except:
 			logger.debug("Non-json data: "+python_line)
 		if not is_logged:#if there is no logged-in users, execute SSO
-		    if retries:#if its not the first attempt, sleep a bit
-		        time.sleep(5)
 		    logger.info ("Trying SSO")
 		    serial_message= '{"__name__":"login","username": "' + username + '","password": "' + password + '"}'+"\n"
 		    logger.debug("Sending credentials for %s to VM: %s", username, vmname)
 		    virtio_socket.sendall(serial_message)
 		    retries += 1
+		    time.sleep(5)
 	else:
 	    logger.info ("Socket timeout for VM: ", vmname)
 	    virtio_socket.close()
