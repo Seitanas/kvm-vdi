@@ -28,6 +28,7 @@ config = ConfigParser()
 config.read('/usr/local/VDI/config')
 socket_timeout = int(config.get('agent', 'socket_timeout'))
 
+
 def vm_routine(vmname, username, password):
     global socket_timeout
     data = ""
@@ -38,22 +39,46 @@ def vm_routine(vmname, username, password):
     try:
 	virtio_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 	virtio_socket.connect(socket_path[0])
-	ready = select.select([virtio_socket], [], [], socket_timeout) #Read VMs spice channel for n seconds. We asume that VM must boot in n seconds and start ovirt-agent.
+	ready = select.select([virtio_socket], [], [], socket_timeout) #Read VMs spice channel for n seconds. We assume that VM must boot in n seconds and start ovirt-agent.
+	is_logged=0
+	retries=0
 	if ready[0]:
-	    data = virtio_socket.recv(32)
-	if data:
-	    logger.info ("Client agent is running")
-	    serial_message= '{"__name__":"login","username": "' + username + '","password": "' + password + '"}'+"\n"
-	    time.sleep(2)#wait for winlogon to showup
-	    logger.debug("Sending credentials for %s to VM: %s", username, vmname)
-	    virtio_socket.sendall(serial_message)
-	    virtio_socket.close()
+	    logger.debug("oVirt agent is up")
+	    while not is_logged and retries<5:
+		logger.debug("Requesting new data for guest: %s", vmname)
+		virtio_socket.sendall( '{"__name__":"refresh"}'+"\n") #let's ask data from oVirt agent on guest machine
+		time.sleep(1)
+		logger.debug("Reading SPICE channel")
+		info = virtio_socket.recv(2048)
+		info_lines=info.split("\n")
+		for python_line in info_lines:#gou through all json responces, search for active-user
+		    try:
+	    		if python_line:#if line is not empty
+			    reply_data=json.loads(python_line)
+			    if reply_data['__name__']=="active-user":
+				if reply_data["name"]=="None" or reply_data["name"]=="":
+				    logger.debug ("There are currently no users logged into machine " +vmname)
+				else:
+				    logger.debug ("There's user " + reply_data["name"] + " logged into machine " + vmname)
+				    is_logged=1
+		    except:
+			logger.debug("Non-json data: "+python_line)
+		if not is_logged:#if there is no logged-in users, execute SSO
+		    if retries:#if its not the first attempt, sleep a bit
+		        time.sleep(5)
+		    logger.info ("Trying SSO")
+		    serial_message= '{"__name__":"login","username": "' + username + '","password": "' + password + '"}'+"\n"
+		    logger.debug("Sending credentials for %s to VM: %s", username, vmname)
+		    virtio_socket.sendall(serial_message)
+		    retries += 1
 	else:
 	    logger.info ("Socket timeout for VM: ", vmname)
 	    virtio_socket.close()
     except:
 	logger.warning ("Virtio socket failure for VM: %s", vmname)
     logger.debug ("Closing vm %s, login thread", vmname)
+    virtio_socket.close()
+
 
 
 logger.info("Starting KVM-VDI hypervisor agent")
