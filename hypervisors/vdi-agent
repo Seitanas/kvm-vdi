@@ -56,7 +56,7 @@ def vm_routine(vmname, username, password):
 	    		if python_line:#if line is not empty
 			    reply_data=json.loads(python_line)
 			    if reply_data['__name__']=="active-user":
-				if reply_data["name"]=="None" or reply_data["name"]=="":
+				if reply_data["name"]=="None" or reply_data["name"]=="" or reply_data["name"]=="(unknown)":
 				    logger.debug ("There are currently no users logged into machine " +vmname)
 				else:
 				    logger.debug ("There's user " + reply_data["name"] + " logged into machine " + vmname)
