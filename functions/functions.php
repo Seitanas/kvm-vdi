@@ -90,7 +90,7 @@ function reload_vm_info(){
 //##############################################################################
 function check_session(){
     session_start();
-    if ($_SESSION['logged'])
+    if (isset($_SESSION['logged']))
 	return $_SESSION['logged'];
     else return 0;
 }
