@@ -32,7 +32,7 @@ spicechannel.append(ET.Element("address",{'type': 'virtio-serial', 'controller':
 emulator = devices.find('emulator')
 emulator.text='/usr/local/VDI/vdi-wrapper'
 graphics = devices.find('graphics')
-#we need to remove cdrom element, which was sed turing installation:
+#we need to remove cdrom element, which was set during installation:
 for disk in devices.findall('disk'):
     devtype=disk.get('device')
     if devtype == 'cdrom':
