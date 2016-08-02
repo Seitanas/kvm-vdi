@@ -64,8 +64,6 @@ if (isset ($_POST['username'])){
 	    if (!empty($tmp_CN[0]))
 		++$group_count;
 	    $group_array="" . $group_array . "','" . $tmp_CN[0];
-	#if (strpos($value, $rpm_admin_group)) {$_SESSION['admin']=1;$allowed=1;}
-	#if (strpos($value, $rpm_user_group)) {$_SESSION['admin']=0;$allowed=1;}
 	}
 	if($group_count){
 	    $group_array = substr($group_array, 2); 

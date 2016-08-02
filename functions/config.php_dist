@@ -35,8 +35,6 @@ $ad_enabled=0;
 $ad_host="somehost.domain.tld";
 $ad_name="domain.tld";
 $ldap_dn = "ou=People,DC=domain,DC=tld";
-$rpm_admin_group="rpm_admins";
-$rpm_user_group="rpm_users";
 ############################################################
 
 
