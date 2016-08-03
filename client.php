@@ -60,7 +60,7 @@ if ($protocol=="SPICE"){
     if (empty($status)){
 	if ($_SESSION['ad_user']=='yes'&&$vm[0]['os_type']=='windows')//we only need to pass username@domainname to windows login.
 	    $username=$username."@".$ad_name;
-	$agent_command=json_encode(array('vmname' => $machine_name, 'username' => $username, 'password' => $password));
+	$agent_command=json_encode(array('vmname' => $machine_name, 'username' => $username, 'password' => $password, 'os_type' => $vm[0]['os_type']));
 	$status='BOOTUP';
         ssh_command('echo "' . addslashes($agent_command) . '"| socat /usr/local/VDI/kvm-vdi.sock - ',true);
 	reload_vm_info();	
