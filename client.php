@@ -17,8 +17,6 @@ if (isset($_POST['username']))
 if (isset($_POST['password']))
     $password=$_POST['password'];
 $userid=$_SESSION['userid'];
-if ($_SESSION['ad_user']=='yes')
-    $username=$username."@".$ad_name;
 
 if ($protocol=="RDP"){
     $json_reply = json_encode(array('status'=>"OK",'protocol' => $protocol, 'address' => $machine_rdp_address));
@@ -46,7 +44,7 @@ if ($protocol=="SPICE"){
     }
     add_SQL_line("UPDATE vms SET clientid='$userid',lastused=NOW() WHERE id='{$suggested_vm[0]['id']}'");
     $machine_name=$suggested_vm[0]['name'];
-    $vm=get_SQL_array("SELECT hypervisor,maintenance,spice_password,name FROM vms WHERE name='$machine_name'");
+    $vm=get_SQL_array("SELECT hypervisor,maintenance,spice_password,name,os_type FROM vms WHERE name='$machine_name'");
     $h_reply=get_SQL_array("SELECT * FROM hypervisors WHERE id='{$vm[0]['hypervisor']}'");
     if ($vm[0]['maintenance']=="true"||$h_reply[0]['maintenance']==1){
         echo json_encode(array('status'=>"MAINTENANCE"));
@@ -60,6 +58,8 @@ if ($protocol=="SPICE"){
     if ($reset_vm&&$reset)
 	ssh_command("sudo virsh reset ".$machine_name,true);
     if (empty($status)){
+	if ($_SESSION['ad_user']=='yes'&&$vm[0]['os_type']=='windows')//we only need to pass username@domainname to windows login.
+	    $username=$username."@".$ad_name;
 	$agent_command=json_encode(array('vmname' => $machine_name, 'username' => $username, 'password' => $password));
 	$status='BOOTUP';
         ssh_command('echo "' . addslashes($agent_command) . '"| socat /usr/local/VDI/kvm-vdi.sock - ',true);
