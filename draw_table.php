@@ -9,7 +9,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-07-20
+2016-08-03
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -42,7 +42,7 @@ if (sizeof($sql_reply)<1){
 }
 while ($x<sizeof($sql_reply)){
     $table_status="";
-    $vms_query=get_SQL_array("SELECT vms.id,vms.name,vms.hypervisor,vms.machine_type,vms.source_volume,vms.snapshot,vms.maintenance,vms.filecopy,vms.state,vms_tmp.name AS sourcename  FROM vms LEFT JOIN vms AS vms_tmp ON vms.source_volume=vms_tmp.id WHERE vms.hypervisor='{$sql_reply[$x]['id']}' AND vms.machine_type <> 'vdimachine' ORDER BY vms.name");
+    $vms_query=get_SQL_array("SELECT vms.id,vms.name,vms.hypervisor,vms.machine_type,vms.source_volume,vms.snapshot,vms.maintenance,vms.filecopy,vms.state,vms.os_type,vms_tmp.name AS sourcename  FROM vms LEFT JOIN vms AS vms_tmp ON vms.source_volume=vms_tmp.id WHERE vms.hypervisor='{$sql_reply[$x]['id']}' AND vms.machine_type <> 'vdimachine' ORDER BY vms.name");
     if (!empty($sql_reply[$x]['name']))
 	$hypervisor_name=$sql_reply[$x]['name'];
     else
@@ -68,6 +68,7 @@ while ($x<sizeof($sql_reply)){
               <th><?php echo _("Virt-snapshot");?></th>
               <th><?php echo _("Maintenance");?></th>
               <th><?php echo _("Operations");?></th>
+              <th><?php echo _("OS type");?></th>
             </tr>
           </thead>
           <tbody>
@@ -93,7 +94,7 @@ while ($x<sizeof($sql_reply)){
                         <td class="col-md-1">' . ($y+1) . '</td> 
                         <td class="col-md-1"></td> 
                         <td class="col-md-2"><a data-toggle="modal" href="vm_info.php?vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id']  . '" data-target="#modalWm">' . $vms_query[$y]['name'] . '</a> </td> 
-                        <td class="col-md-2">', (!empty($vms_query[$y]['machine_type'])) ? $machine_type[$vms_query[$y]['machine_type']]  : "", '</td>
+                        <td class="col-md-1">', (!empty($vms_query[$y]['machine_type'])) ? $machine_type[$vms_query[$y]['machine_type']]  : "", '</td>
                         <td class="col-md-1">' . $vms_query[$y]['sourcename'] . '</td>
                         <td class="col-md-1"><input type="checkbox" '. $vms_query[$y]['snapshot'] . " onclick='handleSnapshot(this);' " . 'id="' . $vms_query[$y]['id'] .  '"></td>
                         <td class="col-md-1"><input type="checkbox" '. $vms_query[$y]['maintenance']. " onclick='handleMaintenance(this);' " . 'id="' . $vms_query[$y]['id'] .  '">';
@@ -145,11 +146,15 @@ while ($x<sizeof($sql_reply)){
 				    echo' <a href="delete_vm.php?vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn btn-danger" aria-label="' . _("Delete VM") . '" title="' . _("Delete VM") .  '"  onclick="return confirmBox(' . "'" . _("Are you sure?") . "'" . ');">
                             		<span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
 
-                        echo    '</td> 
-                              </tr>'; 
+                        echo    '</td>';
+			    if (empty($vms_query[$y]['os_type']))
+				echo '<td class="col-md-1 text-danger">' . _("Unknown") . '</td>';
+			    else
+				echo '<td class="col-md-1">' . ucfirst($vms_query[$y]['os_type']) . '</td>';
+                              echo '</tr>'; 
 			if ($vms_query[$y]['machine_type']=='initialmachine'){
 			    $q=0;
-			    $VDI_query=get_SQL_array("SELECT vms.id,vms.name,vms.hypervisor,vms.machine_type,vms.source_volume,vms.snapshot,vms.maintenance,vms.filecopy,vms.state,vms_tmp.name AS sourcename  FROM vms LEFT JOIN vms AS vms_tmp ON vms.source_volume=vms_tmp.id WHERE vms.source_volume='{$vms_query[$y]['id']}' AND vms.machine_type = 'vdimachine' ORDER BY vms.name");
+			    $VDI_query=get_SQL_array("SELECT vms.id,vms.name,vms.hypervisor,vms.machine_type,vms.source_volume,vms.snapshot,vms.maintenance,vms.filecopy,vms.state,vms.os_type,vms_tmp.name AS sourcename  FROM vms LEFT JOIN vms AS vms_tmp ON vms.source_volume=vms_tmp.id WHERE vms.source_volume='{$vms_query[$y]['id']}' AND vms.machine_type = 'vdimachine' ORDER BY vms.name");
 			    if (!empty($VDI_query))
 				echo '<thead class="vdi-font">
     				<tr class="table-stripe-static">
@@ -178,7 +183,7 @@ while ($x<sizeof($sql_reply)){
                     		<td class="col-md-1 table-stripe-clear"></td> 
                     		<td class="col-md-1">' . ($y+1) . "-" . ($q+1) . '</td> 
                     		<td class="col-md-2"><a data-toggle="modal" href="vm_info.php?vm=' . $VDI_query[$q]['id'] . '&hypervisor=' . $sql_reply[$x]['id']  . '" data-target="#modalWm">' . $VDI_query[$q]['name'] . '</a> </td> 
-                    		<td class="col-md-2">' . $machine_type[$VDI_query[$q]['machine_type']] . '</td>
+                    		<td class="col-md-1">' . $machine_type[$VDI_query[$q]['machine_type']] . '</td>
                     		<td class="col-md-1">' . $VDI_query[$q]['sourcename'] . '</td>
                     		<td class="col-md-1"><input type="checkbox" '. $VDI_query[$q]['snapshot'] . " onclick='handleSnapshot(this);' " . 'id="' . $VDI_query[$q]['id'] .  '"></td>
                     		<td class="col-md-1"><input type="checkbox" '. $VDI_query[$q]['maintenance']. " onclick='handleMaintenance(this);' " . 'id="' . $VDI_query[$q]['id'] .  '"></td>
@@ -195,7 +200,12 @@ while ($x<sizeof($sql_reply)){
 				}
                         	echo' <a href="delete_vm.php?vm=' . $VDI_query[$q]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn btn-danger" aria-label="' . _("Delete VM") . '" title="' . _("Delete VM") .  '"  onclick="return confirmBox(' . "'" . _("Are you sure?") . "'" . ');">
                             		<span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
-				echo '</td></tr>';
+				echo '</td>';
+				if (empty($VDI_query[$q]['os_type']))
+				    echo '<td class="col-md-1 text-danger">' . _("Unknown") . '</td>';
+				else
+    				    echo '<td class="col-md-1">' . ucfirst($VDI_query[$q]['os_type']) . '</td>';
+				echo '</tr>';
 				++$q;
 			    }
 			}

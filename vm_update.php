@@ -15,13 +15,15 @@ if (empty ($snapshot))
     $snapshot="false";
 $source_volume=$_POST['source_volume'];
 $machine_type=$_POST['machine_type'];
+if (isset($_POST['os_type']));
+    $os_type=$_POST['os_type'];
 if ($machine_type=="simplemachine"||$machine_type=="sourcemachine")
     $source_volume="";
 if (empty($vm)&&empty($hypervisor)){
     header("Location: $serviceurl/dashboard.php");
     exit;
 }
-add_SQL_line("UPDATE vms SET snapshot='$snapshot',source_volume='$source_volume',machine_type='$machine_type' WHERE id='$vm'");
+add_SQL_line("UPDATE vms SET snapshot='$snapshot',source_volume='$source_volume',machine_type='$machine_type', os_type='$os_type' WHERE id='$vm'");
 header("Location: $serviceurl/dashboard.php");
 exit;
 ?>

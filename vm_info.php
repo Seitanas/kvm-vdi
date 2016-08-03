@@ -9,7 +9,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-05-30
+2016-08-03
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -24,7 +24,7 @@ if (empty($vm)||empty($hypervisor)){
     exit;
 }
 $h_reply=get_SQL_line("SELECT * FROM hypervisors WHERE id='$hypervisor'");
-$v_reply=get_SQL_line("SELECT * FROM vms WHERE id='$vm'");
+$v_reply=get_SQL_array("SELECT * FROM vms WHERE id='$vm'");
 $source_machines_reply=get_SQL_array("SELECT * FROM vms WHERE hypervisor='$hypervisor' AND (machine_type='sourcemachine' OR machine_type='initialmachine') AND id<>'$vm'  ORDER BY name");
 set_lang();
 ?>
@@ -40,14 +40,24 @@ set_lang();
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-             <h4 class="modal-title">VM name: <?php echo $v_reply[1]; ?></h4>
+             <h4 class="modal-title">VM name: <?php echo $v_reply[0]['name']; ?></h4>
         </div>
         <div class="modal-body">
 	    <div class="row">
+		<div class="col-md-3">
+		    <label><?php echo _("OS type:");?></label>
+		    <select class="form-control" name="os_type" id="os_type">
+	    	        <option value="linux"><?php echo _("Linux");?></option>
+        		<option value="windows"><?php echo _("Windows");?></option>
+		    </select>
+		</div>
+		<div class="col-md-9"></div>
+	    </div>
+	    <div class="row">
 		 <div class="col-md-5">
-		    <label>Machine type:</label>
+		    <label><?php echo _("Machine type:");?></label>
 		    <select class="form-control" name="machine_type" id="machine_type">
-			<?php if (empty($v_reply[3])){?>
+			<?php if (empty($v_reply[0]['machine_type'])){?>
 				<option selected value=""><?php echo _("Please select machine type");?></option> <?php } ?>
 	    	        <option value="simplemachine"><?php echo _("Simple machine");?></option>
         		<option value="initialmachine"><?php echo _("Initial machine");?></option>
@@ -104,13 +114,16 @@ $('#machine_type').on('change', function(){
         $('#sourcevolume').addClass('hide');
     }
 })
-<?php if (!empty($v_reply[3])){?>
-    $("#machine_type").val(<?php echo '"' . $v_reply[3]  . '"'; ?>).change();
+<?php if (!empty($v_reply[0]['os_type'])){?>
+    $("#os_type").val(<?php echo '"' . $v_reply[0]['os_type']  . '"'; ?>).change();
 <?php } ?>
-<?php if (!empty($v_reply[4])){?>
-    $("#source_volume").val(<?php echo '"' . $v_reply[4]  . '"'; ?>).change();
+<?php if (!empty($v_reply[0]['machine_type'])){?>
+    $("#machine_type").val(<?php echo '"' . $v_reply[0]['machine_type']  . '"'; ?>).change();
 <?php } ?>
-$("#snapshot").prop('checked', <?php if (!isset($v_reply[5])) echo 0; else echo 1; ?>);
+<?php if (!empty($v_reply[0]['source_volume'])){?>
+    $("#source_volume").val(<?php echo '"' . $v_reply[0]['source_volume']  . '"'; ?>).change();
+<?php } ?>
+$("#snapshot").prop('checked', <?php if (empty($v_reply[0]['snapshot'])||$v_reply[0]['snapshot']=='false') echo 0; else echo 1; ?>);
 </script>
 </body>
 </html>

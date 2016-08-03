@@ -3,7 +3,7 @@
 KVM-VDI
 Tadas Ustinavičius
 tadas at ring.lt
-2016-05-30
+2016-08-03
 Vilnius, Lithuania.
 */
 include ('functions/config.php');
@@ -60,7 +60,7 @@ if ($machine_type=='simplemachine'||$machine_type=='sourcemachine'){
 	write_log(ssh_command($drive_cmd,true));
 	$vm_reply=ssh_command($vm_cmd,true);
 	if (mb_substr($vm_reply, 0, 5 ) !== "ERROR"&&mb_substr($vm_reply, 0, 5 ) !== "usage"){//if return begins with following strings, - something failed
-	    add_SQL_line("INSERT INTO  vms (name,hypervisor,machine_type,spice_password) VALUES ('$name','$hypervisor','$machine_type','$spice_pw')");
+	    add_SQL_line("INSERT INTO  vms (name,hypervisor,machine_type,spice_password,os_type) VALUES ('$name','$hypervisor','$machine_type','$spice_pw','$os_type')");
 	    write_log(ssh_command($xmledit_cmd,true));
 	}
 	write_log($vm_reply);
@@ -79,7 +79,7 @@ if ($machine_type=='initialmachine'){
     write_log(ssh_command($chown_command,true));
     write_log(ssh_command($vm_cmd,true));
     write_log(ssh_command($xmledit_cmd,true));
-    add_SQL_line("INSERT INTO  vms (name,hypervisor,machine_type,source_volume) VALUES ('$name','$hypervisor','$machine_type','$source_volume')");
+    add_SQL_line("INSERT INTO  vms (name,hypervisor,machine_type,source_volume, os_type) VALUES ('$name','$hypervisor','$machine_type','$source_volume','$os_type')");
     $v_reply=get_SQL_line("SELECT id FROM vms WHERE name='$name'");
     header("Location: $serviceurl/copy_disk.php?vm=" . $v_reply[0] . "&hypervisor=" . $hypervisor);
     exit;
@@ -102,7 +102,7 @@ if ($machine_type=='vdimachine'){
 	write_log(ssh_command($chown_command,true));
 	write_log(ssh_command($vm_cmd,true));
 	write_log(ssh_command($xmledit_cmd,true));
-	add_SQL_line("INSERT INTO  vms (name,hypervisor,machine_type,source_volume) VALUES ('$name','$hypervisor','$machine_type','$source_volume')");
+	add_SQL_line("INSERT INTO  vms (name,hypervisor,machine_type,source_volume,os_type) VALUES ('$name','$hypervisor','$machine_type','$source_volume','$os_type')");
 	++$x;
 
     }
