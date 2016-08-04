@@ -27,6 +27,7 @@ $v_reply=get_SQL_line("SELECT * FROM vms WHERE id='$vm'");
 ssh_connect($h_reply[2].":".$h_reply[3]);
 $address=ssh_command("sudo virsh domdisplay " . $v_reply[1], true);
 $address=str_replace("localhost",$h_reply[2],$address);
+$address=str_replace("\n","",$address);
 $address=$address . "?password=" . $v_reply[9];
 $rnd=uniqid();
 set_lang();
@@ -47,7 +48,7 @@ set_lang();
 	    <?php echo '<img src="screenshot.php?vm=' . $vm . '&hypervisor=' . $hypervisor . '&' . $rnd . '">'; ?>
         </div>
         <div class="modal-footer">
-	    <?php echo '<a class="btn btn-info" type="button" href="' . $address . '" target="_new">' . _("Open remote console") . '</a>';?>
+	    <?php echo '<button type="button" class="btn btn-success" onclick="javascript:window.location=\'' . $address . '\'" target="_new" data-dismiss="modal">' . _("Open remote console") . '</a>';?>
             <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _("Close");?></button>
         </div>
     </div>
