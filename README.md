@@ -143,7 +143,7 @@ Afterwards, use this guide, to install oVirt related binaries: https://github.co
 
 **On Debian based systems:**
 
-    apt-get python python-requests virt-viewer python-qt4 python-webkit python-urllib3 python-gtk2
+    apt-get install python python-requests virt-viewer python-qt4 python-webkit python-urllib3 python-gtk2
 
 Copy files from `thin_clients/` folder to your clients `/usr/local/VDI-client/` folder.  
 Edit `/usr/local/VDI-client/config` file to fit your configuration.  
