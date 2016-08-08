@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-08-03
+2016-08-08
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -98,6 +98,11 @@ if (!check_client_session()){
     exit;
 }
 set_lang();
+
+if ($_SERVER['HTTP_USER_AGENT']=='KVM-VDI client')
+    $html5_client=0;
+else
+    $html5_client=1;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -144,16 +149,18 @@ set_lang();
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
-        <?php
-	$userid=$_SESSION['userid'];
-	$username=$_SESSION['username'];
-	echo '<a class="navbar-brand">' . $username . '</a>';
-	?>
-    </div>
+	        <?php
+		$userid=$_SESSION['userid'];
+		$username=$_SESSION['username'];
+	    	echo '<a class="navbar-brand">' . $username . '</a>';
+		?>
   </div>
 </nav>
     <div class="container">
 	<div class="row">
+	<div class="alert alert-warning hidden" id="warningbox">
+	    
+	</div>
 <?php 
     $last_reload=get_SQL_array ("SELECT id FROM config WHERE name='lastreload' AND valuedate > DATE_SUB(NOW(), INTERVAL 30 SECOND) LIMIT 1"); //if there was no reload of VM list in 30 seconds, initiate reload.
     if (!$last_reload[0]['id']){
@@ -166,7 +173,6 @@ set_lang();
     }
     else
 	$pool_reply=get_SQL_array("SELECT pool.id, pool.name FROM poolmap  LEFT JOIN pool ON poolmap.poolid=pool.id WHERE clientid='$userid'");
-//    print_r($pool_reply);
     $x=0;
     while ($x<sizeof($pool_reply)){
 	    $vm_count=get_SQL_array("SELECT COUNT(*) FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id LEFT JOIN hypervisors ON vms.hypervisor=hypervisors.id WHERE poolmap_vm.poolid='{$pool_reply[$x]['id']}' AND vms.maintenance!='true' AND hypervisors.maintenance!=1");
@@ -235,30 +241,109 @@ set_lang();
     <script src="inc/js/bootstrap.min.js"></script>
 <script>
 $(document).ready(function(){
+var vm_booted=0;
+var retries=4;
+var checker;
+function send_token(token,value,spice_password){
+    $.ajax({
+        type : 'POST',
+        url : 'websocket.php',
+        data: {
+	    'token': token,
+	    'value': value,
+    	},
+    	success:function (data) {
+	    if (data=='OK'){
+		 window.open("spice_html5/?host=<?php echo $websockets_address;?>&port=<?php echo $websockets_port;?>?password="+spice_password+"&vmInfoToken="+token);
+	    }
+	}
+    })
+}
+function call_vm(poolid){
+    $.ajax({
+        type : 'POST',
+        url : 'client.php',
+        data: {
+	    'pool': poolid,
+	    'protocol': "SPICE",
+	    'username': '',
+	    'password': '',
+    	},
+    	success:function (data) {
+	    vm=jQuery.parseJSON(data);
+	    if (vm.status=='OK'){
+		vm_booted=1;
+		clearInterval(checker);
+		send_token(vm.name,vm.address,vm.spice_password);
+		}
+	    if (vm.status=='MAINTENANCE'){
+	        $("#warningbox").html("<strong><?php echo _("Warning!");?></strong> <?php echo _("No VMs available. System in maintenance mode.");?><a class=\"close\" href=\"#\"  onclick=\"$('#warningbox').addClass('hidden')\">&times;</a>");
+	        $("#warningbox").removeClass('hidden');
+	        retries=0;
+		clearInterval(checker);
+	    }
+	    if (vm.status=='BOOTUP'){
+	        console.log("VM is booting");
+	    }
+	    if (vm.status=='NO_FREE_VMS'){
+	        $("#warningbox").html("<strong><?php echo _("Warning!");?></strong> <?php echo _("No free VMs available.");?><a class=\"close\" href=\"#\"  onclick=\"$('#warningbox').addClass('hidden')\">&times;</a>");
+	        $("#warningbox").removeClass('hidden');
+	        retries=0;
+		clearInterval(checker);
+	    }
+
+    	}
+    })
+
+}
+function statusChecker(poolid){
+    if (vm_booted)
+	console.log ("booted");
+    if (retries && !vm_booted){
+	console.log("checking");
+	call_vm(poolid)
+    }
+    retries--;
+}
+    var html5_client=<?php echo $html5_client ;?>;
     $('.pools').click(function() {
-	$('#loadingVM').modal('show');
-	document.title = ""
-	document.title = "kvm-vdi-msg:" + $(this).attr('id')
+	if (!html5_client){
+	    $('#loadingVM').modal('show');
+	    document.title = ""
+	    document.title = "kvm-vdi-msg:" + $(this).attr('id')
+	}
+	else{
+	    vm_booted=0;
+	    retries=4;
+	    var pool= $(this).attr('id');
+	    call_vm(pool);
+	    checker = setInterval(function(){ statusChecker(pool);}, 4000);
+	}
     })
     $('.shutdown').click(function() {
-	document.title = ""
-	document.title = "kvm-vdi-msg:PM:shutdown:" + $(this).attr('id')
+	if (!html5_client){
+	    document.title = ""
+	    document.title = "kvm-vdi-msg:PM:shutdown:" + $(this).attr('id');
+	}
     })
     $('.terminate').click(function() {
-	document.title = ""
-	document.title = "kvm-vdi-msg:PM:destroy:" + $(this).attr('id')
+	if (!html5_client){
+	    document.title = ""
+	    document.title = "kvm-vdi-msg:PM:destroy:" + $(this).attr('id')
+	}
     })
-    function PM(vmid,action){
-    $.ajax({
-            type : 'POST',
-            url : 'client_power.php',
-            data: {
-                vm : vmid,
-                action : action,
-            },
-	})
-    }
-})
+
+//    function PM(vmid,action){
+//    $.ajax({
+///            type : 'POST',
+//            url : 'client_power.php',
+///            data: {
+//                vm : vmid,
+//                action : action,
+///            },
+///	})
+//	}
+    })
 </script>
   </body>
 </html>

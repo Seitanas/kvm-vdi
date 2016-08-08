@@ -8,13 +8,17 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-07-08
+2016-08-08
 */
 ###################Dashboard config##########################
 $serviceurl='http://192.168.0.20/kvm-vdi';
 $language='en_EN';
 #write debug log to web server error.log file.
 $write_debug_log=false;
+#Websockify server address (if using HTML5 client)
+$websockets_address='192.168.0.20';
+#Port of websockify server (if using HTML5 client)
+$websockets_port='5959';
 ############################################################
 
 

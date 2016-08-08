@@ -83,6 +83,16 @@ Comment out `Defaults    requiretty` in `/etc/sudoers`
   
   
   
+### HTML5 SPICE client installation  
+  
+KVM-VDI uses eyeOS HTML5 client to provide web-based access to virtual machines.  
+For this to work, you need to have websockify server running on dashboard server.  
+
+    git clone https://github.com/kanaka/websockify
+    cd websockify
+    ./run --token-plugin TokenFile --token-source /tmp/kvm-vdi 5959
+
+After these steps you should get HTML5 console if you visit `http://YOUR_DASHBOARD/kvm-vdi/client_pools.php`  
 
 
 ### Hypervisor installation
