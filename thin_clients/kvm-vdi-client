@@ -24,7 +24,9 @@ logging.config.fileConfig('/usr/local/VDI-client/config')
 logger = logging.getLogger('root')
 dashboard_path = config.get('server', 'address')
 
-
+http_headers = {
+    'User-Agent': 'KVM-VDI client',
+}
 w = gtk.Window()
 v = webkit.WebView()
 v.props.settings.props.enable_default_context_menu = False
@@ -54,7 +56,7 @@ class Login(QtGui.QDialog):
     def handleLogin(self):
 	global username
 	global password
-	reply=http_session.post(dashboard_path+"client_pools.php", data={'username': str(self.User.text()), 'password': str(self.Pass.text())}, verify=False)
+	reply=http_session.post(dashboard_path+"client_pools.php", data={'username': str(self.User.text()), 'password': str(self.Pass.text())}, verify=False, headers=http_headers)
 	if reply.text!='LOGIN_FAILURE':
 	    username=str(self.User.text())
 	    password=str(self.Pass.text())
@@ -79,7 +81,7 @@ class vm_heartbeat(threading.Thread):
         seconds=0
         while not self.stopped():
 	    if seconds==30:
-		hb_reply=http_session.post(dashboard_path+"client_hb.php", data={'vmname': self.vmname}, verify=False)
+		hb_reply=http_session.post(dashboard_path+"client_hb.php", data={'vmname': self.vmname}, verify=False, headers=http_headers)
 		logger.debug("VM heartbeat")
 		seconds=0
 	    if not self.stopped() and seconds < 30: #sleep for one second. Longer sleep times cause thread to wait on exit.
@@ -88,7 +90,7 @@ class vm_heartbeat(threading.Thread):
 
 def dashboard_reload():
     try:
-	page=http_session.get(dashboard_path+"client_pools.php", verify=False)
+	page=http_session.get(dashboard_path+"client_pools.php", verify=False, headers=http_headers)
 	glib.idle_add(v.load_html_string,str(page.text),dashboard_path)
     except:
 	logger.debug ("Dashboard timeout")
@@ -138,12 +140,12 @@ class remote_viewer(threading.Thread):
     	viewer_config.set('virt-viewer', 'type', 'spice')
     	viewer_config.set('virt-viewer', 'host', tmp[0])
     	viewer_config.set('virt-viewer', 'port', tmp[1])
-    	viewer_config.set('virt-viewer', 'delete-this-file', '1')
+    	viewer_config.set('virt-viewer', 'delete-this-file', '0')
     	viewer_config.set('virt-viewer', 'password', spice_password)
     	with open('/tmp/' + tmpname + '.cfg', 'wb') as configfile:
 	    viewer_config.write(configfile)
-	os.system("/usr/bin/remote-viewer --kiosk-quit=on-disconnect  --kiosk /tmp/" + tmpname + ".cfg ")
-	#os.system("/usr/bin/remote-viewer /tmp/" + tmpname + ".cfg ")
+	#os.system("/usr/bin/remote-viewer --kiosk-quit=on-disconnect  --kiosk /tmp/" + tmpname + ".cfg ")
+	os.system("/usr/bin/remote-viewer /tmp/" + tmpname + ".cfg ")
 	dashboard_reload();
 	logger.info("Exiting virt-viewer")
 	refresh_run=1
@@ -162,15 +164,15 @@ def pool_click(v, param):
 	    vdi_message=vdi_message.replace("PM:","")
 	    vdi_PM=vdi_message.split(":")
 	    if vdi_PM[0]=="shutdown":
-		PM_reply=http_session.post(dashboard_path+"client_power.php", data={'vm': vdi_PM[1], 'action': "shutdown"}, verify=False)
+		PM_reply=http_session.post(dashboard_path+"client_power.php", data={'vm': vdi_PM[1], 'action': "shutdown"}, verify=False, headers=http_headers)
 	    if vdi_PM[0]=="destroy":
-		PM_reply=http_session.post(dashboard_path+"client_power.php", data={'vm': vdi_PM[1], 'action': "destroy"}, verify=False)
+		PM_reply=http_session.post(dashboard_path+"client_power.php", data={'vm': vdi_PM[1], 'action': "destroy"}, verify=False, headers=http_headers)
 	    dashboard_reload()
 	else:
 	    global refresh_run
 	    refresh_run=0;
 	    poolid=vdi_message
-	    reply=http_session.post(dashboard_path+"client.php", data={'pool': poolid, 'protocol': "SPICE", 'username': username, 'password': password} ,verify=False);
+	    reply=http_session.post(dashboard_path+"client.php", data={'pool': poolid, 'protocol': "SPICE", 'username': username, 'password': password} ,verify=False, headers=http_headers);
 	    data=json.loads(reply.text)
 	    if data['status']=='MAINTENANCE':
 		dashboard_reload()
@@ -181,7 +183,7 @@ def pool_click(v, param):
 	    retries=0
 	    while data['status']=="BOOTUP" and retries < 10 :
 		logger.info("BOOTUP, waiting")
-		reply=http_session.post(dashboard_path+"client.php", data={'pool': poolid, 'protocol': "SPICE", 'username': username, 'password': password} ,verify=False);
+		reply=http_session.post(dashboard_path+"client.php", data={'pool': poolid, 'protocol': "SPICE", 'username': username, 'password': password} ,verify=False, headers=http_headers);
 		data=json.loads(reply.text)
 		time.sleep(1)
 	    if data['status']=='OK':
