@@ -211,7 +211,7 @@ function start () {
 		'host': getURLParameter('host') || '10.11.12.100',
 		'port': getURLParameter('port') || 8000,
 		'protocol': getURLParameter('protocol') || 'ws',
-		'token': '1q2w3e4r',
+		'token': getURLParameter('password') || '',
 		'vmHost': getURLParameter('vmhost') || false,
 		'vmPort': getURLParameter('vmport') || false,
 		'useBus': false,
