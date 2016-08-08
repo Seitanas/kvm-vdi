@@ -68,8 +68,9 @@ function reload_vm_info(){
     while ($x<sizeof($sql_reply)){
 	$ip=$sql_reply[$x]['ip'];
 	$port=$sql_reply[$x]['port'];
-	    $hyper_id=$sql_reply[$x]['id'];
-    	    ssh_connect($ip . ":" . $port);
+	$hyper_id=$sql_reply[$x]['id'];
+    	$reply=ssh_connect($ip . ":" . $port);
+	if (!$reply){//if connection is successfull
     	    $output=ssh_command("sudo virsh list --all |tail -n +3|head -n -1|awk '{print $2" . '" "' . "$3}'",true);
 	    $vms=array();
     	    $output=str_replace("\n"," ",$output);
@@ -77,13 +78,16 @@ function reload_vm_info(){
 	    $y=0;
 	    while ($vms[$y]){
     		$vms_reply=get_SQL_line("SELECT id FROM vms WHERE name='$vms[$y]' AND hypervisor='$hyper_id'"); 
-        	$state=$vms[$y+1];
+    		$state=$vms[$y+1];
     		if (empty($vms_reply[0]))//New VM is found
             	    add_SQL_line("INSERT INTO  vms (name,hypervisor,state) VALUES ('$vms[$y]','$hyper_id','$state')");
     		else
             	    add_SQL_line("UPDATE vms SET name='$vms[$y]', hypervisor='$hyper_id', state='$state' WHERE id='$vms_reply[0]'");
-        	$y=$y+2;
+    		$y=$y+2;
 	    }
+	}
+	else
+	    add_SQL_line("UPDATE hypervisors SET maintenance='1' WHERE id='$hyper_id'");
 	++$x;
     }
 }
