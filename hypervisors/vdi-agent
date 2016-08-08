@@ -34,6 +34,9 @@ def vm_routine(vmname, username, password, os_type):
     data = ""
     logger.info("Starting machine %s", vmname)
     err = subprocess.Popen("virsh start " + vmname, shell=True, stdout=subprocess.PIPE).communicate()
+    if not username:
+	logger.debug("Username is empty. Skipping SSO")
+	thread.exit()
     socket_path = subprocess.Popen("virsh dumpxml " + vmname + "| xpath -q -e /domain/devices/channel/source/@path|grep kvm-vdi", shell=True, stdout=subprocess.PIPE).communicate()#get current spice channel path. Path changes on each VM startup
     socket_path = re.findall(r'"([^"]*)"', socket_path[0]) #remove everythig outside double quotes
     try:
