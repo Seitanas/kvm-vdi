@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-08-08
+2016-08-09
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -156,11 +156,17 @@ else
 		?>
   </div>
 </nav>
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+	<div class="alert alert-warning hidden" id="warningbox"></div>
+    </div>
+    <div class="col-md-3"></div>
+</div>
+<div id="mainscreen">
     <div class="container">
 	<div class="row">
-	<div class="alert alert-warning hidden" id="warningbox">
-	    
-	</div>
+
 <?php 
     $last_reload=get_SQL_array ("SELECT id FROM config WHERE name='lastreload' AND valuedate > DATE_SUB(NOW(), INTERVAL 30 SECOND) LIMIT 1"); //if there was no reload of VM list in 30 seconds, initiate reload.
     if (!$last_reload[0]['id']){
@@ -237,13 +243,22 @@ else
     }?>
 	</div>
     </div>
+</div>
     <script src="inc/js/jquery.min.js"></script>
     <script src="inc/js/bootstrap.min.js"></script>
 <script>
 $(document).ready(function(){
 var vm_booted=0;
 var retries=4;
-var checker;
+var checker_object;
+var screen_object;
+var html5_client=<?php echo $html5_client ;?>;
+function reload_screen(){
+    $( "#mainscreen" ).load( "draw_html5_buttons.php", function() {});
+}
+if (html5_client){
+    screen_object = setInterval(function(){reload_screen();},5000);
+}
 function send_token(token,value,spice_password){
     $.ajax({
         type : 'POST',
@@ -273,23 +288,23 @@ function call_vm(poolid){
 	    vm=jQuery.parseJSON(data);
 	    if (vm.status=='OK'){
 		vm_booted=1;
-		clearInterval(checker);
+		clearInterval(checker_object);
 		send_token(vm.name,vm.address,vm.spice_password);
-		}
+	    }
 	    if (vm.status=='MAINTENANCE'){
 	        $("#warningbox").html("<strong><?php echo _("Warning!");?></strong> <?php echo _("No VMs available. System in maintenance mode.");?><a class=\"close\" href=\"#\"  onclick=\"$('#warningbox').addClass('hidden')\">&times;</a>");
 	        $("#warningbox").removeClass('hidden');
 	        retries=0;
-		clearInterval(checker);
+		clearInterval(checker_object);
 	    }
 	    if (vm.status=='BOOTUP'){
-	        console.log("VM is booting");
+	        //console.log("VM is booting");
 	    }
 	    if (vm.status=='NO_FREE_VMS'){
 	        $("#warningbox").html("<strong><?php echo _("Warning!");?></strong> <?php echo _("No free VMs available.");?><a class=\"close\" href=\"#\"  onclick=\"$('#warningbox').addClass('hidden')\">&times;</a>");
 	        $("#warningbox").removeClass('hidden');
 	        retries=0;
-		clearInterval(checker);
+		clearInterval(checker_object);
 	    }
 
     	}
@@ -297,53 +312,63 @@ function call_vm(poolid){
 
 }
 function statusChecker(poolid){
-    if (vm_booted)
-	console.log ("booted");
     if (retries && !vm_booted){
-	console.log("checking");
+//	console.log("checking");
 	call_vm(poolid)
     }
     retries--;
 }
-    var html5_client=<?php echo $html5_client ;?>;
-    $('.pools').click(function() {
+    //$('.pools').click(function() {
+    $(document).delegate(".pools","click",function(){
 	if (!html5_client){
 	    $('#loadingVM').modal('show');
 	    document.title = ""
 	    document.title = "kvm-vdi-msg:" + $(this).attr('id')
 	}
 	else{
+	    heatbet_enabled=0;
 	    vm_booted=0;
 	    retries=4;
 	    var pool= $(this).attr('id');
 	    call_vm(pool);
-	    checker = setInterval(function(){ statusChecker(pool);}, 4000);
+	    checker_object = setInterval(function(){ statusChecker(pool);}, 4000); //since ajax callas are asyncronous, we need to make some kind of scheduler for them not to be called at once
 	}
     })
-    $('.shutdown').click(function() {
+//    $('.shutdown').click(function() {
+    $(document).delegate(".shutdown","click",function(){
 	if (!html5_client){
 	    document.title = ""
 	    document.title = "kvm-vdi-msg:PM:shutdown:" + $(this).attr('id');
 	}
+	else {
+	    $.ajax({
+    		type : 'POST',
+    		url : 'client_power.php',
+    		data: {
+		    'vm': $(this).attr('id'),
+		    'action': 'shutdown',
+    		}
+	    });
+	}
     })
-    $('.terminate').click(function() {
+//    $('.terminate').click(function() {
+    $(document).delegate(".terminate","click",function(){
 	if (!html5_client){
 	    document.title = ""
 	    document.title = "kvm-vdi-msg:PM:destroy:" + $(this).attr('id')
 	}
+	else {
+	    $.ajax({
+    		type : 'POST',
+    		url : 'client_power.php',
+    		data: {
+		    'vm': $(this).attr('id'),
+		    'action': 'destroy',
+    		}
+	    });
+	}
     })
-
-//    function PM(vmid,action){
-//    $.ajax({
-///            type : 'POST',
-//            url : 'client_power.php',
-///            data: {
-//                vm : vmid,
-//                action : action,
-///            },
-///	})
-//	}
-    })
+})
 </script>
   </body>
 </html>

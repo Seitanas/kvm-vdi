@@ -1,3 +1,6 @@
+<?php
+$vmname=$_GET['vmInfoToken'];
+?>
 <!DOCTYPE html>
 <!--
 
@@ -34,7 +37,7 @@ must display the words "Powered by eyeos" and retain the original copyright noti
 -->
 <html>
     <head>
-        <title>eyeOS Spice Web Client</title>
+        <title>KVM-VDI - <?php echo "$vmname";?></title>
         <meta charset="utf-8">
         <!-- libs -->
         <script src="lib/modernizr.js"></script>
@@ -184,4 +187,19 @@ must display the words "Powered by eyeos" and retain the original copyright noti
             <button id="launchWordButton"  type="button" onclick=startBenchmark()>Start benchmark</button>
         </div>
     </body>
+<script>
+var vmname="<?php echo $vmname?>";
+function vm_heartbeat(){
+    $.ajax({
+    	    type : 'POST',
+    	    url : '../client_hb.php',
+    	    data: {
+    	    'vmname': vmname,
+	    }
+	})
+}
+$(document).ready(function(){
+    var heartbeat_object = setInterval(function(){vm_heartbeat();},30000);
+});
+</script>
 </html>
