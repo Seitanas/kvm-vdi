@@ -13,6 +13,10 @@ Vilnius,Lithuania.
 include ('functions/config.php');
 require_once('functions/functions.php');
 slash_vars();
+if ($_SERVER['HTTP_USER_AGENT']=='KVM-VDI client')
+    $html5_client=0;
+else
+    $html5_client=1;
 if (isset ($_POST['username'])){
     $username=$_POST['username'];
     $password=$_POST['password'];
@@ -79,16 +83,16 @@ if (isset ($_POST['username'])){
 	    $_SESSION['username']=$query_user;
 	    $_SESSION['group_array']=$group_array;
 	}
-	else {
+	else if(!$html5_client) {
 	    echo 'LOGIN_FAILURE';
 	    exit;
 	}
-	if(empty($ad_groups_validate[0]['id'])){//there are no groups mapped
-	    echo 'LOGIN_FAILURE';
-	    exit;
-	}
+	//if(empty($ad_groups_validate[0]['id'])&&!$html5_client){//there are no groups mapped
+	//    echo 'LOGIN_FAILURE';
+	///    exit;
+	//}
     }
-    else {
+    else if(!$html5_client) {
 	echo 'LOGIN_FAILURE';
 	exit;
     }
@@ -99,10 +103,7 @@ if (!check_client_session()){
 }
 set_lang();
 
-if ($_SERVER['HTTP_USER_AGENT']=='KVM-VDI client')
-    $html5_client=0;
-else
-    $html5_client=1;
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
