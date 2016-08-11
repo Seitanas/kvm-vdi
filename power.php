@@ -46,9 +46,9 @@ if ($action=="single"){
 	//ssh_command("sudo virsh start " . $v_reply[0], true);
     }
     if ($state=="down")
-	ssh_command("sudo virsh shutdown " . $v_reply[0], true);
+	ssh_command("sudo virsh shutdown " . $v_reply[0]['name'], true);
     if ($state=="destroy")
-	ssh_command("sudo virsh destroy " . $v_reply[0], true);
+	ssh_command("sudo virsh destroy " . $v_reply[0]['name'], true);
 
 }
 header("Location: $serviceurl/reload_vm_info.php");
