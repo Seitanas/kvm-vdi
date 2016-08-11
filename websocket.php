@@ -20,6 +20,8 @@ if (empty($token)||empty($value)){
 if (!file_exists('/tmp/kvm-vdi/')) {
     mkdir('/tmp/kvm-vdi', 0777, true);
 }
+$token=str_replace('/','',$token);
+$value=str_replace('/','',$value);
 file_put_contents("/tmp/kvm-vdi/$token","$token: $value");
 echo "OK";
 exit;
