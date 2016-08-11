@@ -92,6 +92,8 @@ For this to work, you need to have websockify server running on dashboard server
     cd websockify
     ./run --token-plugin TokenFile --token-source /tmp/kvm-vdi 5959
 
+You should create client login. `Clients>add client`. Then add client to atleast one VM pool (`Add clients to pool`).  
+If you are using AD/LDAP users, you must create at least one group for that user and add it to pool (`Add AD group`, `Add AD group to pool`).  
 After these steps you should get HTML5 console if you visit `http://YOUR_DASHBOARD/kvm-vdi/client_pools.php`  
 
 
