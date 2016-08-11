@@ -27,6 +27,7 @@ server.listen(5)
 config = ConfigParser()
 config.read('/usr/local/VDI/config')
 socket_timeout = int(config.get('agent', 'socket_timeout'))
+terminate=0
 
 
 def vm_routine(vmname, username, password, os_type):
@@ -34,19 +35,17 @@ def vm_routine(vmname, username, password, os_type):
     data = ""
     logger.info("Starting machine %s", vmname)
     err = subprocess.Popen("virsh start " + vmname, shell=True, stdout=subprocess.PIPE).communicate()
-    if not username:
-	logger.debug("Username is empty. Skipping SSO")
-	thread.exit()
     socket_path = subprocess.Popen("virsh dumpxml " + vmname + "| xpath -q -e /domain/devices/channel/source/@path|grep kvm-vdi", shell=True, stdout=subprocess.PIPE).communicate()#get current spice channel path. Path changes on each VM startup
     socket_path = re.findall(r'"([^"]*)"', socket_path[0]) #remove everythig outside double quotes
     try:
+	logger.debug("Opening socket %s",socket_path)
 	virtio_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 	virtio_socket.connect(socket_path[0])
 	ready = select.select([virtio_socket], [], [], socket_timeout) #Read VMs spice channel for n seconds. We assume that VM must boot in n seconds and start ovirt-agent.
 	is_logged=0
 	retries=0
 	query_retry=10
-	if ready[0]:
+	if ready[0] and username:
 	    logger.debug("oVirt agent is up")
 	    time.sleep(2)#wait for login
 	    serial_message= '{"__name__":"login","username": "' + username + '","password": "' + password + '"}'+"\n"
@@ -87,50 +86,65 @@ def vm_routine(vmname, username, password, os_type):
 		if os_type=='linux':#do not wait for users to fully login as on windows
 		    query_retry=10
 		time.sleep(10)
-	else:
-	    logger.info ("Socket timeout for VM: ", vmname)
-	    virtio_socket.close()
+	elif not ready[0]:
+	    logger.info ("Socket timeout for VM: %s", vmname)
+	elif not username:
+	    logger.debug("Username is empty for VM: %s. Skipping SSO", vmname)
     except:
 	logger.warning ("Virtio socket failure for VM: %s", vmname)
-    logger.debug ("Closing vm %s, login thread", vmname)
+	logger.debug ("Closing vm %s, login thread", vmname)
+	thread.exit()
+    global terminate
+    while True and not terminate: #make thread stay till global shutdown. We need to have VM socket open from this thread. Its a hack, due problem in ovirt windows agent, where it consumes entire guest core if socket is not open from hypervisor side.
+	time.sleep(2)
+	info = virtio_socket.recv(1024)
+	if not info:
+	    break
+    logger.debug ("Closing socket %s", socket_path)
     virtio_socket.close()
+    logger.debug ("Closing vm %s, login thread", vmname)
+
 
 
 
 logger.info("Starting KVM-VDI hypervisor agent")
-while True:
-  conn, addr = server.accept()
-  while True: 
-    data = conn.recv( 1024 )
-    if not data:
-        break
-    else:
-	command=json.loads(data)
-	fail=0
-	try:
-	    vmname=command['vmname']
-	except:
-	    fail=1
-	try:
-	    username=command['username']
-	except:
-	    fail=1
-	try:
-	    password=command['password']
-	except:
-	    fail=1
-	try:
-	    os_type=command['os_type']
-	except:
-	    fail=1
-	if fail==1:
-	    logger.info ("Illegal json")
-	    logger.debug ("Illegal json: %s", data)
-	else:
-	    logger.debug("Starting login thread for vm: %s", vmname)
-	    t = Thread(target=vm_routine, args=(vmname,username,password,os_type))
-	    t.start()
-        break
-
+try:
+    while True:
+	conn, addr = server.accept()
+	while True: 
+	    data = conn.recv( 1024 )
+	    if not data:
+    		break
+	    else:
+		command=json.loads(data)
+		fail=0
+	    try:
+		vmname=command['vmname']
+	    except:
+		fail=1
+	    try:
+		username=command['username']
+	    except:
+		fail=1
+	    try:
+		password=command['password']
+	    except:
+		fail=1
+	    try:
+		os_type=command['os_type']
+	    except:
+		fail=1
+	    if fail==1:
+		logger.info ("Illegal json")
+		logger.debug ("Illegal json: %s", data)
+	    else:
+		logger.debug("Starting login thread for vm: %s", vmname)
+		t = Thread(target=vm_routine, args=(vmname,username,password,os_type))
+		t.start()
+    	    break
+except KeyboardInterrupt:
+    logger.debug("Keyboard interrupt")
+terminate=1
+time.sleep(1)
 server.close()
 os.remove( sockfile )
