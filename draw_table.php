@@ -9,7 +9,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-08-05
+2016-08-11
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -28,7 +28,7 @@ while ($upgradedfrom=check_upgrade()){
 	</div>';
     }
 reload_vm_info();
-$sql_reply=get_SQL_array("SELECT * FROM hypervisors");
+$sql_reply=get_SQL_array("SELECT * FROM hypervisors ORDER BY name,ip ASC");
 $x=0;
 if (sizeof($sql_reply)<1){
     ?>
