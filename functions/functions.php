@@ -178,3 +178,12 @@ function write_log($message){
     if ($write_debug_log)
 	error_log($message);
 }
+//########################################################################
+function remove_specialchars($item){
+    $item=str_replace("\\'",'',$item);
+    $item=str_replace('\"','',$item);
+    $item=str_replace('\`','',$item);
+    $item=str_replace(':','',$item);
+    $item=str_replace('~','',$item);
+    return $item;
+}

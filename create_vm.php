@@ -3,7 +3,7 @@
 KVM-VDI
 Tadas Ustinavičius
 tadas at ring.lt
-2016-08-03
+2016-08-12
 Vilnius, Lithuania.
 */
 include ('functions/config.php');
@@ -13,24 +13,24 @@ if (!check_session()){
     exit;
 }
 slash_vars();
-$machine_type=$_POST['machine_type'];
-$hypervisor=$_POST['hypervisor'];
-$source_volume=$_POST['source_volume'];
-$source_drivepath=$_POST['source_drivepath'];
-$source_drive_size=$_POST['source_drive_size'];
+$machine_type=remove_specialchars($_POST['machine_type']);
+$hypervisor=remove_specialchars($_POST['hypervisor']);
+$source_volume=remove_specialchars($_POST['source_volume']);
+$source_drivepath=remove_specialchars($_POST['source_drivepath']);
+$source_drive_size=remove_specialchars($_POST['source_drive_size']);
 $iso_image='';
 if (isset($_POST['iso_image']))
-    $iso_image=$_POST['iso_image'];
+    $iso_image=remove_specialchars($_POST['iso_image']);
 if (isset($_POST['iso_path']))
-    $iso_path=$_POST['iso_path'];
-$numcpu=$_POST['numcpu'];
-$numcore=$_POST['numcore'];
-$numram=1024*$_POST['numram'];
-$network=$_POST['network'];
-$machinename=$_POST['machinename'];
-$machinecount=$_POST['machinecount'];
-$os_type=$_POST['os_type'];
-$os_version=$_POST['os_version'];
+    $iso_path=remove_specialchars($_POST['iso_path']);
+$numcpu=remove_specialchars($_POST['numcpu']);
+$numcore=remove_specialchars($_POST['numcore']);
+$numram=1024*remove_specialchars($_POST['numram']);
+$network=remove_specialchars($_POST['network']);
+$machinename=remove_specialchars($_POST['machinename']);
+$machinecount=remove_specialchars($_POST['machinecount']);
+$os_type=remove_specialchars($_POST['os_type']);
+$os_version=remove_specialchars($_POST['os_version']);
 if (check_empty($machine_type,$hypervisor,$numcpu,$numcore,$numram,$network,$machinename,$machinecount)){
     header("Location: $serviceurl/dashboard.php");
     exit;
