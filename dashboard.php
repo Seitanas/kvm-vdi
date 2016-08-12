@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-07-20
+2016-08-12
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -75,6 +75,7 @@ set_lang();
 			$container.addClass('progress-bar-success');
 			$container.css('width', count+'%').attr('aria-valuenow', count);  
 			$container.html(count+'%');
+			console.log(container + " " + filepath + " " + count)
 		    }
 		    if (count < 100 && count!='') {
 			$container.parent('div').show();
