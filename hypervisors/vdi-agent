@@ -27,7 +27,7 @@ server.listen(5)
 config = ConfigParser()
 config.read('/usr/local/VDI/config')
 socket_timeout = int(config.get('agent', 'socket_timeout'))
-terminate=0
+terminate=1 #oVirt agent seems to have fixed issue with windows OS. Making login thread exit after login routine
 
 
 def vm_routine(vmname, username, password, os_type):
@@ -94,6 +94,10 @@ def vm_routine(vmname, username, password, os_type):
 	logger.warning ("Virtio socket failure for VM: %s", vmname)
 	logger.debug ("Closing vm %s, login thread", vmname)
 	thread.exit()
+    #cleaning credential information from memory
+    username=None
+    password=None
+    serial_message=None
     global terminate
     while True and not terminate: #make thread stay till global shutdown. We need to have VM socket open from this thread. Its a hack, due problem in ovirt windows agent, where it consumes entire guest core if socket is not open from hypervisor side.
 	time.sleep(2)
@@ -102,6 +106,7 @@ def vm_routine(vmname, username, password, os_type):
 	    break
     logger.debug ("Closing socket %s", socket_path)
     virtio_socket.close()
+    logger.info ("Done: %s", vmname)
     logger.debug ("Closing vm %s, login thread", vmname)
 
 
