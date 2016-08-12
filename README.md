@@ -204,10 +204,9 @@ We use SSD drive to store our "initial image" - initial bootup of 18 VDIs on eac
 We use second SSD to store temporary ("virtual snapshots").  
 We store "source machine" image on shared NFS storage, since it must be accesable on each hypervisor to use "copy disk from source" function. One must remember to start "source machine" on single hypervisor, because it will potentially corrupt VMs image if ran on multiple nodes.  
 
-
-
+![Alt text](http://webjail.ring.lt/vdi/kvm-vdi.png?raw=true&1)
 ![Alt text](http://webjail.ring.lt/vdi/vdi.jpg?raw=true&4)
 ![Alt text](http://webjail.ring.lt/vdi/vdi1.jpg?raw=true&2)
 ![Alt text](http://webjail.ring.lt/vdi/vdi2.jpg?raw=true&1)
-![Alt text](http://webjail.ring.lt/vdi/vdi3.jpg?raw=true&1)
+![Alt text](http://webjail.ring.lt/vdi/vdi3.jpg?raw=true&2)
 ![Alt text](http://webjail.ring.lt/vdi/vdi4.jpg?raw=true&1)
