@@ -96,6 +96,7 @@ If dashboard is accessed from https, you need to add ssl certificates to websock
 
     ./run --token-plugin TokenFile --token-source /tmp/kvm-vdi 5959 --cert=CERTFILE --key=KEYFILE --daemon
 
+Make sure, that there is no firewall rules blocking connections from websockify server to hypervisor ports 59xx.  
 Also, if certificates are self-signed, SPICE console will not be available on Mozilla Firefox browser.  
 You should create client login. `Clients>add client`. Then add client to atleast one VM pool (`Add clients to pool`).  
 If you are using AD/LDAP users, you must create at least one group for that user and add it to pool (`Add AD group`, `Add AD group to pool`).  
