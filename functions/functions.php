@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2016-07-26
+2016-08-16
 Vilnius, Lithuania.
 */
 function SQL_connect(){
@@ -185,5 +185,15 @@ function remove_specialchars($item){
     $item=str_replace('\`','',$item);
     $item=str_replace(':','',$item);
     $item=str_replace('~','',$item);
+    $item=str_replace(' ','',$item);
+    $item=str_replace('!','',$item);
+    $item=str_replace('@','',$item);
+    $item=str_replace('#','',$item);
+    $item=str_replace('$','',$item);
+    $item=str_replace('&','',$item);
+    $item=str_replace('%','',$item);
+    $item=str_replace('(','',$item);
+    $item=str_replace(')','',$item);
+    $item=str_replace('|','',$item);
     return $item;
 }
