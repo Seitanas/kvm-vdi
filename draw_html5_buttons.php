@@ -51,6 +51,8 @@ $username=$_SESSION['username'];
 	    $pm_icons="";
 	    if ($vm_count_available[0][0]==0)
 		$vm_image="text-muted";
+	    if (!isset($provided_vm[0]['state']))
+		$provided_vm[0]['state']='';
 	    if ($provided_vm[0]['state']=='running'||$provided_vm[0]['state']=='pmsuspended'||$provided_vm[0]['state']=='paused'){
 		$pm_icons='<a href="#" class="shutdown"  id="' . $provided_vm[0]['id'] . '"><i class="pull-left fa fa-stop-circle-o text-danger" title="' . _("Shutdown machine") . '"></i></a>';
 		$pm_icons=$pm_icons.'<a href="#" class="terminate"  id="' . $provided_vm[0]['id'] . '"><i class="pull-left fa fa-times-circle-o text-danger" title="' . ("Terminate machine") . '"></i></a>';

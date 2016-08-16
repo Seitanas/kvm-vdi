@@ -100,7 +100,8 @@ Make sure, that there is no firewall rules blocking connections from websockify 
 Also, if certificates are self-signed, SPICE console will not be available on Mozilla Firefox browser.  
 You should create client login. `Clients>add client`. Then add client to atleast one VM pool (`Add clients to pool`).  
 If you are using AD/LDAP users, you must create at least one group for that user and add it to pool (`Add AD group`, `Add AD group to pool`).  
-After these steps you should get HTML5 console if you visit `http://YOUR_DASHBOARD/kvm-vdi/client_pools.php`  
+After these steps you should get HTML5 console if you visit http://YOUR_DASHBOARD/kvm-vdi/client_pools.php`  
+If apache mod_rewrite is enabled, you can access HTML5 console via: http://YOUR_DASHBOARD/kvm-vdi/client`  
 
 
 ### Hypervisor installation
