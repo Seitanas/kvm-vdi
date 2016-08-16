@@ -9,7 +9,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-08-12
+2016-08-16
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -79,13 +79,26 @@ while ($x<sizeof($sql_reply)){
             $machine_type['sourcemachine']=_("Source machine");
             $machine_type['vdimachine']=_("VDI machine");
             while ($y<sizeof($vms_query)){
-                $pwr_status="off";
-                if ($vms_query[$y]['state']=="shut")
-                    $pwr_button="btn-default";
-                else{
-                    $pwr_button="btn-success";
-                    $pwr_status="on";
-                }
+		$pwr_button="btn-success";
+                $pwr_status="on";
+		switch ($vms_query[$y]['state']) {
+		    case "shut":
+			$vms_status_display='<i class="text-danger">' . _("Shutoff") . '</i>';
+                	$pwr_button="btn-default";
+			$pwr_status="off";
+			break;
+		    case "running":
+			$vms_status_display='<i class="text-success">' . _("Running") . '</i>';
+			break;
+		    case "paused":
+		    	$vms_status_display='<i class="text-warning">' . _("Paused") . '</i>';
+			break;
+		    case "pmsuspended":
+		    	$vms_status_display='<i class="text-warning">' . _("Suspended") . '</i>';
+			break;
+		    default:
+			$vms_status_display='<i class="text-muted">' . _("Unknown") . '</i>';
+		}
                 $vms_query[$y]['snapshot']=str_replace("true","checked",$vms_query[$y]['snapshot']);
                 $vms_query[$y]['snapshot']=str_replace("false","",$vms_query[$y]['snapshot']);
                 $vms_query[$y]['maintenance']=str_replace("true","checked",$vms_query[$y]['maintenance']);
@@ -117,7 +130,7 @@ while ($x<sizeof($sql_reply)){
                               </script>';
                         }
                         echo  '</td>
-                              <td class="col-md-3">';
+                              <td class="col-md-2">';
                         if ($vms_query[$y]['machine_type']=="initialmachine"){
                 	    echo '<div class="btn-group">
                                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -159,9 +172,9 @@ while ($x<sizeof($sql_reply)){
 
                         echo    '</td>';
 			    if (empty($vms_query[$y]['os_type']))
-				echo '<td class="col-md-1 text-danger">' . _("Unknown") . '</td>';
+				echo '<td class="col-md-1 text-danger">' . _("Unknown") . ' &#47; ' . $vms_status_display . '</td>';
 			    else
-				echo '<td class="col-md-1">' . ucfirst($vms_query[$y]['os_type']) . '</td>';
+				echo '<td class="col-md-2">' . ucfirst($vms_query[$y]['os_type']) . ' &#47; ' . $vms_status_display . '</td>';
                               echo '</tr>'; 
 			if ($vms_query[$y]['machine_type']=='initialmachine'){
 			    $q=0;
@@ -183,12 +196,26 @@ while ($x<sizeof($sql_reply)){
             			$VDI_query[$q]['snapshot']=str_replace("false","",$VDI_query[$q]['snapshot']);
             			$VDI_query[$q]['maintenance']=str_replace("true","checked",$VDI_query[$q]['maintenance']);
             			$VDI_query[$q]['maintenance']=str_replace("false","",$VDI_query[$q]['maintenance']);
-				$pwr_status="off";
-            			if ($VDI_query[$q]['state']=="shut")
-                		    $pwr_button="btn-default";
-            			else{
-                		    $pwr_button="btn-success";
-		                    $pwr_status="on";}
+                		$pwr_button="btn-success";
+		                $pwr_status="on";
+				switch ($VDI_query[$q]['state']) {
+				    case "shut":
+					$vdi_status_display='<i class="text-danger">' . _("Shutoff") . '</i>';
+					$pwr_button="btn-default";
+		    			$pwr_status="off";
+					break;
+				    case "running":
+					$vdi_status_display='<i class="text-success">' . _("Running") . '</i>';
+					break;
+				    case "paused":
+				    	$vdi_status_display='<i class="text-warning">' . _("Paused") . '</i>';
+					break;
+				    case "pmsuspended":
+				    	$vdi_status_display='<i class="text-warning">' . _("Suspended") . '</i>';
+					break;
+				    default:
+					$vdi_status_display='<i class="text-muted">' . _("Unknown") . '</i>';;
+				}
 				echo '<tr class="table-stripe-ani vdi-font child-' . $vms_query[$y]['id'] . ' collapse in"> 
                     		<td class="col-md-1 table-stripe-clear"></td> 
                     		<td class="col-md-1">' . ($y+1) . "-" . ($q+1) . '</td> 
@@ -197,7 +224,7 @@ while ($x<sizeof($sql_reply)){
                     		<td class="col-md-1">' . $VDI_query[$q]['sourcename'] . '</td>
                     		<td class="col-md-1"><input type="checkbox" '. $VDI_query[$q]['snapshot'] . " onclick='handleSnapshot(this);' " . 'id="' . $VDI_query[$q]['id'] .  '"></td>
                     		<td class="col-md-1"><input type="checkbox" '. $VDI_query[$q]['maintenance']. " onclick='handleMaintenance(this);' " . 'id="' . $VDI_query[$q]['id'] .  '"></td>
-				<td class="col-md-3">';
+				<td class="col-md-2">';
 		                echo  '<a href="power.php?action=single&state=up&vm=' . $VDI_query[$q]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover" class="btn ' . $pwr_button . '" aria-label="' . _("Power up") . '" title="' . _("Power up") . '">
                             	    <span class="glyphicon glyphicon-play" aria-hidden="true"></span></a>';
                     		if ($pwr_status=="on"){
@@ -212,9 +239,9 @@ while ($x<sizeof($sql_reply)){
                             		<span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
 				echo '</td>';
 				if (empty($VDI_query[$q]['os_type']))
-				    echo '<td class="col-md-1 text-danger">' . _("Unknown") . '</td>';
+				    echo '<td class="col-md-1 text-danger">' . _("Unknown") . ' &#47; ' . $vdi_status_display . '</td>';
 				else
-    				    echo '<td class="col-md-1">' . ucfirst($VDI_query[$q]['os_type']) . '</td>';
+    				    echo '<td class="col-md-2">' . ucfirst($VDI_query[$q]['os_type']) . ' &#47; ' . $vdi_status_display . '</td>';
 				echo '</tr>';
 				++$q;
 			    }
