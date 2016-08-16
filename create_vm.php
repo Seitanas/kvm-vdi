@@ -18,17 +18,27 @@ $hypervisor=remove_specialchars($_POST['hypervisor']);
 $source_volume=remove_specialchars($_POST['source_volume']);
 $source_drivepath=remove_specialchars($_POST['source_drivepath']);
 $source_drive_size=remove_specialchars($_POST['source_drive_size']);
+if (!is_numeric($source_drive_size))
+    exit;
 $iso_image='';
 if (isset($_POST['iso_image']))
     $iso_image=remove_specialchars($_POST['iso_image']);
 if (isset($_POST['iso_path']))
     $iso_path=remove_specialchars($_POST['iso_path']);
 $numcpu=remove_specialchars($_POST['numcpu']);
+if (!is_numeric($numcpu))
+    exit;
 $numcore=remove_specialchars($_POST['numcore']);
+if (!is_numeric($numcore))
+    exit;
 $numram=1024*remove_specialchars($_POST['numram']);
+if (!is_numeric($numram))
+    exit;
 $network=remove_specialchars($_POST['network']);
 $machinename=remove_specialchars($_POST['machinename']);
 $machinecount=remove_specialchars($_POST['machinecount']);
+if (!is_numeric($machinecount))
+    exit;
 $os_type=remove_specialchars($_POST['os_type']);
 $os_version=remove_specialchars($_POST['os_version']);
 if (check_empty($machine_type,$hypervisor,$numcpu,$numcore,$numram,$network,$machinename,$machinecount)){
