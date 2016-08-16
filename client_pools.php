@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-08-09
+2016-08-16
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -271,6 +271,7 @@ function send_token(token,value,spice_password){
     	success:function (data) {
 	    if (data=='OK'){
 		 window.open("spice_html5/?host=<?php echo $websockets_address;?>&port=<?php echo $websockets_port;?>?password="+spice_password+"&vmInfoToken="+token);
+		$('#loadingVM').modal('hide');
 	    }
 	}
     })
@@ -321,8 +322,8 @@ function statusChecker(poolid){
 }
     //$('.pools').click(function() {
     $(document).delegate(".pools","click",function(){
+	$('#loadingVM').modal('show');
 	if (!html5_client){
-	    $('#loadingVM').modal('show');
 	    document.title = ""
 	    document.title = "kvm-vdi-msg:" + $(this).attr('id')
 	}
