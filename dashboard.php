@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-08-12
+2016-08-17
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -220,7 +220,7 @@ set_lang();
 		<li>
 	    	    <a href="#" aria-expanded="false"><span class="fa arrow"></span><i class="fa fa-user fa-fw"></i><?php echo _("Profile");?></a>
 		    <ul aria-expanded="false">
-			<li class="nav"><a href="change_password.php" data-toggle="modal" data-target="#modalWinMedium"><i class="fa fa-key fa-fw"></i><?php echo _("Change password");?></a></li>
+			<li class="nav"><a href="change_password.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-key fa-fw"></i><?php echo _("Change password");?></a></li>
 	    		<li class="nav"><a href="logout.php"><i class="fa fa-sign-out fa-fw"></i><?php echo _("Logout");?></a></li>
 		    </ul>
 		</li>
