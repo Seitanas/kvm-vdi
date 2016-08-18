@@ -113,10 +113,12 @@ function close_session(){
 //##############################################################################
 //check list of variables for any empty value
 function check_empty(){
-    foreach(func_get_args() as $arg)
+    foreach(func_get_args() as $arg){
         if(empty($arg))
             return 1;
-    return false;
+	else
+	    return false;
+    }
 }
 //#############################################################################
 function set_lang(){

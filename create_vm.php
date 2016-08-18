@@ -18,27 +18,17 @@ $hypervisor=remove_specialchars($_POST['hypervisor']);
 $source_volume=remove_specialchars($_POST['source_volume']);
 $source_drivepath=remove_specialchars($_POST['source_drivepath']);
 $source_drive_size=remove_specialchars($_POST['source_drive_size']);
-if (!is_numeric($source_drive_size))
-    exit;
 $iso_image='';
 if (isset($_POST['iso_image']))
     $iso_image=remove_specialchars($_POST['iso_image']);
 if (isset($_POST['iso_path']))
-    $iso_path=remove_specialchars($_POST['iso_path']);
+    $iso_path=$_POST['iso_path'];
 $numcpu=remove_specialchars($_POST['numcpu']);
-if (!is_numeric($numcpu))
-    exit;
 $numcore=remove_specialchars($_POST['numcore']);
-if (!is_numeric($numcore))
-    exit;
 $numram=1024*remove_specialchars($_POST['numram']);
-if (!is_numeric($numram))
-    exit;
 $network=remove_specialchars($_POST['network']);
 $machinename=remove_specialchars($_POST['machinename']);
 $machinecount=remove_specialchars($_POST['machinecount']);
-if (!is_numeric($machinecount))
-    exit;
 $os_type=remove_specialchars($_POST['os_type']);
 $os_version=remove_specialchars($_POST['os_version']);
 if (check_empty($machine_type,$hypervisor,$numcpu,$numcore,$numram,$network,$machinename,$machinecount)){
@@ -47,7 +37,7 @@ if (check_empty($machine_type,$hypervisor,$numcpu,$numcore,$numram,$network,$mac
 }
 $cdrom_cmd="";
 if ($iso_image=='on'){
-    $boot_cmd="--noautoconsole --cdrom " . $default_iso_path . '/' . $iso_path;
+    $boot_cmd="--noautoconsole --cdrom " . escapeshellarg($default_iso_path . '/' . $iso_path);
 }
 else 
     $boot_cmd="--pxe --noautoconsole";
@@ -62,10 +52,10 @@ if ($machine_type=='simplemachine'||$machine_type=='sourcemachine'){
     	    $name=$machinename;
 	$spice_pw=$randomString = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 13);
 	$disk=$source_drivepath . '/' . $name . "-" . uniqid() . ".qcow2";
-	$vm_cmd="sudo virt-install --name=" . $name . " --disk path=" . $disk . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . $numcpu . ",cores=" . $numcore . " --ram=" . $numram . " --network bridge=" . $network . ",model=virtio --os-type=" . $os_type . " --os-variant=" . $os_version . " --graphics spice,listen=0.0.0.0,password=" . $spice_pw . " --redirdev usb,type=spicevmc --video qxl --noreboot --wait=0 " . $boot_cmd;
-	$drive_cmd="sudo qemu-img create -f qcow2 -o size=" . $source_drive_size . "G " . $disk;
+	$vm_cmd="sudo virt-install --name=" . escapeshellarg($name) . " --disk path=" . escapeshellarg($disk) . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . escapeshellarg($numcpu) . ",cores=" . escapeshellarg($numcore) . " --ram=" . escapeshellarg($numram) . " --network bridge=" . escapeshellarg($network) . ",model=virtio --os-type=" . escapeshellarg($os_type) . " --os-variant=" . escapeshellarg($os_version) . " --graphics spice,listen=0.0.0.0,password=" . $spice_pw . " --redirdev usb,type=spicevmc --video qxl --noreboot --wait=0 " . $boot_cmd;
+	$drive_cmd="sudo qemu-img create -f qcow2 -o size=" . escapeshellarg($source_drive_size) . "G " . escapeshellarg($disk);
 	$chown_command="sudo chown $libvirt_user:$libvirt_group $disk";
-	$xmledit_cmd="sudo " . $hypervisor_cmdline_path . "/vdi-xmledit -name " . $name;
+	$xmledit_cmd="sudo " . $hypervisor_cmdline_path . "/vdi-xmledit -name " . escapeshellarg($name);
 	write_log("command: $vm_cmd");
 	write_log(ssh_command($drive_cmd,true));
 	$vm_reply=ssh_command($vm_cmd,true);
@@ -75,16 +65,15 @@ if ($machine_type=='simplemachine'||$machine_type=='sourcemachine'){
 	}
 	write_log($vm_reply);
 	++$x;
-
     }
 }
 if ($machine_type=='initialmachine'){
     $name=$machinename;
     $disk=$source_drivepath . '/' . $name . "-" . uniqid() . ".qcow2";
-    $vm_cmd="sudo virt-install --name=" . $name . " --disk path=" . $disk . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . $numcpu . ",cores=" . $numcore . " --ram=" . $numram . " --network bridge=" . $network . ",model=virtio --os-type=" . $os_type . " --os-variant=" . $os_version . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --import --noreboot --import";
-    $drive_cmd="sudo qemu-img create -f qcow2 -o size=1G " . $disk;
+    $vm_cmd="sudo virt-install --name=" . escapeshellarg($name) . " --disk path=" . escapeshellarg($disk) . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . escapeshellarg($numcpu) . ",cores=" . escapeshellarg($numcore) . " --ram=" . escapeshellarg($numram) . " --network bridge=" . escapeshellarg($network) . ",model=virtio --os-type=" . escapeshellarg($os_type) . " --os-variant=" . escapeshellarg($os_version) . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --import --noreboot --import";
+    $drive_cmd="sudo qemu-img create -f qcow2 -o size=1G " . escapeshellarg($disk);
     $chown_command="sudo chown $libvirt_user:$libvirt_group $disk";
-    $xmledit_cmd="sudo " . $hypervisor_cmdline_path . "/vdi-xmledit -name " . $name;
+    $xmledit_cmd="sudo " . $hypervisor_cmdline_path . "/vdi-xmledit -name " . escapeshellarg($name);
     write_log(ssh_command($drive_cmd,true));
     write_log(ssh_command($chown_command,true));
     write_log(ssh_command($vm_cmd,true));
@@ -104,9 +93,9 @@ if ($machine_type=='vdimachine'){
     while ($x<$machinecount){
 	$name=$machinename.sprintf("%0" . strlen($machinecount) . "s", $x+1);
 	$disk=$source_drivepath . '/' . $name . "-" . uniqid() . ".qcow2";
-	$vm_cmd="sudo virt-install --name=" . $name . " --disk path=" . $disk . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . $numcpu . ",cores=" . $numcore . " --ram=" . $numram . " --network bridge=" . $network . ",model=virtio --os-type=" . $os_type . " --os-variant=" . $os_version . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --noreboot --import";
-	$drive_cmd="sudo qemu-img create -f qcow2 -b " . $source_disk . " " . $disk;
-	$xmledit_cmd="sudo " . $hypervisor_cmdline_path . "/vdi-xmledit -name " . $name;
+	$vm_cmd="sudo virt-install --name=" . escapeshellarg($name) . " --disk path=" . escapeshellarg($disk) . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . escapeshellarg($numcpu) . ",cores=" . escapeshellarg($numcore) . " --ram=" . escapeshellarg($numram) . " --network bridge=" . escapeshellarg($network) . ",model=virtio --os-type=" . escapeshellarg($os_type) . " --os-variant=" . escapeshellarg($os_version) . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --noreboot --import";
+	$drive_cmd="sudo qemu-img create -f qcow2 -b " . $source_disk . " " . escapeshellarg($disk);
+	$xmledit_cmd="sudo " . $hypervisor_cmdline_path . "/vdi-xmledit -name " . escapeshellarg($name);
 	$chown_command="sudo chown $libvirt_user:$libvirt_group $disk";
 	write_log(ssh_command($drive_cmd,true));
 	write_log(ssh_command($chown_command,true));
