@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-08-16
+2016-08-18
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -39,8 +39,14 @@ if (isset ($_POST['username'])){
 	$ldap = ldap_connect($ad_host) or $ldap_login_err=1;
 	ldap_bind($ldap,$query_user,$password) or  $ldap_login_err=1;
 	if ($ldap_login_err){
-	    echo 'LOGIN_FAILURE';
-	    exit;
+	    if (!$html5_client){
+		echo 'LOGIN_FAILURE';
+		exit;
+	    }
+	    else {
+		header ("Location: $serviceurl/client_index.php?error=1");
+		exit;
+	    }
 	}
 	else {
 	    $results = ldap_search($ldap,$ldap_dn,"(samaccountname=$username)",array("memberof","primarygroupid","displayname"));
