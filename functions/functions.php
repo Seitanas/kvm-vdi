@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2016-08-16
+2016-08-18
 Vilnius, Lithuania.
 */
 function SQL_connect(){
@@ -77,12 +77,16 @@ function reload_vm_info(){
 	    $vms=explode(" ",$output);
 	    $y=0;
 	    while ($vms[$y]){
-    		$vms_reply=get_SQL_line("SELECT id FROM vms WHERE name='$vms[$y]' AND hypervisor='$hyper_id'"); 
+    		$vms_reply=get_SQL_line("SELECT id,maintenance FROM vms WHERE name='$vms[$y]' AND hypervisor='$hyper_id'"); 
+		if (!$vms_reply[1])
+		    $maint="false";
+		else
+		    $maint=$vms_reply[1];
     		$state=$vms[$y+1];
     		if (empty($vms_reply[0]))//New VM is found
-            	    add_SQL_line("INSERT INTO  vms (name,hypervisor,state) VALUES ('$vms[$y]','$hyper_id','$state')");
+            	    add_SQL_line("INSERT INTO  vms (name,hypervisor,state,maintenance) VALUES ('$vms[$y]','$hyper_id','$state','$maint')");
     		else
-            	    add_SQL_line("UPDATE vms SET name='$vms[$y]', hypervisor='$hyper_id', state='$state' WHERE id='$vms_reply[0]'");
+            	    add_SQL_line("UPDATE vms SET name='$vms[$y]', hypervisor='$hyper_id', state='$state', maintenance='$maint' WHERE id='$vms_reply[0]'");
     		$y=$y+2;
 	    }
 	}
