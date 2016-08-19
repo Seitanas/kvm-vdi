@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-08-18
+2016-08-19
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -162,6 +162,12 @@ set_lang();
 	    	echo '<a class="navbar-brand">' . $username . '</a>';
 		?>
   </div>
+    <ul class="nav navbar-nav navbar-right">
+      <li><?php
+	    if($html5_client)
+		echo '<a href="logout.php?type=client"><span class="glyphicon glyphicon-log-in"></span> ' . _("Logout") . '</a></li>';
+	?>
+    </ul>
 </nav>
 <div class="row">
     <div class="col-md-3"></div>
