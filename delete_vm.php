@@ -3,7 +3,7 @@
 KVM-VDI
 Tadas Ustinavičius
 tadas at ring.lt
-2016-08-05
+2016-08-25
 Vilnius, Lithuania.
 */
 include ('functions/config.php');
@@ -36,11 +36,10 @@ if ($action!='mass_delete'){
         $source_path=str_replace("\n", "",(ssh_command("sudo virsh domblklist " . $v_reply[0]['name'] . "|grep hda| awk '{print $2}' ",true)));
     if (empty ($source_path)||$source_path=='-'||strtolower(substr($source_path, -4))=='.iso')//if we have cd drive, then disk image would be second drive
 	$source_path=str_replace("\n", "",(ssh_command("sudo virsh domblklist " . $v_reply[0]['name'] . "|grep hdb| awk '{print $2}' ",true)));
-    if (!empty($source_path)){
-	ssh_command("sudo virsh destroy " . $v_reply[0]['name'], true);
-	ssh_command("sudo virsh undefine " . $v_reply[0]['name'], true);
-	ssh_command("sudo rm " . $source_path, true);
-    }
+    if (!empty($source_path))
+	write_log(ssh_command("sudo rm " . $source_path, true));
+    write_log(ssh_command("sudo virsh destroy " . $v_reply[0]['name'], true));
+    write_log(ssh_command("sudo virsh undefine " . $v_reply[0]['name'], true));
     add_SQL_line("DELETE FROM vms WHERE id='$vm' LIMIT 1");
 }
 if ($action=='mass_delete'){
