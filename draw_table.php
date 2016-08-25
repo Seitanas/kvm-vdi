@@ -9,7 +9,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-08-16
+2016-08-25
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -151,7 +151,7 @@ while ($x<sizeof($sql_reply)){
                                             <li><a href="snapshot.php?action=mass_on&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">' . _("Turn on snapshots") . '</a></li>
                                             <li><a href="snapshot.php?action=mass_off&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">' . _("Turn off snapshots") . '</a></li>
                                             <li role="separator" class="divider"></li>
-                                            <li><a href="delete_vm.php?action=mass_delete&hypervisor=' . $sql_reply[$x]['id'] .  '&parent=' . $vms_query[$y]['id'] .  '" onclick="return confirmation();">' . _("Delete all child VMs") . '</a></li>
+                                            <li><a href="delete_vm.php?action=mass_delete&hypervisor=' . $sql_reply[$x]['id'] .  '&parent=' . $vms_query[$y]['id'] .  '" onclick="return confirmation2();">' . _("Delete all child VMs") . '</a></li>
                                         </ul>
                                     </div>';
 

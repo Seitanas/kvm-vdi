@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-08-17
+2016-08-25
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -106,6 +106,13 @@ set_lang();
 	}
 	function confirmation1() {
 	    if (confirm("<?php echo _("All virtual machines will be powered off and their initial snapshots recreated.\\nProceed?");?>")) {
+		$('#copyalert').show();
+		return true;
+	     }
+        return false;
+	}
+	function confirmation2() {
+	    if (confirm("<?php echo _("All VDI machines will be deleted.\\nProceed?");?>")) {
 		$('#copyalert').show();
 		return true;
 	     }
