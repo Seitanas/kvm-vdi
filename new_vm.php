@@ -24,7 +24,7 @@ set_lang();
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <title>Remote file for Bootstrap Modal</title>  
+    <script src="inc/js/kvm-vdi.js"></script>
 </head>
 <body>
 <style>
@@ -32,7 +32,7 @@ set_lang();
     min-width:80px;
 }
 </style>
-<form method="POST" action="create_vm.php">
+<form id="new_vm">
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -86,7 +86,7 @@ set_lang();
 			<div class="col-md-4">
     				<label><?php echo _("Disk size");?></label>		    
 			    <div class="input-group">
-				<input type="number" min="1" value="10" name="source_drive_size" class="form-control">
+				<input type="number" min="1" value="10" name="source_drive_size" id="source_drive_size" class="form-control" type="number">
 				<span class="input-group-addon">GB</span>
 			    </div>
 			</div>
@@ -123,19 +123,19 @@ set_lang();
 		<div class="col-md-4">
 		    <label><?php echo _("Hardware info:");?></label>
 		    <div class="input-group">
-			<input type="number" min="1" value="1" class="form-control" name="numcpu">
+			<input type="number" min="1" value="1" class="form-control" name="numcpu" id="numcpu" type="number">
 			<span class="input-group-addon"><?php echo _("CPUs");?></span>
 		    </div>
 		    <div class="input-group">
-			<input type="number" min="1" value="1" class="form-control" name="numcore">
+			<input type="number" min="1" value="1" class="form-control" name="numcore" id="numcore" type="number">
 			<span class="input-group-addon"><?php echo _("Cores");?></span>
 		    </div>
 		    <div class="input-group">
-			<input type="number" min="1" value="1" class="form-control" name="numram">
+			<input type="number" min="1" value="1" class="form-control" name="numram" id="numram" type="number">
 			<span class="input-group-addon"><?php echo _("GB RAM");?></span>
 		    </div>
 		    <div class="input-group">
-			<input type="text" value="<?php echo $default_bridge; ?>" class="form-control" name="network">
+			<input type="text" value="<?php echo $default_bridge; ?>" class="form-control" name="network" id="network">
 			<span class="input-group-addon"><?php echo _("Network");?></span>
 		    </div>
 		</div>
@@ -143,7 +143,7 @@ set_lang();
 		    <label>System info:</label>
 		    <div class="input-group">
 			<span class="input-group-addon"><?php echo _("OS type");?></span>
-			<select class="form-control osselection" name="os_type" id="os_type" tabindex="3" required>
+			<select class="form-control osselection" name="os_type" id="os_type" tabindex="3" required type="number">
 			    <option selected value=""><?php echo _("Please select OS type");?></option>
 	    		    <option value="linux"><?php echo _("Linux");?></option>
         		    <option value="windows"><?php echo _("Windows");?></option>
@@ -179,18 +179,26 @@ set_lang();
 	    <div class="row">
 		<div class="col-md-5">
 		    <label><?php echo _("Prepend machine name:");?></label>		    
-		    <input type="text" name="machinename" placeholder="somename-" class="form-control" required>
+		    <input type="text" name="machinename" id="machinename" placeholder="somename-" class="form-control" required pattern="[a-zA-Z0-9-]+" oninvalid="setCustomValidity(<?php echo ("'Illegal characters detected'");?>)" onchange="try{setCustomValidity('')}catch(e){}" >
 		</div>
 		<div class="col-md-5">
 		    <label><?php echo _("Number of machines to create:");?></label>		    
-		    <input type="number" name="machinecount" min="1" value="1" class="form-control" required>
+		    <input type="number" name="machinecount" id="machinecount" min="1" value="1" class="form-control" required>
 		</div>
 	    </div>
         </div>
 	
         <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _("Close");?></button>
-            <button type="submit" class="btn btn-primary"><?php echo _("Create VMs");?></button>
+	    <div class="row">
+		<div class="col-md-7">
+		    <div class="alert hide text-left" id="new_vm_creation_info_box"></div>
+		</div>
+		<div class="col-md-5">
+        	    <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _("Close");?></button>
+        	    <button type="button" class="btn btn-primary" id="create-vm-button-click"><?php echo _("Create VMs");?></button>
+		    <input type="submit" class="hide">
+		</div>
+	    </div>
         </div>
     </div>
 </form>

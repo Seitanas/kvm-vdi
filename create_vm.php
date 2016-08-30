@@ -3,7 +3,7 @@
 KVM-VDI
 Tadas Ustinavičius
 tadas at ring.lt
-2016-08-12
+2016-08-30
 Vilnius, Lithuania.
 */
 include ('functions/config.php');
@@ -32,18 +32,30 @@ $machinecount=remove_specialchars($_POST['machinecount']);
 $os_type=remove_specialchars($_POST['os_type']);
 $os_version=remove_specialchars($_POST['os_version']);
 if (check_empty($machine_type,$hypervisor,$numcpu,$numcore,$numram,$network,$machinename,$machinecount)){
-    header("Location: $serviceurl/dashboard.php");
+    echo 'MISSING_ARGS';
     exit;
 }
 $cdrom_cmd="";
-if ($iso_image=='on'){
-    $boot_cmd="--noautoconsole --cdrom " . escapeshellarg($default_iso_path . '/' . $iso_path);
+if ($iso_image=='on'&&!empty($iso_path)){
+        $boot_cmd="--noautoconsole --cdrom " . escapeshellarg($default_iso_path . '/' . $iso_path);
 }
 else 
     $boot_cmd="--pxe --noautoconsole";
 $h_reply=get_SQL_line("SELECT ip, port FROM hypervisors WHERE id='$hypervisor'");
 ssh_connect($h_reply[0].":".$h_reply[1]);
 if ($machine_type=='simplemachine'||$machine_type=='sourcemachine'){
+    $x=0;
+    while ($x<$machinecount){
+	$name=$machinename;
+	if ($machinecount>1)
+	    $name=$machinename.sprintf("%0" . strlen($machinecount) . "s", $x+1);
+	$existing_vm=get_SQL_array("SELECT * FROM vms WHERE BINARY name='$name'");
+	if (!empty($existing_vm)){
+	    echo 'VMNAME_EXISTS';
+	    exit;
+	}
+	++$x;
+    }
     $x=0;
     while ($x<$machinecount){
 	if ($machinecount>1)
@@ -69,6 +81,11 @@ if ($machine_type=='simplemachine'||$machine_type=='sourcemachine'){
 }
 if ($machine_type=='initialmachine'){
     $name=$machinename;
+    $existing_vm=get_SQL_array("SELECT * FROM vms WHERE BINARY name='$name'");
+    if (!empty($existing_vm)){
+        echo 'VMNAME_EXISTS';
+        exit;
+    }
     $disk=$source_drivepath . '/' . $name . "-" . uniqid() . ".qcow2";
     $vm_cmd="sudo virt-install --name=" . escapeshellarg($name) . " --disk path=" . escapeshellarg($disk) . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . escapeshellarg($numcpu) . ",cores=" . escapeshellarg($numcore) . " --ram=" . escapeshellarg($numram) . " --network bridge=" . escapeshellarg($network) . ",model=virtio --os-type=" . escapeshellarg($os_type) . " --os-variant=" . escapeshellarg($os_version) . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --import --noreboot --import";
     $drive_cmd="sudo qemu-img create -f qcow2 -o size=1G " . escapeshellarg($disk);
@@ -80,11 +97,20 @@ if ($machine_type=='initialmachine'){
     write_log(ssh_command($xmledit_cmd,true));
     add_SQL_line("INSERT INTO  vms (name,hypervisor,machine_type,source_volume, os_type) VALUES ('$name','$hypervisor','$machine_type','$source_volume','$os_type')");
     $v_reply=get_SQL_line("SELECT id FROM vms WHERE name='$name'");
-    header("Location: $serviceurl/copy_disk.php?vm=" . $v_reply[0] . "&hypervisor=" . $hypervisor);
     exit;
 }
 
 if ($machine_type=='vdimachine'){
+    $x=0;
+    while ($x<$machinecount){
+	$name=$machinename.sprintf("%0" . strlen($machinecount) . "s", $x+1);
+	$existing_vm=get_SQL_array("SELECT * FROM vms WHERE BINARY name='$name'");
+	if (!empty($existing_vm)){
+	    echo 'VMNAME_EXISTS';
+	    exit;
+	}
+	++$x;
+    }
     $source_reply=get_SQL_line("SELECT name FROM vms WHERE id='$source_volume'");
     $source_disk=str_replace("\n", "",(ssh_command("sudo virsh domblklist $source_reply[0]|grep vda| awk '{print $2}' ",true)));
     if (empty ($source_disk)) //if there is no vda drive, perhaps client uses non virtio controller
@@ -107,6 +133,6 @@ if ($machine_type=='vdimachine'){
     }
 }
 
-header("Location: $serviceurl/reload_vm_info.php");
+echo "SUCCESS";
 exit;
 ?>

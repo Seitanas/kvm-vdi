@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-08-25
+2016-08-30
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -54,6 +54,7 @@ set_lang();
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="inc/js/ie10-viewport-bug-workaround.js"></script>
     <script src="inc/metisMenu/metisMenu.min.js"></script>
+    <script src="inc/js/kvm-vdi.js"></script>
     <!--clear remote modal forms -->
     <script type="text/javascript">
 	$(document).on("hidden.bs.modal", function (e) {
@@ -249,9 +250,6 @@ set_lang();
 
 </body>
 <script>
-function draw_table(){
-    $( "#main_table" ).load( "draw_table.php" );
-}
 draw_table();
 </script>
 <script>
