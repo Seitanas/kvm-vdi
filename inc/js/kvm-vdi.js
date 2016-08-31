@@ -45,7 +45,7 @@ $(document).ready(function(){
 		    source_drive_size: $('#source_drive_size').val(),
 		    iso_image: $('#iso_image').val(),
 		    iso_path: $('#iso_path').val(),
-		    numcpu: $('#numcpu').val(),
+		    numsock: $('#numsock').val(),
 		    numcore: $('#numcore').val(),
 		    numram: $('#numram').val(),
 		    network: $('#network').val(),

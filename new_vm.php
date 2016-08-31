@@ -123,15 +123,15 @@ set_lang();
 		<div class="col-md-4">
 		    <label><?php echo _("Hardware info:");?></label>
 		    <div class="input-group">
-			<input type="number" min="1" value="1" class="form-control" name="numcpu" id="numcpu" type="number">
-			<span class="input-group-addon"><?php echo _("CPUs");?></span>
+			<input type="number" min="1" value="1" class="form-control" name="numsock" id="numsock">
+			<span class="input-group-addon"><?php echo _("Sockets");?></span>
 		    </div>
 		    <div class="input-group">
-			<input type="number" min="1" value="1" class="form-control" name="numcore" id="numcore" type="number">
+			<input type="number" min="1" value="1" class="form-control" name="numcore" id="numcore">
 			<span class="input-group-addon"><?php echo _("Cores");?></span>
 		    </div>
 		    <div class="input-group">
-			<input type="number" min="1" value="1" class="form-control" name="numram" id="numram" type="number">
+			<input type="number" min="1" value="1" class="form-control" name="numram" id="numram">
 			<span class="input-group-addon"><?php echo _("GB RAM");?></span>
 		    </div>
 		    <div class="input-group">
