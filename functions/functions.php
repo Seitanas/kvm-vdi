@@ -51,6 +51,7 @@ function ssh_connect($address){
 }
 function ssh_command($command,$blocking){
     global $connection;
+    write_log("Executing: ".$command);
     $reply = ssh2_exec($connection,$command);
     $errorReply = ssh2_fetch_stream($reply, SSH2_STREAM_STDERR);
     stream_set_blocking($reply, $blocking);
