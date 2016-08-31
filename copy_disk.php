@@ -36,7 +36,6 @@ while ($x<sizeof($child_vms)){
     ++$x;
 }
 ssh_command("sudo " . $hypervisor_cmdline_path . "copy-file $source_path $dest_path $vm",false);
-file_put_contents('/tmp/test', "sudo " . $hypervisor_cmdline_path . "copy-file $source_path $dest_path $vm");
 header("Location: $serviceurl/dashboard.php");
 exit;
 ?>

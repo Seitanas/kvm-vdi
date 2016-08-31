@@ -26,9 +26,7 @@ function lock_VM(vmid){
 	$(".lockable-vm-buttons-"+vmid).addClass('disabled');
 	$("#populate-machines-button-"+vmid).addClass('disabled');
     }
-	
 }
-
 $(document).ready(function(){
     $('#create-vm-button-click').click(function() {
 	$("#new_vm_creation_info_box").addClass('hide');;
@@ -62,9 +60,8 @@ $(document).ready(function(){
 			$("#new_vm_creation_info_box").removeClass('hide');
 			$("#new_vm_creation_info_box").removeClass('alert-success');
 			$("#new_vm_creation_info_box").addClass('alert-danger');
-
 		    }
-            	    if (data=='SUCCESS'){
+            	    else if (data=='SUCCESS' || $('#machine_type').val()=='initialmachine'){
 			$("#new_vm_creation_info_box").removeClass('alert-danger');
 			$("#new_vm_creation_info_box").removeClass('hide');
 			$("#new_vm_creation_info_box").addClass('alert-success');

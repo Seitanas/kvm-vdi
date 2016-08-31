@@ -97,6 +97,7 @@ if ($machine_type=='initialmachine'){
     write_log(ssh_command($xmledit_cmd,true));
     add_SQL_line("INSERT INTO  vms (name,hypervisor,machine_type,source_volume, os_type) VALUES ('$name','$hypervisor','$machine_type','$source_volume','$os_type')");
     $v_reply=get_SQL_line("SELECT id FROM vms WHERE name='$name'");
+    header("Location: $serviceurl/copy_disk.php?vm=" . $v_reply[0] . "&hypervisor=" . $hypervisor);
     exit;
 }
 
