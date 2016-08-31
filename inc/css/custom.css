@@ -1,4 +1,4 @@
-.disabled {
+.hypervisor-screen-disabled {
     z-index: 1000;
     background-color: lightgrey;
     opacity: 0.6;

@@ -9,7 +9,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-08-25
+2016-08-31
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -42,7 +42,7 @@ if (sizeof($sql_reply)<1){
 }
 while ($x<sizeof($sql_reply)){
     $table_status="";
-    $vms_query=get_SQL_array("SELECT vms.id,vms.name,vms.hypervisor,vms.machine_type,vms.source_volume,vms.snapshot,vms.maintenance,vms.filecopy,vms.state,vms.os_type,vms_tmp.name AS sourcename  FROM vms LEFT JOIN vms AS vms_tmp ON vms.source_volume=vms_tmp.id WHERE vms.hypervisor='{$sql_reply[$x]['id']}' AND vms.machine_type <> 'vdimachine' ORDER BY vms.name");
+    $vms_query=get_SQL_array("SELECT vms.id,vms.name,vms.hypervisor,vms.machine_type,vms.source_volume,vms.snapshot,vms.maintenance,vms.filecopy,vms.state,vms.os_type, vms.locked, vms_tmp.name AS sourcename  FROM vms LEFT JOIN vms AS vms_tmp ON vms.source_volume=vms_tmp.id WHERE vms.hypervisor='{$sql_reply[$x]['id']}' AND vms.machine_type <> 'vdimachine' ORDER BY vms.name");
     if (!empty($sql_reply[$x]['name']))
 	$hypervisor_name=$sql_reply[$x]['name'];
     else
@@ -53,7 +53,7 @@ while ($x<sizeof($sql_reply)){
     if (!$sql_reply[$x]['maintenance']) echo '<a href="hypervisor.php?maintenance=1&id=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn glyphicon glyphicon-ok-circle btn-success"> ' . _("Enabled") . '</a>';
     else {
 	echo '<a href="hypervisor.php?maintenance=0&id=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn glyphicon glyphicon-ban-circle btn-default"> ' . _("Disabled") . '</a>';
-        $table_status="disabled";
+        $table_status="hypervisor-screen-disabled";
     }?>
     </h1>
     <div class="table-responsive"  style="overflow: inherit;">
@@ -131,18 +131,21 @@ while ($x<sizeof($sql_reply)){
                         }
                         echo  '</td>
                               <td class="col-md-2">';
+			$lockstatus='';
                         if ($vms_query[$y]['machine_type']=="initialmachine"){
+			    if ($vms_query[$y]['locked']=='true')
+				$lockstatus='disabled';
                 	    echo '<div class="btn-group">
                                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 VDI <span class="caret"></span>
                                 </button>
                                         <ul class="dropdown-menu">
-                                            <li><a href="copy_disk.php?hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] . '" onclick="return confirmation1();">' . _("Copy disk from source") . '</a></li>
+                                            <li class="' . $lockstatus . '" id="copy-disk-from-source-button-' . $vms_query[$y]['id'] . '"><a href="copy_disk.php?hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] . '" onclick="return confirmation1();">' . _("Copy disk from source") . '</a></li>
                                             <li role="separator" class="divider"></li>
                                             <li><a href="maintenance.php?action=mass_on&source=' . $vms_query[$y]['id'] .  '">' . _("Turn maintenance on") . '</a></li>
                                             <li><a href="maintenance.php?action=mass_off&source=' . $vms_query[$y]['id'] .  '">' . _("Turn maintenance off") . '</a></li>
                                             <li role="separator" class="divider"></li>
-                                            <li><a href="populate.php?hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '" onclick="return confirmation();" >' . _("Populate machines") . '</a></li>
+                                            <li class="' . $lockstatus . '" id="populate-machines-button-' . $vms_query[$y]['id'] . '"><a href="populate.php?hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '" onclick="return confirmation();" >' . _("Populate machines") . '</a></li>
                                             <li role="separator" class="divider"></li>
                                             <li><a href="power.php?action=mass_on&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">' . _("Mass power on") . '</a></li>
                                             <li><a href="power.php?action=mass_off&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">' . _("Mass shut down (soft)") . '</a></li>
@@ -152,11 +155,17 @@ while ($x<sizeof($sql_reply)){
                                             <li><a href="snapshot.php?action=mass_off&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">' . _("Turn off snapshots") . '</a></li>
                                             <li role="separator" class="divider"></li>
                                             <li><a href="delete_vm.php?action=mass_delete&hypervisor=' . $sql_reply[$x]['id'] .  '&parent=' . $vms_query[$y]['id'] .  '" onclick="return confirmation2();">' . _("Delete all child VMs") . '</a></li>
-                                        </ul>
+			                    <li role="separator" class="divider"></li>';
+					    if ($vms_query[$y]['locked']=='false')
+						echo '<li><a href="#" id="lock-vm-button-' . $vms_query[$y]['id'] . '" class="lock-vm-button-click" data-id=' . $vms_query[$y]['id'] . '>' . _("VM locked:") . '<i class="fa fa-fw fa-square-o" aria-hidden="true"></i></a></li>';
+					    else
+						echo '<li><a href="#" id="lock-vm-button-' . $vms_query[$y]['id'] . '" class="lock-vm-button-click" data-id=' . $vms_query[$y]['id'] . '>' . _("VM locked:") . '<i class="fa fa-fw fa-check-square-o" aria-hidden="true"></i></a></li>';
+
+                                echo '</ul>
                                     </div>';
 
                         }
-                        echo  '<a href="power.php?action=single&state=up&vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover" class="btn ' . $pwr_button . '" aria-label="' . _("Power up") . '" title="' . _("Power up") . '">
+                        echo  '<a href="power.php?action=single&state=up&vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover" class="lockable-vm-buttons-' . $vms_query[$y]['id'] . ' ' . $lockstatus . ' btn ' . $pwr_button . '" aria-label="' . _("Power up") . '" title="' . _("Power up") . '">
                               <span class="glyphicon glyphicon-play" aria-hidden="true"></span></a>';
                         if ($pwr_status=="on"){
                             echo' <a data-toggle="modal" data-target="#vmConsole" href="vm_screen.php?vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn btn-info" aria-label="' . _("Open console") . '" title="' . _("Open console") . '">
@@ -167,7 +176,7 @@ while ($x<sizeof($sql_reply)){
                               <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a>';
 			    }
                               if ($vms_query[$y]['machine_type']!='simplemachine')
-				    echo' <a href="delete_vm.php?vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn btn-danger" aria-label="' . _("Delete VM") . '" title="' . _("Delete VM") .  '"  onclick="return confirmBox(' . "'" . _("Are you sure?") . "'" . ');">
+				    echo' <a href="delete_vm.php?vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="lockable-vm-buttons-' . $vms_query[$y]['id'] . ' ' .  $lockstatus . ' btn btn-danger" aria-label="' . _("Delete VM") . '" title="' . _("Delete VM") .  '"  onclick="return confirmBox(' . "'" . _("Are you sure?") . "'" . ');">
                             		<span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
 
                         echo    '</td>';
@@ -266,5 +275,8 @@ else {
     $('#childof-'+this.id).removeClass('fa-plus');
     $('#childof-'+this.id).addClass('fa-minus');
 }
+});
+$('a.lock-vm-button-click').click(function() {
+    lock_VM($(this).data('id'));
 });
 </script>

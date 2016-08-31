@@ -250,10 +250,8 @@ set_lang();
 
 </body>
 <script>
-draw_table();
-</script>
-<script>
 $("#left-menu").metisMenu({ toggle: false });
+draw_table()
 </script>
 
 </html>

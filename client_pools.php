@@ -345,7 +345,7 @@ function statusChecker(poolid){
 	    retries=4;
 	    var pool= $(this).attr('id');
 	    call_vm(pool);
-	    checker_object = setInterval(function(){ statusChecker(pool);}, 4000); //since ajax callas are asyncronous, we need to make some kind of scheduler for them not to be called at once
+	    checker_object = setInterval(function(){ statusChecker(pool);}, 4000); //since ajax calls are asyncronous, we need to make some kind of scheduler for them not to be called at once
 	}
     })
 //    $('.shutdown').click(function() {

@@ -1,6 +1,33 @@
 function draw_table(){
     $( "#main_table" ).load( "draw_table.php" );
 }
+function update_VM_lock(vmid,lock){
+    $.ajax({
+	type : 'POST',
+        url : 'lock_vm.php',
+        data: {
+	    vm: vmid,
+	    lock: lock,
+    	},
+    });
+}
+function lock_VM(vmid){
+    if ($("#copy-disk-from-source-button-"+vmid ).hasClass( 'disabled' )){
+	$("#lock-vm-button-"+vmid).html("VM locked:<i class=\"fa fa-fw fa-square-o\" aria-hidden=\"true\"></i>");
+	$("#copy-disk-from-source-button-"+vmid).removeClass('disabled');
+	$(".lockable-vm-buttons-"+vmid).removeClass('disabled');
+	$("#populate-machines-button-"+vmid).removeClass('disabled');
+	update_VM_lock(vmid,'false');
+    }
+    else{
+	update_VM_lock(vmid,'true');
+	$("#lock-vm-button-"+vmid).html("VM locked:<i class=\"fa fa-fw fa-check-square-o\" aria-hidden=\"true\"></i>");
+	$("#copy-disk-from-source-button-"+vmid).addClass('disabled');
+	$(".lockable-vm-buttons-"+vmid).addClass('disabled');
+	$("#populate-machines-button-"+vmid).addClass('disabled');
+    }
+	
+}
 
 $(document).ready(function(){
     $('#create-vm-button-click').click(function() {
@@ -35,7 +62,7 @@ $(document).ready(function(){
 			$("#new_vm_creation_info_box").removeClass('hide');
 			$("#new_vm_creation_info_box").removeClass('alert-success');
 			$("#new_vm_creation_info_box").addClass('alert-danger');
-			$("#new_vm_creation_info_box").html("<i class=\"fa fa-minus-circle fa-fw\"></i>VM name already exists");
+
 		    }
             	    if (data=='SUCCESS'){
 			$("#new_vm_creation_info_box").removeClass('alert-danger');

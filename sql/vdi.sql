@@ -68,7 +68,7 @@ CREATE TABLE `config` (
 
 
 INSERT INTO `config` (`id`, `name`, `valueint`, `valuechar`, `valuedate`) VALUES
-(1, 'dbversion', 0, '20160803001', '0000-00-00 00:00:00');
+(1, 'dbversion', 0, '20160831001', '0000-00-00 00:00:00');
 
 --
 -- Table structure for table `hypervisors`
@@ -202,6 +202,7 @@ CREATE TABLE `vms` (
   `clientid` int(11) NOT NULL,
   `lastused` datetime NOT NULL,
   `os_type` varchar(255) NOT NULL DEFAULT '',
+  `locked` varchar(11) NOT NULL DEFAULT 'false',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
