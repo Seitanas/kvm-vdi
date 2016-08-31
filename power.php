@@ -3,7 +3,7 @@
 KVM-VDI
 Tadas Ustinavičius
 tadas at ring.lt
-2016-08-11
+2016-08-31
 Vilnius, Lithuania.
 */
 include ('functions/config.php');
@@ -38,9 +38,18 @@ if ($action=="mass_on" || $action == "mass_off" || $action == "mass_destroy"){
     }
 }
 if ($action=="single"){
-    $v_reply=get_SQL_array("SELECT name,os_type FROM vms WHERE id='$vm'");
+    $v_reply=get_SQL_array("SELECT id,name,os_type,machine_type FROM vms WHERE id='$vm'");
     $state=$_GET['state'];
     if ($state=="up"){
+	if ($v_reply[0]['machine_type']=='initialmachine'){//if we are powering initial machine up, we should power down all child VMs and put them to maintenance mode
+	    $child_vms=get_SQL_array("SELECT name,os_type FROM vms WHERE source_volume='{$v_reply[0]['id']}' AND state<>'shut'");
+	    $x=0;
+	    while ($x<sizeof($child_vms)){
+		write_log(ssh_command("sudo virsh destroy " . $child_vms[$x]['name'], true));
+		++$x;
+	    }
+	    add_SQL_line("UPDATE vms SET maintenance='true' WHERE source_volume='{$v_reply[0]['id']}'");
+	}
 	$agent_command=json_encode(array('vmname' => $v_reply[0]['name'], 'username' => '', 'password' => '', 'os_type' => $v_reply[0]['os_type']));
         ssh_command('echo "' . addslashes($agent_command) . '"| socat /usr/local/VDI/kvm-vdi.sock - ',true);
 	//ssh_command("sudo virsh start " . $v_reply[0], true);
