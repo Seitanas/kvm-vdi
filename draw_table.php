@@ -81,6 +81,7 @@ while ($x<sizeof($sql_reply)){
             while ($y<sizeof($vms_query)){
 		$pwr_button="btn-success";
                 $pwr_status="on";
+		$lockstatus='';
 		switch ($vms_query[$y]['state']) {
 		    case "shut":
 			$vms_status_display='<i class="text-danger">' . _("Shutoff") . '</i>';
@@ -131,7 +132,6 @@ while ($x<sizeof($sql_reply)){
                         }
                         echo  '</td>
                               <td class="col-md-2">';
-			$lockstatus='';
                         if ($vms_query[$y]['machine_type']=="initialmachine"){
 			    if ($vms_query[$y]['locked']=='true')
 				$lockstatus='disabled';
