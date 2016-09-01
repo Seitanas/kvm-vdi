@@ -27,6 +27,17 @@ function lock_VM(vmid){
 	$("#populate-machines-button-"+vmid).addClass('disabled');
     }
 }
+function show_hide_table_section(parentid,status){
+    $.ajax({
+	type : 'POST',
+        url : 'inc/infrastructure/table_pos.php',
+        data: {
+	    parentid: parentid,
+	    status: status,
+    	},
+    });
+
+}
 $(document).ready(function(){
     $('#create-vm-button-click').click(function() {
 	$("#new_vm_creation_info_box").addClass('hide');;

@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2016-08-18
+2016-09-01
 Vilnius, Lithuania.
 */
 function SQL_connect(){
@@ -113,7 +113,9 @@ function check_client_session(){
 //##############################################################################
 function close_session(){
     session_start();
-    session_unset();
+    $_SESSION['logged']='';
+//    session_unset();
+
 }
 //##############################################################################
 //check list of variables for any empty value

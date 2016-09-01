@@ -9,7 +9,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-08-31
+2016-09-01
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -105,15 +105,22 @@ while ($x<sizeof($sql_reply)){
                 $vms_query[$y]['maintenance']=str_replace("true","checked",$vms_query[$y]['maintenance']);
                 $vms_query[$y]['maintenance']=str_replace("false","",$vms_query[$y]['maintenance']);
 		$VDI_query=array();
-		if ($vms_query[$y]['machine_type']=='initialmachine')
+		$vdi_table_section_collapse='in';
+		$vdi_collapse_button='fa-minus';
+		if ($vms_query[$y]['machine_type']=='initialmachine'){
 		    $VDI_query=get_SQL_array("SELECT vms.id,vms.name,vms.hypervisor,vms.machine_type,vms.source_volume,vms.snapshot,vms.maintenance,vms.filecopy,vms.state,vms.os_type,vms_tmp.name AS sourcename  FROM vms LEFT JOIN vms AS vms_tmp ON vms.source_volume=vms_tmp.id WHERE vms.source_volume='{$vms_query[$y]['id']}' AND vms.machine_type = 'vdimachine' ORDER BY vms.name");
+		    if ($_SESSION['table_section-'.$vms_query[$y]['id']] == 'hide'){
+			$vdi_table_section_collapse='';
+			$vdi_collapse_button='fa-plus';
+			}
+		}
 		if (!empty($VDI_query))
             	    echo '<tr class="table-stripe-bottom-line">';
 		else
             	    echo '<tr class="table-stripe-bottom-line">';
                     echo '<td class="col-md-1 clickable parent" id="' . $vms_query[$y]['id'] . '" data-toggle="collapse" data-target=".child-' . $vms_query[$y]['id'] . '" >' . ($y+1);
 		    if (!empty($VDI_query))
-			echo '<i class="fa fa-minus fa-fw" id="childof-' . $vms_query[$y]['id'] . '"></i>';
+			echo '<i class="fa ' . $vdi_collapse_button . ' fa-fw" id="childof-' . $vms_query[$y]['id'] . '"></i>';
 		    echo '</td> 
                     <td class="col-md-1"></td> 
                     <td class="col-md-2"><a data-toggle="modal" href="vm_info.php?vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id']  . '" data-target="#modalWm">' . $vms_query[$y]['name'] . '</a> </td> 
@@ -189,7 +196,7 @@ while ($x<sizeof($sql_reply)){
 			    $q=0;
 			    if (!empty($VDI_query))
 				echo '<thead class="vdi-font">
-    				<tr class="table-stripe-static child-' . $vms_query[$y]['id'] . ' collapse in">
+    				<tr class="table-stripe-static child-' . $vms_query[$y]['id'] . ' collapse ' . $vdi_table_section_collapse . '">
 		            	    <th class="table-stripe-clear"></th>
 	    			    <th>#</th>
             			    <th>' . _("VDI name") . '</th>
@@ -225,7 +232,7 @@ while ($x<sizeof($sql_reply)){
 				    default:
 					$vdi_status_display='<i class="text-muted">' . _("Unknown") . '</i>';;
 				}
-				echo '<tr class="table-stripe-ani vdi-font child-' . $vms_query[$y]['id'] . ' collapse in"> 
+				echo '<tr class="table-stripe-ani vdi-font child-' . $vms_query[$y]['id'] . ' collapse ' . $vdi_table_section_collapse . '"> 
                     		<td class="col-md-1 table-stripe-clear"></td> 
                     		<td class="col-md-1">' . ($y+1) . "-" . ($q+1) . '</td> 
                     		<td class="col-md-2"><a data-toggle="modal" href="vm_info.php?vm=' . $VDI_query[$q]['id'] . '&hypervisor=' . $sql_reply[$x]['id']  . '" data-target="#modalWm">' . $VDI_query[$q]['name'] . '</a> </td> 
@@ -270,10 +277,12 @@ $(".parent").click(function() {
 if ($('#childof-'+this.id).hasClass('fa-minus')){
     $('#childof-'+this.id).removeClass('fa-minus');
     $('#childof-'+this.id).addClass('fa-plus');
+    show_hide_table_section(this.id,'hide');
 }
 else {
     $('#childof-'+this.id).removeClass('fa-plus');
     $('#childof-'+this.id).addClass('fa-minus');
+    show_hide_table_section(this.id,'show');
 }
 });
 $('a.lock-vm-button-click').click(function() {
