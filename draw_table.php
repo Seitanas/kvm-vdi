@@ -61,6 +61,7 @@ while ($x<sizeof($sql_reply)){
           <thead>
             <tr>
               <th>#</th>
+              <th></th>
               <th><?php echo _("Machine name");?></th>
               <th><?php echo _("Machine type");?></th>
               <th><?php echo _("Source image");?></th>
