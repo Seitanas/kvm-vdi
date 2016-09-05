@@ -54,9 +54,43 @@ function send_token(websockets_address, websockets_port,token,value,spice_passwo
         }
     })
 }
+
+function load_list(poolid, non_VDI_vms){
+    var list_non_vdi_vms=0;
+    if (non_VDI_vms)
+	list_non_vdi_vms=1;
+    $.getJSON("vms_in_pool.php?side=from&list_non_vdi_vms="+list_non_vdi_vms, {},  function(json){
+            $('#multiselect').empty();
+            $.each(json, function(i, obj){
+                     $('#multiselect').append($('<option>').text(obj.name).attr('value', obj.id));
+            });
+    });
+    $.getJSON("vms_in_pool.php?side=to&poolid="+poolid, {},  function(json){
+            $('#multiselect_to').empty();
+            $.each(json, function(i, obj){
+                    $('#multiselect_to').append($('<option>').text(obj.name).attr('value', obj.id));
+            });
+    });
+}
+
+function show_non_vdi_vms(status){
+    var $poolid=$('#poollist').val();
+    if (status=='checked'){
+	$("#show-non-vdi-vms-checkbox").removeClass('fa-check-square-o');
+	$("#show-non-vdi-vms-checkbox").addClass('fa-square-o');
+	$("#show-non-vdi-vms-checkbox").data("status","");
+	load_list($poolid, false);
+    }
+    else {
+	$("#show-non-vdi-vms-checkbox").removeClass('fa-square-o');
+	$("#show-non-vdi-vms-checkbox").addClass('fa-check-square-o');
+	$("#show-non-vdi-vms-checkbox").data("status","checked");
+	load_list($poolid, true);
+    }
+}
 $(document).ready(function(){
     $('#create-vm-button-click').click(function() {
-	$("#new_vm_creation_info_box").addClass('hide');;
+	$("#new_vm_creation_info_box").addClass('hide');
 	if(!$('#new_vm')[0].checkValidity()){
 	    $('#new_vm').find('input[type="submit"]').click();    
 	}
