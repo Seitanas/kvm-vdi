@@ -192,7 +192,7 @@ while ($x<sizeof($sql_reply)){
 			    if (!empty($VDI_query))
 				echo '<thead class="vdi-font">
     				<tr class="table-stripe-static child-' . $vms_query[$y]['id'] . ' collapse ' . $vdi_table_section_collapse . '">
-				    <th></th>
+				    <th class="table-stripe-clear"></th>
             			    <th>#</th>
             			    <th>' . _("VDI name") . '</th>
             			    <th>' . _("Machine type") . '</th>
@@ -230,7 +230,7 @@ while ($x<sizeof($sql_reply)){
 				}
 				echo '<tr class="table-stripe-ani vdi-font child-' . $vms_query[$y]['id'] . ' collapse ' . $vdi_table_section_collapse . '"> 
                     		<td class="col-md-1 table-stripe-clear"></td> 
-                    		<td class="col-md-1 table-stripe-clear">' . ($y+1) . "-" . ($q+1) . '</td> 
+                    		<td class="col-md-1">' . ($y+1) . "-" . ($q+1) . '</td> 
                     		<td class="col-md-2"><a data-toggle="modal" href="vm_info.php?vm=' . $VDI_query[$q]['id'] . '&hypervisor=' . $sql_reply[$x]['id']  . '" data-target="#modalWm">' . $VDI_query[$q]['name'] . '</a> </td> 
                     		<td class="col-md-1">' . $machine_type[$VDI_query[$q]['machine_type']] . '</td>
                     		<td class="col-md-1">' . $VDI_query[$q]['sourcename'] . '</td>
