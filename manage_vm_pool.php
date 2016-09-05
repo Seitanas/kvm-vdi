@@ -1,6 +1,4 @@
 <?php
-/*
-*/
 include ('functions/config.php');
 require_once('functions/functions.php');
 if (!check_session()){
@@ -25,7 +23,7 @@ set_lang();
 	<div class="form-group">
     	    <div class="row">
 		<div class="col-xs-5">
-		     <label for="formGroupExampleInput" class="text-muted"><?php echo _("Available Vms");?></label>
+		     <label for="multiselect" class="text-muted"><?php echo _("Available Vms");?></label>
     		    <select name="multiselect" id="multiselect" class="form-control" size="20" multiple="multiple"></select>
 	        </div>
 		<div class="col-xs-2">
@@ -37,7 +35,7 @@ set_lang();
 		    </div>
     		</div>
     		<div class="col-xs-5">
-		     <label for="formGroupExampleInput" class="text-muted"><?php echo _("Vms in pool");?></label>
+		     <label for="multiselect_to" class="text-muted"><?php echo _("Vms in pool");?></label>
         	    <select id="multiselect_to" name="multiselect_to" class="form-control" size="20" multiple="multiple"></select>
     		</div>
     </div>
