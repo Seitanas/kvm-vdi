@@ -38,6 +38,22 @@ function show_hide_table_section(parentid,status){
     });
 
 }
+function send_token(websockets_address, websockets_port,token,value,spice_password){
+    $.ajax({
+        type : 'POST',
+        url : 'websocket.php',
+        data: {
+            'token': token,
+            'value': value,
+        },
+        success:function (data) {
+            if (data=='OK'){
+                 window.open("spice_html5/?host="+websockets_address+"&port="+websockets_port+"?password="+spice_password+"&vmInfoToken="+token);
+                $('#loadingVM').modal('hide');
+            }
+        }
+    })
+}
 $(document).ready(function(){
     $('#create-vm-button-click').click(function() {
 	$("#new_vm_creation_info_box").addClass('hide');;

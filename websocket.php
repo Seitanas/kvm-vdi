@@ -2,12 +2,12 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2016-08-08
+2016-09-05
 Vilnius, Lithuania.
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
-if (!check_client_session()){
+if (!check_client_session()&&!check_session()){
     header ("Location: $serviceurl/?error=1");
     exit;
 }

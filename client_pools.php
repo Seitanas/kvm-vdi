@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-08-19
+2016-09-05
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -259,6 +259,7 @@ set_lang();
 </div>
     <script src="inc/js/jquery.min.js"></script>
     <script src="inc/js/bootstrap.min.js"></script>
+    <script src="inc/js/kvm-vdi.js"></script>
 <script>
 $(document).ready(function(){
 var vm_booted=0;
@@ -271,22 +272,6 @@ function reload_screen(){
 }
 if (html5_client){
     screen_object = setInterval(function(){reload_screen();},5000);
-}
-function send_token(token,value,spice_password){
-    $.ajax({
-        type : 'POST',
-        url : 'websocket.php',
-        data: {
-	    'token': token,
-	    'value': value,
-    	},
-    	success:function (data) {
-	    if (data=='OK'){
-		 window.open("spice_html5/?host=<?php echo $websockets_address;?>&port=<?php echo $websockets_port;?>?password="+spice_password+"&vmInfoToken="+token);
-		$('#loadingVM').modal('hide');
-	    }
-	}
-    })
 }
 function call_vm(poolid){
     $.ajax({
@@ -303,7 +288,7 @@ function call_vm(poolid){
 	    if (vm.status=='OK'){
 		vm_booted=1;
 		clearInterval(checker_object);
-		send_token(vm.name,vm.address,vm.spice_password);
+		send_token(<?php echo "'" . $websockets_address . "', '" . $websockets_port . "', ";?>vm.name,vm.address,vm.spice_password);
 	    }
 	    if (vm.status=='MAINTENANCE'){
 	        $("#warningbox").html("<strong><?php echo _("Warning!");?></strong> <?php echo _("No VMs available. System in maintenance mode.");?><a class=\"close\" href=\"#\"  onclick=\"$('#warningbox').addClass('hidden')\">&times;</a>");
