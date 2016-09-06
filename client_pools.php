@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-09-05
+2016-09-06
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -58,7 +58,10 @@ if (isset ($_POST['username'])){
 	$token = $entries[0]['primarygroupid'][0];
 	$fullname= $entries[0]['displayname'][0];
 	array_shift($output);
-	$results2 = ldap_search($ldap,$ldap_dn,"(objectcategory=group)",array("distinguishedname","primarygrouptoken"));
+	if (isset($group_dn))
+	    $results2 = ldap_search($ldap,$group_dn,"(objectcategory=group)",array("distinguishedname","primarygrouptoken"));
+	else
+	    $results2 = ldap_search($ldap,$ldap_dn,"(objectcategory=group)",array("distinguishedname","primarygrouptoken"));
         $entries2 = ldap_get_entries($ldap, $results2);
         array_shift($entries2);
 	foreach($entries2 as $e) {
