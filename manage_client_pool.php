@@ -45,8 +45,8 @@ if (isset($_GET['type']))
     </div>
     <div class="row">
 	<div class="col-md-4">
-	    <label for="poollist" class="text-muted"><?php echo _("Pool");?></label>
-	    <select class="input-small form-control" id="poollist" name="poollist" data-type="<?php echo $type;?>">
+	    <label for="client-poollist" class="text-muted"><?php echo _("Pool");?></label>
+	    <select class="input-small form-control" id="client-poollist" name="client-poollist" data-type="<?php echo $type;?>">
     	    <?php 
 	    $group_array=get_SQL_array("SELECT * FROM pool ORDER BY name");
 	    $x=0;
@@ -69,34 +69,18 @@ if (isset($_GET['type']))
 </body>
 
 <script>
-function load_list(poolid,type){
-    $.getJSON("clients_in_pool.php?side=from&poolid="+poolid+"&type="+type, {},  function(json){
-	    $('#multiselect').empty();
-            $.each(json, function(i, obj){
-                     $('#multiselect').append($('<option>').text(obj.username).attr('value', obj.id));
-            });
-    });
-    $.getJSON("clients_in_pool.php?side=to&poolid="+poolid+"&type="+type, {},  function(json){
-	    $('#multiselect_to').empty();
-            $.each(json, function(i, obj){
-                    $('#multiselect_to').append($('<option>').text(obj.username).attr('value', obj.id));
-            });
-    });
-}
-</script>
-<script>
-$('#poollist').on('change', function(){
-    poolid=$('#poollist').val();
-    var type=$('#poollist').data("type");
-    load_list(poolid,type);
+$('#client-poollist').on('change', function(){
+    poolid=$('#client-poollist').val();
+    var type=$('#client-poollist').data("type");
+    load_client_pool_list(poolid,type);
 });
 </script>
 <script>
 $(document).ready(function(){
     $('#multiselect').multiselect();
-    poolid=$('#poollist').val();
-    var type=$('#poollist').data("type");
-    load_list(poolid,type);
+    poolid=$('#client-poollist').val();
+    var type=$('#client-poollist').data("type");
+    load_client_pool_list(poolid,type);
     $("#submit").click(function(){
 	var multivalues="";
 	$("#multiselect_to option").each(function(){
@@ -104,7 +88,7 @@ $(document).ready(function(){
        });
         $.post("manage_clientmaps_do.php",
         {
-          poolid: $('#poollist').val(),
+          poolid: $('#client-poollist').val(),
 	  type: type,
           clientlist: multivalues
         });

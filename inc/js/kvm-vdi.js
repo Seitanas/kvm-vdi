@@ -54,8 +54,21 @@ function send_token(websockets_address, websockets_port,token,value,spice_passwo
         }
     })
 }
-
-function load_list(poolid, non_VDI_vms){
+function load_client_pool_list(poolid,type){
+    $.getJSON("clients_in_pool.php?side=from&poolid="+poolid+"&type="+type, {},  function(json){
+            $('#multiselect').empty();
+            $.each(json, function(i, obj){
+                     $('#multiselect').append($('<option>').text(obj.username).attr('value', obj.id));
+            });
+    });
+    $.getJSON("clients_in_pool.php?side=to&poolid="+poolid+"&type="+type, {},  function(json){
+            $('#multiselect_to').empty();
+            $.each(json, function(i, obj){
+                    $('#multiselect_to').append($('<option>').text(obj.username).attr('value', obj.id));
+            });
+    });
+}
+function load_vm_pool_list(poolid, non_VDI_vms){
     var list_non_vdi_vms=0;
     if (non_VDI_vms)
 	list_non_vdi_vms=1;
