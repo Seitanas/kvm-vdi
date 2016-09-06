@@ -98,6 +98,8 @@ If dashboard is accessed from https, you need to add ssl certificates to websock
 
 Make sure, that there is no firewall rules blocking connections from websockify server to hypervisor ports 59xx.  
 Also, if certificates are self-signed, SPICE console will not be available on Mozilla Firefox browser.  
+If you are using HTTPS to serve your dashboard, then you must use SSL-enabled websockets. Please manually edit `spice_html5/run.js`  
+And change line `213` from `'protocol': getURLParameter('protocol') || 'ws',` to `'protocol': getURLParameter('protocol') || 'wss',`  
 You should create client login. `Clients>add client`. Then add client to atleast one VM pool (`Add clients to pool`).  
 If you are using AD/LDAP users, you must create at least one group for that user and add it to pool (`Add AD group`, `Add AD group to pool`).  
 After these steps you should get HTML5 console if you visit http://YOUR_DASHBOARD/kvm-vdi/client_pools.php`  
