@@ -19,7 +19,7 @@ ssh_connect($h_reply[2].":".$h_reply[3]);
 #issue, where only every second screenshot is updated from libvirt/qemu.
 #https://www.redhat.com/archives/libvirt-users/2016-August/msg00075.html
 #http://lists.nongnu.org/archive/html/qemu-discuss/2016-09/msg00000.html
-ssh_command("sudo virsh screenshot " . $v_reply[1] . " " . $filepath."bugfix");
+ssh_command("sudo virsh screenshot " . $v_reply[1] . " " . $filepath."bugfix",true);
 ssh_command("sudo virsh screenshot " . $v_reply[1] . " " . $filepath, true);
 $im=ssh_command("cat ". $filepath,true);
 $image = new Imagick();
