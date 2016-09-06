@@ -2,14 +2,12 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-tadas at ring.lt
 
 Vilnius University.
 Center of Information Technology Development.
 
-
 Vilnius,Lithuania.
-2016-05-10
+2016-09-06
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -42,7 +40,7 @@ if (check_db()<1){
             <div class="col-md-4 col-md-offset-4">
                 <div class="login-panel panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Please Sign In
+                        <h3 class="panel-title"><?php echo _("KVM-VDI administrator portal");?>
 			    <span class="pull-right">
                         	<a href="https://github.com/Seitanas/kvm-vdi" target="_new">
                             	    <span class="fa fa-info-circle glyphicon glyphicon-collapse-up"></span>
@@ -60,7 +58,8 @@ if (check_db()<1){
                                 <div class="form-group">
                                     <input class="form-control" placeholder="Password" name="password" type="password" value="" required>
                                 </div>
-                                <input type="submit" value="Login" class="btn btn-lg btn-success btn-block">
+                                <input type="submit" value="<?php echo _("Sign In");?>" class="btn btn-lg btn-success btn-block">
+                                <a class="btn btn-sm btn-info btn-block" href="client_index.php"><?php echo _("Go to client area");?></a>
 				<?php if (isset($_GET['error'])){?>
 				    <div class="alert alert-danger" role="alert">Wrong username/password
 	    				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
