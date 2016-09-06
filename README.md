@@ -102,7 +102,7 @@ If you are using HTTPS to serve your dashboard, then you must use SSL-enabled we
 And change line `213` from `'protocol': getURLParameter('protocol') || 'ws',` to `'protocol': getURLParameter('protocol') || 'wss',`  
 You should create client login. `Clients>add client`. Then add client to atleast one VM pool (`Add clients to pool`).  
 If you are using AD/LDAP users, you must create at least one group for that user and add it to pool (`Add AD group`, `Add AD group to pool`).  
-After these steps you should get HTML5 console if you visit http://YOUR_DASHBOARD/kvm-vdi/client_pools.php`  
+After these steps you should get HTML5 console if you visit http://YOUR_DASHBOARD/kvm-vdi/client_index.php`  
 If apache mod_rewrite is enabled, you can access HTML5 console via: http://YOUR_DASHBOARD/kvm-vdi/client`  
 
 

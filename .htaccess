@@ -1,4 +1,4 @@
 <ifModule mod_rewrite.c>
     RewriteEngine on
-    RewriteRule ^client$ client_pools.php
+    RewriteRule ^client$ client_index.php
 </ifModule>
