@@ -92,13 +92,13 @@ function show_non_vdi_vms(status){
 	$("#show-non-vdi-vms-checkbox").removeClass('fa-check-square-o');
 	$("#show-non-vdi-vms-checkbox").addClass('fa-square-o');
 	$("#show-non-vdi-vms-checkbox").data("status","");
-	load_list($poolid, false);
+	load_vm_pool_list($poolid, false);
     }
     else {
 	$("#show-non-vdi-vms-checkbox").removeClass('fa-square-o');
 	$("#show-non-vdi-vms-checkbox").addClass('fa-check-square-o');
 	$("#show-non-vdi-vms-checkbox").data("status","checked");
-	load_list($poolid, true);
+	load_vm_pool_list($poolid, true);
     }
 }
 $(document).ready(function(){
