@@ -52,12 +52,14 @@ if (isset ($_POST['username'])){
 	    $results = ldap_search($ldap,$ldap_dn,"(samaccountname=$username)",array("memberof","primarygroupid","displayname"));
 	    $entries = ldap_get_entries($ldap, $results);
 	}
-	if($entries['count'] == 0) {
-        }
-	$output = $entries[0]['memberof'];
+	$output=array();
+	$token=0;
+	if (isset($entries[0]['memberof']))
+    	    $output = $entries[0]['memberof'];
 	$token = $entries[0]['primarygroupid'][0];
-	$fullname= $entries[0]['displayname'][0];
-	array_shift($output);
+    	$fullname= $entries[0]['displayname'][0];
+	if(isset($output))
+	    array_shift($output);
 	if (isset($group_dn))
 	    $results2 = ldap_search($ldap,$group_dn,"(objectcategory=group)",array("distinguishedname","primarygrouptoken"));
 	else
@@ -71,6 +73,7 @@ if (isset ($_POST['username'])){
 	    }
 	}
 	$group_count=0;
+	$group_array='';
 	foreach ($output as &$value) {
 	    $tmp_CN=explode(",",$value);
 	    $tmp_CN[0]=str_replace("CN=","",$tmp_CN[0]);
@@ -96,10 +99,6 @@ if (isset ($_POST['username'])){
 	    echo 'LOGIN_FAILURE';
 	    exit;
 	}
-	//if(empty($ad_groups_validate[0]['id'])&&!$html5_client){//there are no groups mapped
-	//    echo 'LOGIN_FAILURE';
-	///    exit;
-	//}
     }
     else if(!$html5_client) {
 	echo 'LOGIN_FAILURE';
@@ -111,8 +110,6 @@ if (!check_client_session()){
     exit;
 }
 set_lang();
-
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -185,7 +182,7 @@ set_lang();
 
 <?php 
     $last_reload=get_SQL_array ("SELECT id FROM config WHERE name='lastreload' AND valuedate > DATE_SUB(NOW(), INTERVAL 30 SECOND) LIMIT 1"); //if there was no reload of VM list in 30 seconds, initiate reload.
-    if (!$last_reload[0]['id']){
+    if (!isset($last_reload[0]['id'])){
 	add_SQL_line("INSERT INTO config (name,valuedate) VALUES ('lastreload',NOW()) ON DUPLICATE KEY UPDATE valuedate=NOW()");
 	reload_vm_info();
     }
@@ -210,6 +207,8 @@ set_lang();
 	    $pm_icons="";
 	    if ($vm_count_available[0][0]==0)
 		$vm_image="text-muted";
+	    if (!isset($provided_vm[0]['state']))
+		$provided_vm[0]['state']='';
 	    if ($provided_vm[0]['state']=='running'||$provided_vm[0]['state']=='pmsuspended'||$provided_vm[0]['state']=='paused'){
 		$pm_icons='<a href="#" class="shutdown"  id="' . $provided_vm[0]['id'] . '"><i class="pull-left fa fa-stop-circle-o text-danger" title="' . _("Shutdown machine") . '"></i></a>';
 		$pm_icons=$pm_icons.'<a href="#" class="terminate"  id="' . $provided_vm[0]['id'] . '"><i class="pull-left fa fa-times-circle-o text-danger" title="' . ("Terminate machine") . '"></i></a>';
