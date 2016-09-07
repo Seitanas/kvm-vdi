@@ -58,7 +58,7 @@ else
                     </div>
                     <div class="col-md-6 users-line">
 			<input class="hide" type="checkbox" name="users[]" value="' . $users_reply[$x]['id']  . '" id="user-' . $users_reply[$x]['id']  . '">';
-			if ($users_reply[$x]['username']!='admin'&&$credentialtype=='user')
+			if ($users_reply[$x]['username']!='admin'||$credentialtype=='client')
     			    echo '<button type="button" class="btn btn-warning delete"  data-id="' . $users_reply[$x]['id']  . '">' . _("Delete") . '</button>';
 			echo '<button type="button" class="btn btn-info reset-pw"  data-id="' . $users_reply[$x]['id']  . '">' . _("Reset password") . '</button>
             	    </div>
