@@ -9,7 +9,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-09-05
+2016-09-07
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -109,10 +109,12 @@ while ($x<sizeof($sql_reply)){
 		$vdi_collapse_button='fa-minus';
 		if ($vms_query[$y]['machine_type']=='initialmachine'){
 		    $VDI_query=get_SQL_array("SELECT vms.id,vms.name,vms.hypervisor,vms.machine_type,vms.source_volume,vms.snapshot,vms.maintenance,vms.filecopy,vms.state,vms.os_type,vms_tmp.name AS sourcename  FROM vms LEFT JOIN vms AS vms_tmp ON vms.source_volume=vms_tmp.id WHERE vms.source_volume='{$vms_query[$y]['id']}' AND vms.machine_type = 'vdimachine' ORDER BY vms.name");
-		    if ($_SESSION['table_section-'.$vms_query[$y]['id']] == 'hide'){
-			$vdi_table_section_collapse='';
-			$vdi_collapse_button='fa-plus';
-			}
+		    if (isset($_SESSION['table_section-'.$vms_query[$y]['id']])){
+			if ($_SESSION['table_section-'.$vms_query[$y]['id']] == 'hide'){
+			    $vdi_table_section_collapse='';
+			    $vdi_collapse_button='fa-plus';
+			    }
+		    }
 		}
             	echo '<tr class="table-stripe-bottom-line">
                 	  <td colspan="2" class="col-md-1 clickable parent" id="' . $vms_query[$y]['id'] . '" data-toggle="collapse" data-target=".child-' . $vms_query[$y]['id'] . '" >' . ($y+1);
