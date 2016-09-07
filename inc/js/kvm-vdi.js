@@ -30,7 +30,7 @@ function lock_VM(vmid){
 function show_hide_table_section(parentid,status){
     $.ajax({
 	type : 'POST',
-        url : 'inc/infrastructure/table_pos.php',
+        url : 'inc/infrastructure/TableState.php',
         data: {
 	    parentid: parentid,
 	    status: status,

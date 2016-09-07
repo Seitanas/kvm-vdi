@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-06-28
+2016-09-07
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -16,8 +16,13 @@ if (!check_session()){
     header ("Location: $serviceurl/?error=1");
     exit;
 }
+if(isset ($_GET['credentialtype']))
+    $credentialtype=$_GET['credentialtype'];
 set_lang();
-$users_reply=get_SQL_array("SELECT * FROM users ORDER BY username");
+if ($credentialtype=='client')
+    $users_reply=get_SQL_array("SELECT * FROM clients WHERE isdomain=0 ORDER BY username");
+else
+    $users_reply=get_SQL_array("SELECT * FROM users ORDER BY username");
 ?>
 <!DOCTYPE html>
 <html>
@@ -49,7 +54,7 @@ $users_reply=get_SQL_array("SELECT * FROM users ORDER BY username");
                     </div>
                     <div class="col-md-6 users-line">
 			<input class="hide" type="checkbox" name="users[]" value="' . $users_reply[$x]['id']  . '" id="user-' . $users_reply[$x]['id']  . '">';
-			if ($users_reply[$x]['username']!='admin')
+			if ($users_reply[$x]['username']!='admin'&&$credentialtype=='user')
     			    echo '<button type="button" class="btn btn-warning delete"  data-id="' . $users_reply[$x]['id']  . '">' . _("Delete") . '</button>';
 			echo '<button type="button" class="btn btn-info reset-pw"  data-id="' . $users_reply[$x]['id']  . '">' . _("Reset password") . '</button>
             	    </div>
@@ -82,11 +87,12 @@ $(document).ready(function(){
 	$("#progress").removeClass('hide');
         $.ajax({
             type : 'POST',
-            url : 'update_users.php',
+            url : 'inc/infrastructure/ManageCredentials.php',
             data: {
 		id : id,
                 type : 'update-pw',
 		password : password,
+		credentialtype : <?php echo "'" . $credentialtype . "'";?>,
 	    },
 	    success:function (data) {
 		$("#progress").text("<?php echo _("Password changed to: ");?>" + password);
@@ -111,10 +117,11 @@ $(document).ready(function(){
 	});
         $.ajax({
             type : 'POST',
-            url : 'update_users.php',
+            url : 'inc/infrastructure/ManageCredentials.php',
             data: {
                 type : 'delete',
 		user : to_delete,
+		credentialtype : <?php echo "'" . $credentialtype . "'";?>,
 	    },
 	    success:function (data) {
 		$("#submit").addClass('hide');

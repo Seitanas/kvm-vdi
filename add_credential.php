@@ -18,6 +18,8 @@ if (!check_session()){
 }
 slash_vars();
 set_lang();
+if(isset ($_GET['credentialtype']))
+    $credentialtype=$_GET['credentialtype'];
 ?>
 <!DOCTYPE html>
 <html>
@@ -28,7 +30,13 @@ set_lang();
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-             <h4 class="modal-title"><?php echo _("Add new administrator");?></h4>
+             <h4 class="modal-title"><?php
+		    if ($credentialtype=='user')
+			 echo _("Add new administrator");
+		    else
+			 echo _("Add new client");
+		    ?>
+	    </h4>
         </div>
         <div class="modal-body">
 	    <div class="row">
@@ -90,9 +98,10 @@ $(document).ready(function(){
 	
         $.ajax({
             type : 'POST',
-            url : 'update_users.php',
+            url : 'inc/infrastructure/ManageCredentials.php',
             data: {
 		type : 'new',
+		credentialtype : <?php echo "'" . $credentialtype . "'";?>,
                 username : $('#username').val(),
                 password : $('#password').val(),
 		
