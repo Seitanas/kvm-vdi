@@ -35,16 +35,20 @@ else
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-             <h4 class="modal-title"><?php echo _("Modify users");?></h4>
+             <h4 class="modal-title"><?php echo _("Modify clients");?></h4>
         </div>
         <div class="modal-body">
-	    <div class="row">
-        	<div class="col-md-6 users-line">
-		    <?php echo _("Username");?>
-                </div>
-                <div class="col-md-6 users-line">
-            	</div>
-	    </div>
+		<div class="row pre-scrollable credential-list-div">
+		    <div class="col-md-1">
+		    </div>
+		    <div class="col-md-10">
+			<div class="row">
+        		    <div class="col-md-6 users-line">
+				<?php echo _("Username");?>
+            		    </div>
+            		    <div class="col-md-6 users-line">
+            		    </div>
+			</div>
 	<?php
 	$x=0;
 	while ($x<sizeof($users_reply)){
@@ -62,6 +66,10 @@ else
 	    ++$x;
 	}
 	?>
+	    </div>
+	    <div class="col-md-1">
+	    </div>
+	    </div>
 	        <div class="row">
 		    <div class="col-md-12">
                         <div class="alert alert-info hide" id="progress"><i </div>

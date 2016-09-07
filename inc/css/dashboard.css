@@ -85,9 +85,6 @@ body {
 }
 
 
-/*
- * Placeholder dashboard ideas
- */
 
 .placeholders {
   margin-bottom: 30px;
@@ -102,4 +99,8 @@ body {
 .placeholder img {
   display: inline-block;
   border-radius: 50%;
+}
+.credential-list-div{
+    min-height: 100px;
+    overflow-y: auto;
 }
