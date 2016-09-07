@@ -6,8 +6,6 @@ $username=$_POST['username'];
 $password=$_POST['password'];
 $sql_reply=get_SQL_line("SELECT id,password FROM users WHERE username LIKE '$username'");
 if (password_verify($password, $sql_reply[1])){
-#if (hash_equals($sql_reply[1], crypt($password, $sql_reply[1]))) {
-   //echo "Password verified!";
     session_start();
     $_SESSION['logged']='yes';
     $_SESSION['userid']=$sql_reply[0];

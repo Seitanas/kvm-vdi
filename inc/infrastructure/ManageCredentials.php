@@ -33,7 +33,7 @@ if ($type=='new'){
         echo 'EXISTS';
         exit;
     }
-    $password=crypt($password);
+    $password=crypt($password,$salt);
     if ($credentialtype=='user')
 	add_SQL_line("INSERT INTO users (username,password) VALUES ('$username','$password')");
     else
@@ -44,7 +44,7 @@ if ($type=='new'){
 if ($type=='update-pw'){//using x-editable jQuery plugin, which uses different param naming
     $password=$_POST['password'];
     $id=$_POST['id'];
-    $password=crypt($password);
+    $password=crypt($password,$salt);
     if ($credentialtype=='user')
 	add_SQL_line("UPDATE users SET password='$password' WHERE id='$id' LIMIT 1");
     else

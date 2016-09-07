@@ -64,7 +64,7 @@ $abort=0;
 		    Whoops, something happened while populating database. Check PHP logs.
 		</div>';
 	else{
-	    $password=crypt('password');
+	    $password=crypt('password',$salt);
 	    add_SQL_line("INSERT INTO users (username, password) VALUES ('admin','$password')");
 	    echo '<div class="alert alert-success" role="alert">
 		    <span class="glyphicon glyphicon glyphicon-ok-circle" aria-hidden="true"></span>

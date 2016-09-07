@@ -8,11 +8,13 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-09-06
+2016-09-07
 */
 ###################Dashboard config##########################
 $serviceurl='http://192.168.0.20/kvm-vdi';
 $language='en_EN';
+#define salt string, which will be used to generate passwords.
+$salt='SecretString';
 #write debug log to web server error.log file.
 $write_debug_log=false;
 #Websockify server address (if using HTML5 client)
