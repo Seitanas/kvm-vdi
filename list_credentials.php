@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-09-07
+2016-09-08
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -20,9 +20,11 @@ if(isset ($_GET['credentialtype']))
     $credentialtype=$_GET['credentialtype'];
 set_lang();
 if ($credentialtype=='client')
-    $users_reply=get_SQL_array("SELECT * FROM clients WHERE isdomain=0 ORDER BY username");
-else
-    $users_reply=get_SQL_array("SELECT * FROM users ORDER BY username");
+    $cred_reply=get_SQL_array("SELECT * FROM clients WHERE isdomain=0 ORDER BY username");
+if ($credentialtype=='adgroup')
+    $cred_reply=get_SQL_array("SELECT id, name AS username FROM ad_groups ORDER BY name");
+if ($credentialtype=='user')
+    $cred_reply=get_SQL_array("SELECT * FROM users ORDER BY username");
 ?>
 <!DOCTYPE html>
 <html>
@@ -51,17 +53,18 @@ else
 			</div>
 	<?php
 	$x=0;
-	while ($x<sizeof($users_reply)){
-	    echo '<div class="row users-list" id="row-name-' . $users_reply[$x]['id']  . '">
-                    <div class="col-md-6 users-line name-' . $users_reply[$x]['id']  . '">
-		    ' . $users_reply[$x]['username'] . '
+	while ($x<sizeof($cred_reply)){
+	    echo '<div class="row users-list" id="row-name-' . $cred_reply[$x]['id']  . '">
+                    <div class="col-md-5 users-line name-' . $cred_reply[$x]['id']  . '">
+		    ' . $cred_reply[$x]['username'] . '
                     </div>
-                    <div class="col-md-6 users-line">
-			<input class="hide" type="checkbox" name="users[]" value="' . $users_reply[$x]['id']  . '" id="user-' . $users_reply[$x]['id']  . '">';
-			if ($users_reply[$x]['username']!='admin'||$credentialtype=='client')
-    			    echo '<button type="button" class="btn btn-warning delete"  data-id="' . $users_reply[$x]['id']  . '">' . _("Delete") . '</button>';
-			echo '<button type="button" class="btn btn-info reset-pw"  data-id="' . $users_reply[$x]['id']  . '">' . _("Reset password") . '</button>
-            	    </div>
+                    <div class="col-md-7 users-line">
+			<input class="hide" type="checkbox" name="users[]" value="' . $cred_reply[$x]['id']  . '" id="user-' . $cred_reply[$x]['id']  . '">';
+			if ($cred_reply[$x]['username']!='admin'||$credentialtype=='client')
+    			    echo '<button type="button" class="btn btn-warning delete"  data-id="' . $cred_reply[$x]['id']  . '"><i class="fa fa-trash-o fa-lg fa-fw"></i>' . _("Delete") . '</button>';
+			if($credentialtype!='adgroup')
+			    echo '<button type="button" class="btn btn-info reset-pw"  data-id="' . $cred_reply[$x]['id']  . '"><i class="fa fa-lock fa-lg fa-fw"></i>' . _("Reset password") . '</button>';
+            	    echo '</div>
 		</div>';
 	    ++$x;
 	}
@@ -128,7 +131,7 @@ $(document).ready(function(){
             url : 'inc/infrastructure/ManageCredentials.php',
             data: {
                 type : 'delete',
-		user : to_delete,
+		credid : to_delete,
 		credentialtype : <?php echo "'" . $credentialtype . "'";?>,
 	    },
 	    success:function (data) {

@@ -27,7 +27,7 @@ if ($type=='new'){
     }
     if ($credentialtype=='user')
         $existing=get_SQL_line("SELECT id FROM users WHERE username = '$username'");
-    else
+    if ($credentialtype=='client')
 	$existing=get_SQL_line("SELECT id FROM clients WHERE username = '$username'");
     if (!empty($existing[0])){
         echo 'EXISTS';
@@ -36,7 +36,7 @@ if ($type=='new'){
     $password=crypt($password,$salt);
     if ($credentialtype=='user')
 	add_SQL_line("INSERT INTO users (username,password) VALUES ('$username','$password')");
-    else
+    if ($credentialtype=='client')
 	add_SQL_line("INSERT INTO clients (username,password) VALUES ('$username','$password')");
     echo 'SUCCESS';
     exit;
@@ -47,16 +47,21 @@ if ($type=='update-pw'){//using x-editable jQuery plugin, which uses different p
     $password=crypt($password,$salt);
     if ($credentialtype=='user')
 	add_SQL_line("UPDATE users SET password='$password' WHERE id='$id' LIMIT 1");
-    else
+    if ($credentialtype=='client')
 	add_SQL_line("UPDATE clients SET password='$password' WHERE id='$id' LIMIT 1");
     exit;
 }
 if ($type=='delete'){
-    $user=$_POST['user'];
-    foreach ($user as $id){
+    $credid=$_POST['credid'];
+    foreach ($credid as $id){
 	if ($credentialtype=='user')
     	    add_SQL_line("DELETE FROM users WHERE id='$id' LIMIT 1");
-	else
+	if ($credentialtype=='client')
 	    add_SQL_line("DELETE FROM clients WHERE id='$id' LIMIT 1");
+	if ($credentialtype=='adgroup'){
+	    add_SQL_line("DELETE FROM poolmap_ad WHERE groupid='$id'");
+	    add_SQL_line("DELETE FROM ad_groups WHERE id='$id' LIMIT 1");
+	}
+
     }
 }
