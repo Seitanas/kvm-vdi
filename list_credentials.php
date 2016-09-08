@@ -25,6 +25,8 @@ if ($credentialtype=='adgroup')
     $cred_reply=get_SQL_array("SELECT id, name AS username FROM ad_groups ORDER BY name");
 if ($credentialtype=='user')
     $cred_reply=get_SQL_array("SELECT * FROM users ORDER BY username");
+if ($credentialtype=='pool')
+    $cred_reply=get_SQL_array("SELECT id, name AS username FROM pool ORDER BY name");
 ?>
 <!DOCTYPE html>
 <html>
@@ -37,7 +39,16 @@ if ($credentialtype=='user')
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-             <h4 class="modal-title"><?php echo _("Modify clients");?></h4>
+             <h4 class="modal-title"><?php
+	    if ($credentialtype=='client')
+    		echo _("Manage clients");
+	    if ($credentialtype=='adgroup')
+    		echo _("Manage AD groups");
+	    if ($credentialtype=='user')
+    		echo _("Manage administrators");
+	    if ($credentialtype=='pool')
+    		echo _("Manage pools");
+	?></h4>
         </div>
         <div class="modal-body">
 		<div class="row pre-scrollable credential-list-div">
@@ -62,7 +73,7 @@ if ($credentialtype=='user')
 			<input class="hide" type="checkbox" name="users[]" value="' . $cred_reply[$x]['id']  . '" id="user-' . $cred_reply[$x]['id']  . '">';
 			if ($cred_reply[$x]['username']!='admin'||$credentialtype=='client')
     			    echo '<button type="button" class="btn btn-warning delete"  data-id="' . $cred_reply[$x]['id']  . '"><i class="fa fa-trash-o fa-lg fa-fw"></i>' . _("Delete") . '</button>';
-			if($credentialtype!='adgroup')
+			if($credentialtype!='adgroup'&&$credentialtype!='pool')
 			    echo '<button type="button" class="btn btn-info reset-pw"  data-id="' . $cred_reply[$x]['id']  . '"><i class="fa fa-lock fa-lg fa-fw"></i>' . _("Reset password") . '</button>';
             	    echo '</div>
 		</div>';

@@ -210,6 +210,7 @@ set_lang();
 			?>
 			<li class="nav-divider"></li>
 			<li class="nav"><a href="add_pool.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-cloud fa-fw"></i><?php echo _("Add pool");?></a></li>
+			<li class="nav"><a href="list_credentials.php?credentialtype=pool" data-toggle="modal" data-target="#modalWm"><i class="fa fa-recycle fa-fw"></i><?php echo _("Manage pools");?></a></li>
 			<li class="nav"><a href="manage_vm_pool.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-desktop fa-fw"></i><?php echo _("Add VMs to pool");?></a></li>
 			<li class="nav"><a href="manage_client_pool.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-male fa-fw"></i></i><?php echo _("Add clients to pool");?></a></li>
 			<?php if ($ad_enabled)

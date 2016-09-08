@@ -62,6 +62,13 @@ if ($type=='delete'){
 	    add_SQL_line("DELETE FROM poolmap_ad WHERE groupid='$id'");
 	    add_SQL_line("DELETE FROM ad_groups WHERE id='$id' LIMIT 1");
 	}
+	if ($credentialtype=='pool'){
+	    add_SQL_line("DELETE FROM poolmap WHERE poolid='$id'");
+	    add_SQL_line("DELETE FROM poolmap_ad WHERE poolid='$id'");
+	    add_SQL_line("DELETE FROM poolmap_vm WHERE poolid='$id'");
+	    add_SQL_line("DELETE FROM pool WHERE id='$id' LIMIT 1");
+	}
+
 
     }
 }
