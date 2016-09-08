@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2016-09-01
+2016-09-08
 Vilnius, Lithuania.
 */
 function SQL_connect(){
@@ -98,23 +98,25 @@ function reload_vm_info(){
 }
 //##############################################################################
 function check_session(){
-    session_start();
+    if (session_status() == PHP_SESSION_NONE) 
+	session_start();
     if (isset($_SESSION['logged']))
 	return $_SESSION['logged'];
     else return 0;
 }
 //##############################################################################
 function check_client_session(){
-    session_start();
+    if (session_status() == PHP_SESSION_NONE) 
+	session_start();
     if ($_SESSION['client_logged'])
 	return $_SESSION['client_logged'];
     else return 0;
 }
 //##############################################################################
 function close_session(){
-    session_start();
+    if (session_status() == PHP_SESSION_NONE) 
+	session_start();
     $_SESSION['logged']='';
-//    session_unset();
 
 }
 //##############################################################################

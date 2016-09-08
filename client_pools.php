@@ -23,7 +23,8 @@ if (isset ($_POST['username'])){
     $sql_reply=get_SQL_line("SELECT id,password FROM clients WHERE username LIKE '$username' AND isdomain=0");
     if(!empty($sql_reply[1])){
 	if (password_verify($password, $sql_reply[1])){
-	    session_start();
+	    if (session_status() == PHP_SESSION_NONE) 
+		session_start();
 	    $_SESSION['client_logged']='yes';
 	    $_SESSION['userid']=$sql_reply[0];
 	    $_SESSION['username']=$username;
@@ -88,7 +89,8 @@ if (isset ($_POST['username'])){
 	    $ip = $_SERVER['REMOTE_ADDR'];
 	    add_SQL_line("INSERT INTO clients (username,ip,isdomain,lastlogin) VALUES ('$query_user','$ip','1',NOW()) ON DUPLICATE KEY UPDATE ip='$ip', lastlogin=NOW()");
 	    $sql_reply=get_SQL_line("SELECT id FROM clients WHERE username LIKE '$query_user'");
-	    session_start();
+	    if (session_status() == PHP_SESSION_NONE) 
+		session_start();
 	    $_SESSION['ad_user']='yes';
 	    $_SESSION['client_logged']='yes';	    
 	    $_SESSION['userid']=$sql_reply[0];

@@ -3,7 +3,8 @@ include ("functions/config.php");
 require_once("functions/functions.php");
 if (isset($_GET['type'])){
     if($_GET['type']=='client'){
-    session_start();
+    if (session_status() == PHP_SESSION_NONE)
+	session_start();
     $_SESSION['client_logged']='';
     header("Location: $serviceurl/client_index.php");
     exit;
