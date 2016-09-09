@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-09-06
+2016-09-09
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -40,6 +40,7 @@ if (isset ($_POST['username'])){
 	$ldap = ldap_connect($ad_host) or $ldap_login_err=1;
 	ldap_bind($ldap,$query_user,$password) or  $ldap_login_err=1;
 	if ($ldap_login_err){
+	    write_log("LDAP bind failure. Invalid credentials.");
 	    if (!$html5_client){
 		echo 'LOGIN_FAILURE';
 		exit;
@@ -66,6 +67,8 @@ if (isset ($_POST['username'])){
 	else
 	    $results2 = ldap_search($ldap,$ldap_dn,"(objectcategory=group)",array("distinguishedname","primarygrouptoken"));
         $entries2 = ldap_get_entries($ldap, $results2);
+	write_log("Listing primary groupid: " . serialize($entries));
+	write_log("Listing groups: " . serialize($entries2));
         array_shift($entries2);
 	foreach($entries2 as $e) {
     	    if($e['primarygrouptoken'][0] == $token) {
