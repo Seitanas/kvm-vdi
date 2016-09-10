@@ -39,7 +39,6 @@ Create a "Source machine" and install a guest operating system to it.
 Create required number of VDI machines. 
 Copy "Source machine's" disk image to "Initial machine's" disk image  ("Copy disk from source" button).
 Create snapshots for all VDI VM's from "Initial machine's" disk image ("Populate machines" button);
-Configure "clients.xml" file, to provide thin clients with it's own VDI VM.
 
 
 ### Dashboard installation
@@ -62,7 +61,6 @@ Create empty database/user on db server.
     cd kvm-vdi
 
 Rename functions/config.php_dist to functions/config.php Edit config.php to fit your needs.  
-Change permissions on tmp/ folder and functions/clients.xml file to give webserver writeable rights.  
 Go to http://yourservename/kvm-vdi  
 If installation is successful, you will be redirected to login page. Default credentials are: admin/password  
 
