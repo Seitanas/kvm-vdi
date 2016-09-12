@@ -47,17 +47,17 @@ $LDAP_host='192.168.0.20';
 #Username and password to bind to LDAP server (not deeded by Active Directory):
 $LDAP_username='uid=USERNAME,ou=bind users,dc=domain,dc=tld';
 $LDAP_password='ldappassword';
-#Bind DN pattern:
-$bind_dn = 'ou=People,DC=domain,DC=tld';
-#For LDAP backend you should specify bind DN including username:
-#$bind_dn = 'uid=%username%,ou=people,dc=domain,dc=tld';
+#Base DN pattern:
+$base_dn = 'ou=People,DC=domain,DC=tld';
+#For LDAP backend you should specify base DN including username:
+#$base_dn = 'uid=%username%,ou=people,dc=domain,dc=tld';
 
 #Specify attribute in LDAP, which will be used as group provider.
 #You should add values from this attribute do dasboard "AD group"
 #section, to allow LDAP users to login.
 $LDAP_attribute_name='objectClass';
 #$group_dn is used when you need to specify different base dn
-#to list domain groups. If commented out, $bind_dn will be used.
+#to list domain groups. If commented out, $base_dn will be used.
 #$group_dn='CN=Users,DC=domain,DC=tld';
 ############################################################
 

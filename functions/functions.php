@@ -238,7 +238,7 @@ function list_ad_groups($username,$password,$query_user,$html5_client){
         }
     }
     else {
-        $results = ldap_search($ldap,$bind_dn,"(samaccountname=$username)",array("memberof","primarygroupid","displayname"));
+        $results = ldap_search($ldap,$base_dn,"(samaccountname=$username)",array("memberof","primarygroupid","displayname"));
         $entries = ldap_get_entries($ldap, $results);
     }
     $output=array();
@@ -252,7 +252,7 @@ function list_ad_groups($username,$password,$query_user,$html5_client){
     if (isset($group_dn))
         $results2 = ldap_search($ldap,$group_dn,"(objectcategory=group)",array("distinguishedname","primarygrouptoken"));
     else
-        $results2 = ldap_search($ldap,$bind_dn,"(objectcategory=group)",array("distinguishedname","primarygrouptoken"));
+        $results2 = ldap_search($ldap,$base_dn,"(objectcategory=group)",array("distinguishedname","primarygrouptoken"));
     $entries2 = ldap_get_entries($ldap, $results2);
     ldap_close($ldap);
     array_shift($entries2);
@@ -302,7 +302,8 @@ function list_ldap_groups($username,$password,$query_user,$html5_client){
     	    }
 	}
         if ($ldapbind) {
-    	    $result = ldap_search($ldap,$ldaptree, "(cn=*)", array($LDAP_attribute_name)) or die ("Error in search query: ".ldap_error($ldap));
+	    $base_dn = str_replace('%username%',$username,$base_dn);
+    	    $result = ldap_search($ldap,$base_dn, "(cn=*)", array($LDAP_attribute_name)) or die ("Error in search query: ".ldap_error($ldap));
     	    $data = ldap_get_entries($ldap, $result);
     	    $x=0;
 	    $group_array='';
