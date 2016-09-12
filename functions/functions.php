@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2016-09-08
+2016-09-12
 Vilnius, Lithuania.
 */
 function SQL_connect(){
@@ -219,4 +219,100 @@ function remove_specialchars($item){
     $item=str_replace('?','',$item);
     $item=str_replace('+','',$item);
     return $item;
+}
+//#############################################################################
+function list_ad_groups($username,$password,$query_user,$html5_client){
+    include (dirname(__FILE__).'/config.php');
+    $ldap_login_err=0;
+    $ldap = ldap_connect($LDAP_host) or $ldap_login_err=1;
+    ldap_bind($ldap,$query_user,$password) or  $ldap_login_err=1;
+    if ($ldap_login_err){
+        write_log("LDAP bind failure. Invalid credentials.");
+        if (!$html5_client){
+            echo 'LOGIN_FAILURE';
+            exit;
+        }
+        else {
+            header ("Location: $serviceurl/client_index.php?error=1");
+            exit;
+        }
+    }
+    else {
+        $results = ldap_search($ldap,$bind_dn,"(samaccountname=$username)",array("memberof","primarygroupid","displayname"));
+        $entries = ldap_get_entries($ldap, $results);
+    }
+    $output=array();
+    $token=0;
+    if (isset($entries[0]['memberof']))
+        $output = $entries[0]['memberof'];
+    $token = $entries[0]['primarygroupid'][0];
+    $fullname= $entries[0]['displayname'][0];
+    if(isset($output))
+        array_shift($output);
+    if (isset($group_dn))
+        $results2 = ldap_search($ldap,$group_dn,"(objectcategory=group)",array("distinguishedname","primarygrouptoken"));
+    else
+        $results2 = ldap_search($ldap,$bind_dn,"(objectcategory=group)",array("distinguishedname","primarygrouptoken"));
+    $entries2 = ldap_get_entries($ldap, $results2);
+    ldap_close($ldap);
+    array_shift($entries2);
+    foreach($entries2 as $e) {
+        if($e['primarygrouptoken'][0] == $token) {
+            $output[] = $e['distinguishedname'][0];
+            break;
+        }
+    }
+    $group_array='';
+    foreach ($output as &$value) {
+        $tmp_CN=explode(",",$value);
+        $tmp_CN[0]=str_replace("CN=","",$tmp_CN[0]);
+        if (!empty($tmp_CN[0]))
+            $group_array= $group_array . "','" . $tmp_CN[0];
+    }
+    return ($group_array);
+}
+//###########################################################################################
+function list_ldap_groups($username,$password,$query_user,$html5_client){
+    include (dirname(__FILE__).'/config.php');
+    $ldap_login_err=0;
+    $ldap = ldap_connect($LDAP_host) or  $ldap_login_err=1;
+    $html5_client=0;
+    if ($ldap_login_err){
+    write_log("LDAP connect failure.");
+        if (!$html5_client){
+            echo 'LOGIN_FAILURE';
+            exit;
+        }
+        else {
+            header ("Location: $serviceurl/client_index.php?error=1");
+            exit;
+        }
+    }
+    if($ldap) {
+	$ldapbind = ldap_bind($ldap, $LDAP_username, $LDAP_password) or $ldap_login_err=1;
+	if ($ldap_login_err){
+	    write_log("LDAP bind failure failure. Invalid credentials.");
+    	    if (!$html5_client){
+        	echo 'LOGIN_FAILURE';
+        	exit;
+    	    }
+    	    else {
+        	header ("Location: $serviceurl/client_index.php?error=1");
+        	exit;
+    	    }
+	}
+        if ($ldapbind) {
+    	    $result = ldap_search($ldap,$ldaptree, "(cn=*)", array($LDAP_attribute_name)) or die ("Error in search query: ".ldap_error($ldap));
+    	    $data = ldap_get_entries($ldap, $result);
+    	    $x=0;
+	    $group_array='';
+    	    while ($x<$data[0][$group_attribute_name]['count']){
+        	if (!empty($data[0][$group_attribute_name][$x]))
+		    $group_array= $group_array . "','" . $data[0][$group_attribute_name][$x];
+        	++$x;
+    	    }
+	}
+    }
+    ldap_close($ldapconn);
+    return $group_array;
 }

@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-09-09
+2016-09-12
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -34,67 +34,31 @@ if (isset ($_POST['username'])){
 	    exit;
 	}
     }
-    else if ($ad_enabled){
-	$query_user =$username."@".$ad_name;
-	$ldap_login_err=0;
-	$ldap = ldap_connect($ad_host) or $ldap_login_err=1;
-	ldap_bind($ldap,$query_user,$password) or  $ldap_login_err=1;
-	if ($ldap_login_err){
-	    write_log("LDAP bind failure. Invalid credentials.");
-	    if (!$html5_client){
-		echo 'LOGIN_FAILURE';
-		exit;
-	    }
-	    else {
-		header ("Location: $serviceurl/client_index.php?error=1");
-		exit;
-	    }
-	}
-	else {
-	    $results = ldap_search($ldap,$ldap_dn,"(samaccountname=$username)",array("memberof","primarygroupid","displayname"));
-	    $entries = ldap_get_entries($ldap, $results);
-	}
-	$output=array();
-	$token=0;
-	if (isset($entries[0]['memberof']))
-    	    $output = $entries[0]['memberof'];
-	$token = $entries[0]['primarygroupid'][0];
-    	$fullname= $entries[0]['displayname'][0];
-	if(isset($output))
-	    array_shift($output);
-	if (isset($group_dn))
-	    $results2 = ldap_search($ldap,$group_dn,"(objectcategory=group)",array("distinguishedname","primarygrouptoken"));
-	else
-	    $results2 = ldap_search($ldap,$ldap_dn,"(objectcategory=group)",array("distinguishedname","primarygrouptoken"));
-        $entries2 = ldap_get_entries($ldap, $results2);
-	write_log("Listing primary groupid: " . serialize($entries));
-	write_log("Listing groups: " . serialize($entries2));
-        array_shift($entries2);
-	foreach($entries2 as $e) {
-    	    if($e['primarygrouptoken'][0] == $token) {
-		$output[] = $e['distinguishedname'][0];
-		break;
-	    }
-	}
-	$group_count=0;
+    else if ($LDAP_backend){
 	$group_array='';
-	foreach ($output as &$value) {
-	    $tmp_CN=explode(",",$value);
-	    $tmp_CN[0]=str_replace("CN=","",$tmp_CN[0]);
-	    if (!empty($tmp_CN[0]))
-		++$group_count;
-	    $group_array="" . $group_array . "','" . $tmp_CN[0];
-	}
-	if($group_count){
+	if ($LDAP_backend=='activedir'){
+	    $query_user = $username."@".$domain_name;
+	    $group_array=list_ad_groups($username,$password,$query_user,$html5_client);
 	    $group_array = substr($group_array, 2); 
 	    $group_array=$group_array."'";
-	    $ad_groups_validate=get_SQL_array("SELECT * FROM ad_groups WHERE name IN ($group_array)");
+	}
+	else if ($LDAP_backend=='ldap'){
+	    $query_user= $username;
+	    $group_array=list_ldap_groups($username,$password,$query_user,$html5_client);
+	    $group_array = substr($group_array, 2); 
+	    $group_array=$group_array."'";
+	}
+	write_log("Groups for $query_user: " . $group_array);
+	if(!empty($group_array)){
 	    $ip = $_SERVER['REMOTE_ADDR'];
 	    add_SQL_line("INSERT INTO clients (username,ip,isdomain,lastlogin) VALUES ('$query_user','$ip','1',NOW()) ON DUPLICATE KEY UPDATE ip='$ip', lastlogin=NOW()");
 	    $sql_reply=get_SQL_line("SELECT id FROM clients WHERE username LIKE '$query_user'");
 	    if (session_status() == PHP_SESSION_NONE) 
 		session_start();
-	    $_SESSION['ad_user']='yes';
+	    if ($LDAP_backend=='activedir')
+		$_SESSION['ad_user']='yes';
+	    else if ($LDAP_backend=='ldap')
+		$_SESSION['ad_user']='';
 	    $_SESSION['client_logged']='yes';	    
 	    $_SESSION['userid']=$sql_reply[0];
 	    $_SESSION['username']=$query_user;

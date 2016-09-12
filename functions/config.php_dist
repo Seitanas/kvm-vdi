@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-09-07
+2016-09-12
 */
 ###################Dashboard config##########################
 $serviceurl='http://192.168.0.20/kvm-vdi';
@@ -36,15 +36,31 @@ $reset_vm=0;
 ############################################################
 
 
-####################Active Directory logins#################
-$ad_enabled=0;
-$ad_host="somehost.domain.tld";
-$ad_name="domain.tld";
-$ldap_dn = "OU=People,DC=domain,DC=tld";
+####################Active Directory/LDAP logins#############
+#please specify your LDAP backend:
+$LDAP_backend='activedir';
+#$LDAP_backend='ldap';
+#Domain part to be added to username (only for Active Directory).
+$domain_name='domain.tld';
+#Address of ACtive Directory/LDAP server.
+$LDAP_host='192.168.0.20';
+#Username and password to bind to LDAP server (not deeded by Active Directory):
+$LDAP_username='uid=USERNAME,ou=bind users,dc=domain,dc=tld';
+$LDAP_password='ldappassword';
+#Bind DN pattern:
+$bind_dn = 'ou=People,DC=domain,DC=tld';
+#For LDAP backend you should specify bind DN including username:
+#$bind_dn = 'uid=%username%,ou=people,dc=domain,dc=tld';
+
+#Specify attribute in LDAP, which will be used as group provider.
+#You should add values from this attribute do dasboard "AD group"
+#section, to allow LDAP users to login.
+$LDAP_attribute_name='objectClass';
 #$group_dn is used when you need to specify different base dn
-#to list domain groups. If commented out, $ldap_dn will be used.
-#$group_dn="CN=Users,DC=domain,DC=tld";
+#to list domain groups. If commented out, $bind_dn will be used.
+#$group_dn='CN=Users,DC=domain,DC=tld';
 ############################################################
+
 
 
 ##################Hypervisor config#########################
@@ -71,9 +87,4 @@ $mysql_host='localhost';
 $mysql_db='vdi';
 $mysql_user='vdi';
 $mysql_pass='vdi';
-############################################################
-
-
-##################vmWare Horizon config (if used)###########
-$vmView_server='view.someadress.tld';
 ############################################################
