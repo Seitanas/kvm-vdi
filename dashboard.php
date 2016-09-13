@@ -209,8 +209,8 @@ set_lang();
 			}
 			if ($LDAP_backend=='ldap'){
 				    echo '<li class="nav-divider"></li>';
-				    echo '<li class="nav"><a href="add_ad_group.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-group fa-fw"></i>' .  _("Add LDAP group") . '</a></li>';
-				    echo '<li class="nav"><a href="list_credentials.php?credentialtype=adgroup" data-toggle="modal" data-target="#modalWm"><i class="fa fa-recycle fa-fw"></i>' .  _("Manage LDAP groups") . '</a></li>';
+				    echo '<li class="nav"><a href="add_ad_group.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-group fa-fw"></i>' .  _("Add LDAP attribute") . '</a></li>';
+				    echo '<li class="nav"><a href="list_credentials.php?credentialtype=adgroup" data-toggle="modal" data-target="#modalWm"><i class="fa fa-recycle fa-fw"></i>' .  _("Manage LDAP attributes") . '</a></li>';
 			}
 			?>
 			<li class="nav-divider"></li>
@@ -222,7 +222,7 @@ set_lang();
 				if ($LDAP_backend=='activedir')
 				    echo '<li class="nav"><a href="manage_client_pool.php?type=ad" data-toggle="modal" data-target="#modalWm"><i class="glyphicon glyphicon-user fa-fw"></i>' .  _("Add AD group to pool") . '</a></li>';
 				else if ($LDAP_backend=='ldap')
-				    echo '<li class="nav"><a href="manage_client_pool.php?type=ad" data-toggle="modal" data-target="#modalWm"><i class="glyphicon glyphicon-user fa-fw"></i>' .  _("Add LDAP group to pool") . '</a></li>';
+				    echo '<li class="nav"><a href="manage_client_pool.php?type=ad" data-toggle="modal" data-target="#modalWm"><i class="glyphicon glyphicon-user fa-fw"></i>' .  _("Add LDAP attribute to pool") . '</a></li>';
 			?>
 		    </ul>
 		</li>
