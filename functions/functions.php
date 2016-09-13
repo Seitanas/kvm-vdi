@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2016-09-12
+2016-09-13
 Vilnius, Lithuania.
 */
 function SQL_connect(){
@@ -276,7 +276,7 @@ function list_ldap_groups($username,$password,$query_user,$html5_client){
     include (dirname(__FILE__).'/config.php');
     $ldap_login_err=0;
     $ldap = ldap_connect($LDAP_host) or  $ldap_login_err=1;
-    $html5_client=0;
+    $base_dn = str_replace('%username%',$username,$base_dn);
     if ($ldap_login_err){
     write_log("LDAP connect failure.");
         if (!$html5_client){
@@ -289,9 +289,22 @@ function list_ldap_groups($username,$password,$query_user,$html5_client){
         }
     }
     if($ldap) {
+	$ldap_user_login_err=0;
+	ldap_bind($ldap, $base_dn, $password) or $ldap_user_login_err=1;
+	if ($ldap_user_login_err){
+	    write_log("LDAP bind failure failure. Invalid login credentials.");
+    	    if (!$html5_client){
+        	echo 'LOGIN_FAILURE';
+        	exit;
+    	    }
+    	    else {
+        	header ("Location: $serviceurl/client_index.php?error=1");
+        	exit;
+    	    }
+	}
 	$ldapbind = ldap_bind($ldap, $LDAP_username, $LDAP_password) or $ldap_login_err=1;
 	if ($ldap_login_err){
-	    write_log("LDAP bind failure failure. Invalid credentials.");
+	    write_log("LDAP bind failure failure. Invalid bind credentials.");
     	    if (!$html5_client){
         	echo 'LOGIN_FAILURE';
         	exit;
@@ -302,7 +315,6 @@ function list_ldap_groups($username,$password,$query_user,$html5_client){
     	    }
 	}
         if ($ldapbind) {
-	    $base_dn = str_replace('%username%',$username,$base_dn);
     	    $result = ldap_search($ldap,$base_dn, "(cn=*)", array($LDAP_attribute_name)) or die ("Error in search query: ".ldap_error($ldap));
     	    $data = ldap_get_entries($ldap, $result);
     	    $x=0;
@@ -314,6 +326,6 @@ function list_ldap_groups($username,$password,$query_user,$html5_client){
     	    }
 	}
     }
-    ldap_close($ldapconn);
+    ldap_close($ldap);
     return $group_array;
 }

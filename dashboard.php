@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-09-08
+2016-09-13
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -202,10 +202,15 @@ set_lang();
     	    		<li class="nav"><a href="add_credential.php?credentialtype=client" data-toggle="modal" data-target="#modalWm"><i class="fa fa-user-plus fa-fw"></i><?php echo _("Add client");?></a></li>
 			<li class="nav"><a href="list_credentials.php?credentialtype=client" data-toggle="modal" data-target="#modalWm"><i class="fa fa-recycle fa-fw"></i><?php echo _("Manage clients");?></a></li>
 			<?php
-			if ($ad_enabled){
+			if ($LDAP_backend=='activedir'){
 				    echo '<li class="nav-divider"></li>';
 				    echo '<li class="nav"><a href="add_ad_group.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-group fa-fw"></i>' .  _("Add AD group") . '</a></li>';
 				    echo '<li class="nav"><a href="list_credentials.php?credentialtype=adgroup" data-toggle="modal" data-target="#modalWm"><i class="fa fa-recycle fa-fw"></i>' .  _("Manage AD groups") . '</a></li>';
+			}
+			if ($LDAP_backend=='ldap'){
+				    echo '<li class="nav-divider"></li>';
+				    echo '<li class="nav"><a href="add_ad_group.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-group fa-fw"></i>' .  _("Add LDAP group") . '</a></li>';
+				    echo '<li class="nav"><a href="list_credentials.php?credentialtype=adgroup" data-toggle="modal" data-target="#modalWm"><i class="fa fa-recycle fa-fw"></i>' .  _("Manage LDAP groups") . '</a></li>';
 			}
 			?>
 			<li class="nav-divider"></li>
@@ -213,8 +218,11 @@ set_lang();
 			<li class="nav"><a href="list_credentials.php?credentialtype=pool" data-toggle="modal" data-target="#modalWm"><i class="fa fa-recycle fa-fw"></i><?php echo _("Manage pools");?></a></li>
 			<li class="nav"><a href="manage_vm_pool.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-desktop fa-fw"></i><?php echo _("Add VMs to pool");?></a></li>
 			<li class="nav"><a href="manage_client_pool.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-male fa-fw"></i></i><?php echo _("Add clients to pool");?></a></li>
-			<?php if ($ad_enabled)
+			<?php 
+				if ($LDAP_backend=='activedir')
 				    echo '<li class="nav"><a href="manage_client_pool.php?type=ad" data-toggle="modal" data-target="#modalWm"><i class="glyphicon glyphicon-user fa-fw"></i>' .  _("Add AD group to pool") . '</a></li>';
+				else if ($LDAP_backend=='ldap')
+				    echo '<li class="nav"><a href="manage_client_pool.php?type=ad" data-toggle="modal" data-target="#modalWm"><i class="glyphicon glyphicon-user fa-fw"></i>' .  _("Add LDAP group to pool") . '</a></li>';
 			?>
 		    </ul>
 		</li>
