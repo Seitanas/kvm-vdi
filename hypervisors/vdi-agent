@@ -93,7 +93,11 @@ def vm_routine(vmname, username, password, os_type):
     except:
 	logger.warning ("Virtio socket failure for VM: %s", vmname)
 	logger.debug ("Closing vm %s, login thread", vmname)
-	thread.exit()
+	#cleaning credential information from memory
+	username=None
+	password=None
+        serial_message=None
+	return 0
     #cleaning credential information from memory
     username=None
     password=None
@@ -153,3 +157,4 @@ terminate=1
 time.sleep(1)
 server.close()
 os.remove( sockfile )
+
