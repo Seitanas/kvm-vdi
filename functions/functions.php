@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2016-09-13
+2016-09-15
 Vilnius, Lithuania.
 */
 function SQL_connect(){
@@ -319,9 +319,9 @@ function list_ldap_groups($username,$password,$query_user,$html5_client){
     	    $data = ldap_get_entries($ldap, $result);
     	    $x=0;
 	    $group_array='';
-    	    while ($x<$data[0][$group_attribute_name]['count']){
-        	if (!empty($data[0][$group_attribute_name][$x]))
-		    $group_array= $group_array . "','" . $data[0][$group_attribute_name][$x];
+    	    while ($x<$data[0][$LDAP_attribute_name]['count']){
+        	if (!empty($data[0][$LDAP_attribute_name][$x]))
+		    $group_array= $group_array . "','" . $data[0][$LDAP_attribute_name][$x];
         	++$x;
     	    }
 	}
