@@ -276,6 +276,7 @@ function list_ldap_groups($username,$password,$query_user,$html5_client){
     include (dirname(__FILE__).'/config.php');
     $ldap_login_err=0;
     $ldap = ldap_connect($LDAP_host) or  $ldap_login_err=1;
+    ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
     $base_dn = str_replace('%username%',$username,$base_dn);
     if ($ldap_login_err){
     write_log("LDAP connect failure.");
