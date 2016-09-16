@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-09-12
+2016-09-16
 */
 ###################Dashboard config##########################
 $serviceurl='http://192.168.0.20/kvm-vdi';
@@ -58,6 +58,7 @@ $base_dn = 'ou=People,DC=domain,DC=tld';
 $LDAP_attribute_name='objectClass';
 #$group_dn is used when you need to specify different base dn
 #to list domain groups. If commented out, $base_dn will be used.
+#(Active Directory only).
 #$group_dn='CN=Users,DC=domain,DC=tld';
 ############################################################
 
