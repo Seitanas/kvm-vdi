@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-09-16
+2016-10-03
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -18,9 +18,11 @@ if ($_SERVER['HTTP_USER_AGENT']=='KVM-VDI client')
 else
     $html5_client=1;
 if (isset ($_POST['username'])){
-    $username=$_POST['username'];
-    $password=$_POST['password'];
-    $sql_reply=get_SQL_line("SELECT id,password FROM clients WHERE username LIKE '$username' AND isdomain=0");
+    $mysql_conn=SQL_connect();
+    $username=mysqli_real_escape_string($mysql_conn,$_POST['username']);
+    $password=mysqli_real_escape_string($mysql_conn,$_POST['password']);
+    $sql_reply=mysqli_fetch_row(mysqli_query($mysql_conn, "SELECT id,password FROM clients WHERE username LIKE '$username' AND isdomain=0"));
+    mysqli_close($mysql_conn);
     if(!empty($sql_reply[1])){
 	if (password_verify($password, $sql_reply[1])){
 	    if (session_status() == PHP_SESSION_NONE) 

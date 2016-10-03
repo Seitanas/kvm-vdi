@@ -2,9 +2,11 @@
 include ("functions/config.php");
 require_once("functions/functions.php");
 slash_vars();
-$username=$_POST['username'];
-$password=$_POST['password'];
-$sql_reply=get_SQL_line("SELECT id,password FROM users WHERE username LIKE '$username'");
+$mysql_conn=SQL_connect();
+$username=mysqli_real_escape_string($mysql_conn,$_POST['username']);
+$password=mysqli_real_escape_string($mysql_conn,$_POST['password']);
+$sql_reply=mysqli_fetch_row(mysqli_query($mysql_conn, "SELECT id,password FROM users WHERE username LIKE '$username'"));
+mysqli_close($mysql_conn);
 if (password_verify($password, $sql_reply[1])){
     if (session_status() == PHP_SESSION_NONE)
 	session_start();
