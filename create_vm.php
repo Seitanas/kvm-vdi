@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2016-08-31
+2016-10-10
 Vilnius, Lithuania.
 */
 include ('functions/config.php');
@@ -87,7 +87,7 @@ if ($machine_type=='initialmachine'){
         exit;
     }
     $disk=$source_drivepath . '/' . $name . "-" . uniqid() . ".qcow2";
-    $vm_cmd="sudo virt-install --name=" . escapeshellarg($name) . " --disk path=" . escapeshellarg($disk) . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . escapeshellarg($numcpu) . ",cores=" . escapeshellarg($numcore). ",sockets=" . escapeshellarg($numsock) . " --ram=" . escapeshellarg($numram) . " --network bridge=" . escapeshellarg($network) . ",sockets=" . escapeshellarg($numsock) . ",model=virtio --os-type=" . escapeshellarg($os_type) . " --os-variant=" . escapeshellarg($os_version) . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --import --noreboot --import"; escapeshellarg
+    $vm_cmd="sudo virt-install --name=" . escapeshellarg($name) . " --disk path=" . escapeshellarg($disk) . ",format=qcow2,bus=virtio,cache=none --soundhw=ac97 --vcpus=" . escapeshellarg($numcpu) . ",cores=" . escapeshellarg($numcore). ",sockets=" . escapeshellarg($numsock) . " --ram=" . escapeshellarg($numram) . " --network bridge=" . escapeshellarg($network) . escapeshellarg($numsock) . ",model=virtio --os-type=" . escapeshellarg($os_type) . " --os-variant=" . escapeshellarg($os_version) . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --import --noreboot --import";
     $drive_cmd="sudo qemu-img create -f qcow2 -o size=1G " . escapeshellarg($disk);
     $chown_command="sudo chown $libvirt_user:$libvirt_group $disk";
     $xmledit_cmd="sudo " . $hypervisor_cmdline_path . "/vdi-xmledit -name " . escapeshellarg($name);
