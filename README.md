@@ -131,7 +131,8 @@ On dashboard server type:
     cd
     ssh-keygen -t rsa
 
-copy files from /home/VDI/.ssh to /var/hyper_keys folder.
+copy files from /home/VDI/.ssh to /var/hyper_keys folder.  
+Make files in `/var/hyper_keys` readable by webserver.  
 copy rsa.pub file from dashboard /var/hyper_keys folder to each of hypervisors /home/VDI/.ssh/authorized_keys file.
 To check if everything works, from dashboard server type:
 
