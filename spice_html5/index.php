@@ -2,45 +2,12 @@
 $vmname=$_GET['vmInfoToken'];
 ?>
 <!DOCTYPE html>
-<!--
-
-eyeOS Spice Web Client
-Copyright (c) 2015 eyeOS S.L.
-
-Contact Jose Carlos Norte (jose@eyeos.com) for more information about this software.
-
-This program is free software; you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3 as published by the
-Free Software Foundation.
- 
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
-details.
- 
-You should have received a copy of the GNU Affero General Public License
-version 3 along with this program in the file "LICENSE".  If not, see 
-<http://www.gnu.org/licenses/agpl-3.0.txt>.
- 
-See www.eyeos.org for more details. All requests should be sent to licensing@eyeos.org
- 
-The interactive user interfaces in modified source and object code versions
-of this program must display Appropriate Legal Notices, as required under
-Section 5 of the GNU Affero General Public License version 3.
- 
-In accordance with Section 7(b) of the GNU Affero General Public License version 3,
-these Appropriate Legal Notices must retain the display of the "Powered by
-eyeos" logo and retain the original copyright notice. If the display of the 
-logo is not reasonably feasible for technical reasons, the Appropriate Legal Notices
-must display the words "Powered by eyeos" and retain the original copyright notice. 
-
--->
-<html>
     <head>
         <title>KVM-VDI - <?php echo "$vmname";?></title>
         <meta charset="utf-8">
         <!-- libs -->
-        <script src="lib/modernizr.js"></script>
+
+ <script src="lib/modernizr.js"></script>
         <script src="lib/jquery-2.0.3.js"></script>
         <script src="lib/jquery-mousewheel.js"></script>
         <script src="lib/jgestures.min.js"></script>
@@ -126,67 +93,46 @@ must display the words "Powered by eyeos" and retain the original copyright noti
         <script src="run.js"></script>
         <!-- end core -->
         <meta content="yes" name="apple-mobile-web-app-capable" />
-
-        <style type="text/css">
-            body {
-                background-color:black;
-                padding:0;
-                margin:0;
-            }
-
-            #integrationBenchmark {
-                display: none;
-                position:absolute;
-                z-index: 10000000000000000000000000;
-                top:0;
-                right:0;
-                bottom:0;
-                left:0;
-                text-align: center;
-                background-color: rgba(0, 0, 0, 0.2);
-            }
-
-            #integrationBenchmark .closeButton {
-                position: absolute;
-                top: 0;
-                right: 0;
-                padding: 5px;
-                background-color: #fff;
-                color: #000;
-                cursor: pointer;
-            }
-
-            #integrationBenchmark .result {
-                font-size: 4em;
-                font-weight: bold;
-                position: absolute;
-                top: 50%;
-                left: 35%;
-                color: #0f0;
-                background-color: #fff;
-            }
-
-            #launchWordButton {
-                position:absolute;
-                top:50%;
-            }
-
-        </style>
+	<link href="../inc/css/custom.css" rel="stylesheet">
+	<!-- Bootstrap core CSS -->
+	<link href="../inc/css/bootstrap.min.css" rel="stylesheet">
+	<!-- metisMenu CSS -->
+	<link href="../inc/metisMenu/metisMenu.min.css" rel="stylesheet">
+	<!-- Font Awesome-->
+	<link href="../inc/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+	<link href="../inc/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+	<link href="../inc/css/dashboard.css" rel="stylesheet">
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+	<!--[if lt IE 9]>
+        <script src="../https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="../https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+	<![endif]-->
+	<!-- Bootstrap core JavaScript ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script src="../inc/js/jquery.min.js"></script>
+	<script>window.jQuery || document.write('<script src="inc/js/vendor/jquery.min.js"><\/script>')</script>
+	<script src="../inc/js/bootstrap.min.js"></script>
+	<script src="../inc/js/multiselect.min.js"></script>
+	<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+	<script src="../inc/js/ie10-viewport-bug-workaround.js"></script>
+	<script src="../inc/metisMenu/metisMenu.min.js"></script>
+	<script src="../inc/js/kvm-vdi.js"></script>
     </head>
+    <style>
+	body {background-color: black;}
+    </style>
     <body>
-        <div id="testVdi"></div>
-        <input type="button" value="getStats" style="display:none;position:absolute;top:0px;right:0px;z-index:100;width:200px;height:200px;" id="getStats" />
-        <input type="text" id="hiddeninput" style="display:none;opacity:0;font-size: 60px;color:transparent"/>
-        <div id="canvasSpace" style="display: none; height: 1024px"></div>
-        <div id="graphicDebug" style="display: none; background-color: white; font-family: Consolas,Lucida Console,Courier,mono">
-            <button id="clearButton" type="button" onclick="$(debugInfo).html('');">Clear</button>
-            <input id="logActive" type="checkbox" value="Log">Log
-            <div id="debugInfo" style="background-color: white"></div>
-        </div>
-        <div id="integrationBenchmark"  style="" width=100% height=100%>
-            <div class="closeButton" onclick="closeIntegrationBenchmark();">X</div>
-            <button id="launchWordButton"  type="button" onclick=startBenchmark()>Start benchmark</button>
-        </div>
+	    <div class="dropdown" style="position: absolute; top: 0px; left: 0px; margin-top: 0;line-height:0;">
+		<button style="margin-top:0; top:0;" class="btn btn-default dropdown-toggle btn-xs fa fa-bars" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" id="ctrlMenu">
+		</button>
+		<ul class="dropdown-menu" aria-labelledby="ctrlMenu">
+		    <li><a href="#" id="ctrlaltdel">Send Ctrl+Alt+Del</a></li>
+	        </ul>
+	    </div>
+    	    <div id="KVM-VDI-screen" style="position: absolute; top: 20px; left: 0px;">
+	    </div>
+	</div>
     </body>
 <script>
 var vmname="<?php echo $vmname?>";
@@ -199,8 +145,12 @@ function vm_heartbeat(){
 	    }
 	})
 }
+$('#ctrlaltdel').click(function(e) {
+	ctrl_alt_del();
+});
 $(document).ready(function(){
     var heartbeat_object = setInterval(function(){vm_heartbeat();},30000);
+
 });
 </script>
 </html>

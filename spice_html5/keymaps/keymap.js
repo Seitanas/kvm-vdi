@@ -34,7 +34,7 @@ wdi.Keymap = {
      * @returns {*}
      */
     getScanCodes: function(e) {
-		if (e['hasScanCode']) {
+		if (e['hasScanCode']) { 
 			return e['scanCode'];
 		} else if (this.handledByCtrlKeyCode(e['type'], e['keyCode'], e['generated'])) {// before doing anything else we check if the event about to be handled has to be intercepted
             return this.getScanCodeFromKeyCode(e['keyCode'], e['type'], this.ctrlKeymap, this.reservedCtrlKeymap);
@@ -42,7 +42,7 @@ wdi.Keymap = {
             return this.getScanCodesFromCharCode(e['charCode']);
         } else if (this.handledByNormalKeyCode(e['type'], e['keyCode'])) {
             return this.getScanCodeFromKeyCode(e['keyCode'], e['type'], this.keymap);
-        } else {
+	}else {
             return [];
         }
     },
@@ -69,6 +69,7 @@ wdi.Keymap = {
                 return [this.makeKeymap(0x80e0 | ((key - 0x100) << 8))];
             }
         }
+	console.log(key);
         return key;
     },
 

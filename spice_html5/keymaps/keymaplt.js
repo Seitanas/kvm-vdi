@@ -113,8 +113,9 @@ wdi.KeymapLT = function() {
     keymapLT[9]                 = 0x0F; // TAB
     //keymapLT[20]                = 0x3A; // // BLOQ.MAY. => see the charmap, all the capital letters and shift chars send a shift in their sequence
     keymapLT[16]                = 0x2A; // LEFT SHIFT and RIGHT SHIFT
-	keymapLT[91]                = 0x1D; // LEFT GUI (META, COMMAND) BINDED TO CONTROL
+    keymapLT[91]                = 0x1D; // LEFT GUI (META, COMMAND) BINDED TO CONTROL
 	keymapLT[17]                = 0x1D; // LEFT CONTROL and RIGHT CONTROL
+	keymapLT[18]                = 0x38; // LEFT ALT
     keymapLT[32]                = 0x39; // SPACE
     keymapLT[8]                 = 0x0E; // BACKSPACE
     keymapLT[13]                = 0x1C; // ENTER

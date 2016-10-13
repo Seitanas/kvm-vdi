@@ -105,6 +105,7 @@ wdi.KeymapUS = function() {
     keymapUS[16]                = 0x2A; // LEFT SHIFT and RIGHT SHIFT
 	keymapUS[91]                = 0x1D; // LEFT GUI (META, COMMAND) BINDED TO CONTROL
 	keymapUS[17]                = 0x1D; // LEFT CONTROL and RIGHT CONTROL
+        keymapUS[18]                = 0x38; // LEFT ALT
     keymapUS[32]                = 0x39; // SPACE
     keymapUS[8]                 = 0x0E; // BACKSPACE
     keymapUS[13]                = 0x1C; // ENTER

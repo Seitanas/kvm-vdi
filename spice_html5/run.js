@@ -41,10 +41,12 @@ function getURLParameter (name) {
 wdi.Debug.debug = false; //enable logging to javascript console
 wdi.exceptionHandling = false; //disable "global try catch" to improve debugging
 //if enabled, console errors do not include line numbers
-//wdi.SeamlessIntegration = false; //enable window integration. (if disabled, full desktop is received)
+//wdi.SeamlessIntegration = true; //enable window integration. (if disabled, full desktop is received)
 
 wdi.IntegrationBenchmarkEnabled = false;// MS Excel loading time benchmark
-
+function ctrl_alt_del(){
+    app.sendShortcut('CtrlAltDel');
+}
 function start () {
 	var testSessionStarted = false;
 
@@ -92,12 +94,12 @@ function start () {
 				var position = item.position * 2;
 				canvas = $(item.canvas).css({
 					'zIndex': 10000 - position - 1,
-					'position': 'absolute',
+					'position': 'relative',
 					'top': item.info.top + 'px',
 					'left': item.info.left + 'px'
 				});
 				eventlayer = $(item.eventLayer).css({
-					'top': item.info.top + 'px',
+					'top': item.info.top  + 'px',
 					'left': item.info.left + 'px',
 					'zIndex': 10000 - position
 				})
@@ -106,7 +108,7 @@ function start () {
 			}
 		} else if (action == 'ready') {
 			var width = $(window).width();
-			var height = $(window).height();
+			var height = $(window).height() -20;
 
 			// launch tests
 			if (performanceTest) {
@@ -210,7 +212,7 @@ function start () {
 		'context': this,
 		'host': getURLParameter('host') || '10.11.12.100',
 		'port': getURLParameter('port') || 8000,
-		'protocol': getURLParameter('protocol') || 'ws',
+		'protocol': getURLParameter('protocol') || 'wss',
 		'token': getURLParameter('password') || '',
 		'vmHost': getURLParameter('vmhost') || false,
 		'vmPort': getURLParameter('vmport') || false,
@@ -225,16 +227,16 @@ function start () {
         'heartbeatToken': 'heartbeat',
 		'heartbeatTimeout': 4000,//miliseconds
 		'busFileServerBaseUrl': 'https://10.11.12.200/fileserver/',
-		'layout': 'es',
+		'layout': 'us',
 		'clientOffset': {
 			'x': 0,
-			'y': 0
+			'y': -20
 		},
 		'useWorkers': useWorkers,
 		'seamlessDesktopIntegration': false,
 		'externalClipboardHandling': false,
 		'disableClipboard': true,
-		'layer': document.getElementById('testVdi'),
+		'layer': document.getElementById('KVM-VDI-screen'),
 		'vmInfoToken': getURLParameter('vmInfoToken')
 		//'language': navigator.language
 	});
