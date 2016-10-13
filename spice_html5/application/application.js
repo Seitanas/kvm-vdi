@@ -450,7 +450,7 @@ Application = $.spcExtend(wdi.DomainObject, {
                 "keydown",
                 [
                     {
-                        'generated': false,
+                        'generated': true,
                         'type': "keydown",
                         'keyCode': 17,
                         'charCode': 0
@@ -463,7 +463,7 @@ Application = $.spcExtend(wdi.DomainObject, {
                 "keydown",
                 [
                     {
-                        'generated': false,
+                        'generated': true,
                         'type': "keydown",
                         'keyCode': 18,
                         'charCode': 0
@@ -476,7 +476,7 @@ Application = $.spcExtend(wdi.DomainObject, {
                 "keydown",
                 [
                     {
-                        'generated': false,
+                        'generated': true,
                         'type': "keydown",
                         'keyCode': 46,
                         'charCode': 0
@@ -489,7 +489,7 @@ Application = $.spcExtend(wdi.DomainObject, {
                 "keyup",
                 [
                     {
-                        'generated': false,
+                        'generated': true,
                         'type': "keyup",
                         'keyCode': 17,
                         'charCode': 0
@@ -501,7 +501,7 @@ Application = $.spcExtend(wdi.DomainObject, {
                 "keyup",
                 [
                     {
-                        'generated': false,
+                        'generated': true,
                         'type': "keyup",
                         'keyCode': 18,
                         'charCode': 0
@@ -513,7 +513,7 @@ Application = $.spcExtend(wdi.DomainObject, {
                 "keyup",
                 [
                     {
-                        'generated': false,
+                        'generated': true,
                         'type': "keyup",
                         'keyCode': 46,
                         'charCode': 0

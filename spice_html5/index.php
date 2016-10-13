@@ -146,7 +146,8 @@ function vm_heartbeat(){
 	})
 }
 $('#ctrlaltdel').click(function(e) {
-	ctrl_alt_del();
+    ctrl_alt_del();
+    document.getElementById("inputmanager").focus();
 });
 $(document).ready(function(){
     var heartbeat_object = setInterval(function(){vm_heartbeat();},30000);
