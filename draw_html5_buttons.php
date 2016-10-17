@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-08-09
+2016-10-17
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -30,7 +30,7 @@ $username=$_SESSION['username'];
 	add_SQL_line("INSERT INTO config (name,valuedate) VALUES ('lastreload',NOW()) ON DUPLICATE KEY UPDATE valuedate=NOW()");
 	reload_vm_info();
     }
-    if ($_SESSION['ad_user']=='yes'){
+    if ($_SESSION['ad_user']=='yes'||$_SESSION['ad_user']=='LDAP'){
 	$group_array=$_SESSION['group_array'];
 	$pool_reply=get_SQL_array("SELECT DISTINCT(pool.id), pool.name FROM poolmap_ad  LEFT JOIN pool ON poolmap_ad.poolid=pool.id LEFT JOIN ad_groups ON poolmap_ad.groupid=ad_groups.id WHERE ad_groups.name IN ($group_array)");
     }
