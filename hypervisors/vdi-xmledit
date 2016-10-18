@@ -36,9 +36,9 @@ graphics = devices.find('graphics')
 for disk in devices.findall('disk'):
     devtype=disk.get('device')
     if devtype == 'cdrom':
-	image_path = disk.find('source')
-	if image_path:
-	    image_path.clear()
+        image_path = disk.find('source')
+        if image_path:
+            image_path.clear()
 #we need to remove password element, which was set during installation:
 graphics.clear()
 graphics.set('type','spice')
