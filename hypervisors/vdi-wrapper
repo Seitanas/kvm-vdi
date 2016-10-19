@@ -27,19 +27,19 @@ sys.argv[0]=path_to_kvm
 if not os.path.isfile(path_to_kvm): #if kvm binary from config file does not exist, try finding it in default paths:
     kvm_paths = ['/usr/libexec/qemu-kvm', '/usr/bin/qemu-kvm', '/usr/bin/qemu-system-x86_64']
     for kvm in kvm_paths:
-	if os.path.isfile(kvm):
-	    path_to_kvm=kvm
+        if os.path.isfile(kvm):
+            path_to_kvm=kvm
 while (x != y):
     namearg=str(sys.argv[x])
     if (namearg=="-name"):
-	vmname_tmp=str(sys.argv[x+1])
-	vmname_tmp=vmname_tmp.split(",")
-	vmname=vmname_tmp[0]
-	vmname=vmname.replace("guest=", "")
-	startup_procedure=1
+        vmname_tmp=str(sys.argv[x+1])
+        vmname_tmp=vmname_tmp.split(",")
+        vmname=vmname_tmp[0]
+        vmname=vmname.replace("guest=", "")
+        startup_procedure=1
     if "-spice" in namearg:
-	sys.argv[x+1]=sys.argv[x+1]+",password="+spice_password
-	sys.argv[x+1]=sys.argv[x+1].replace("disable-ticketing,", "")
+        sys.argv[x+1]=sys.argv[x+1]+",password="+spice_password
+        sys.argv[x+1]=sys.argv[x+1].replace("disable-ticketing,", "")
     x += 1
 command_args=sys.argv
 if (startup_procedure):
@@ -47,5 +47,5 @@ if (startup_procedure):
     snapshot=(response.text)
     snapshot = snapshot.replace("\n", "")
     if (snapshot=="true"):
-	command_args.append("-snapshot")
+        command_args.append("-snapshot")
 os.execve(path_to_kvm, command_args,env_vars)#call kvm via execv() to replace parent process with it

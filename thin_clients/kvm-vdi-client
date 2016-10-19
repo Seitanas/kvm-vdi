@@ -45,32 +45,32 @@ class Login(QtGui.QDialog):
         super(Login, self).__init__(parent)
         self.User = QtGui.QLineEdit(self)
         self.Pass = QtGui.QLineEdit(self)
-	self.LabelUser=QtGui.QLabel(self)
-	self.LabelUser.setText("Username:")
-	self.LabelPass=QtGui.QLabel(self)
-	self.LabelPass.setText("Password:")
+        self.LabelUser=QtGui.QLabel(self)
+        self.LabelUser.setText("Username:")
+        self.LabelPass=QtGui.QLabel(self)
+        self.LabelPass.setText("Password:")
         self.Pass.setEchoMode(QtGui.QLineEdit.Password)
         self.buttonLogin = QtGui.QPushButton('Login', self)
         self.buttonLogin.clicked.connect(self.handleLogin)
         layout = QtGui.QVBoxLayout(self)
-	layout.addWidget(self.LabelUser)
+        layout.addWidget(self.LabelUser)
         layout.addWidget(self.User)
-	layout.addWidget(self.LabelPass)
+        layout.addWidget(self.LabelPass)
         layout.addWidget(self.Pass)
         layout.addWidget(self.buttonLogin)
 
     def handleLogin(self):
-	global username
-	global password
-	reply=http_session.post(dashboard_path+"client_pools.php", data={'username': str(self.User.text()), 'password': str(self.Pass.text())}, verify=False, headers=http_headers)
-	if reply.text!='LOGIN_FAILURE':
-	    username=str(self.User.text())
-	    password=str(self.Pass.text())
-	    v.connect("notify::title", pool_click)
-	    v.load_html_string(str(reply.text),dashboard_path)
-	    self.accept()
+        global username
+        global password
+        reply=http_session.post(dashboard_path+"client_pools.php", data={'username': str(self.User.text()), 'password': str(self.Pass.text())}, verify=False, headers=http_headers)
+        if reply.text!='LOGIN_FAILURE':
+            username=str(self.User.text())
+            password=str(self.Pass.text())
+            v.connect("notify::title", pool_click)
+            v.load_html_string(str(reply.text),dashboard_path)
+            self.accept()
         else:
-	    QtGui.QMessageBox.warning(self, 'Error', 'Bad user or password')
+            QtGui.QMessageBox.warning(self, 'Error', 'Bad user or password')
 
 
 
@@ -78,7 +78,7 @@ class vm_heartbeat(threading.Thread):
     def __init__(self, vmname):
         super(vm_heartbeat, self).__init__()
         self._stop = threading.Event()
-	self.vmname = vmname
+        self.vmname = vmname
     def stop(self):
         self._stop.set()
     def stopped(self):
@@ -86,20 +86,20 @@ class vm_heartbeat(threading.Thread):
     def run(self):
         seconds=0
         while not self.stopped():
-	    if seconds==30:
-		hb_reply=http_session.post(dashboard_path+"client_hb.php", data={'vmname': self.vmname}, verify=False, headers=http_headers)
-		logger.debug("VM heartbeat")
-		seconds=0
-	    if not self.stopped() and seconds < 30: #sleep for one second. Longer sleep times cause thread to wait on exit.
-        	time.sleep(1)
-		seconds += 1
+            if seconds==30:
+                hb_reply=http_session.post(dashboard_path+"client_hb.php", data={'vmname': self.vmname}, verify=False, headers=http_headers)
+                logger.debug("VM heartbeat")
+                seconds=0
+            if not self.stopped() and seconds < 30: #sleep for one second. Longer sleep times cause thread to wait on exit.
+                time.sleep(1)
+                seconds += 1
 
 def dashboard_reload():
     try:
-	page=http_session.get(dashboard_path+"client_pools.php", verify=False, headers=http_headers)
-	glib.idle_add(v.load_html_string,str(page.text),dashboard_path)
+        page=http_session.get(dashboard_path+"client_pools.php", verify=False, headers=http_headers)
+        glib.idle_add(v.load_html_string,str(page.text),dashboard_path)
     except:
-	logger.debug ("Dashboard timeout")
+        logger.debug ("Dashboard timeout")
 
 class refresh_timer(threading.Thread):
     def __init__(self):
@@ -110,54 +110,54 @@ class refresh_timer(threading.Thread):
     def stopped(self):
         return self._stop.isSet()
     def run(self):
-	global refresh_run
-	seconds=0
+        global refresh_run
+        seconds=0
         while not self.stopped():
-	    if seconds==5:
-		if refresh_run==1:
-		    logger.debug ("Dashboard reload")
-		    dashboard_reload()
-		seconds=0
-	    if not self.stopped() and seconds < 5: #sleep for one second. Longer sleep times cause thread to wait on exit.
-        	time.sleep(1)
-		seconds += 1
+            if seconds==5:
+                if refresh_run==1:
+                    logger.debug ("Dashboard reload")
+                    dashboard_reload()
+                seconds=0
+            if not self.stopped() and seconds < 5: #sleep for one second. Longer sleep times cause thread to wait on exit.
+                time.sleep(1)
+                seconds += 1
 
 
 class remote_viewer(threading.Thread):
     def __init__(self,data):
         super(remote_viewer, self).__init__()
         self._stop = threading.Event()
-	self.data = data
+        self.data = data
     def stop(self):
         self._stop.set()
     def stopped(self):
         return self._stop.isSet()
     def run(self):
-	global refresh_run
-	vmname=self.data['name']
-	t = vm_heartbeat(vmname)
-	t.daemon=True
-	t.start()
-	tmp=self.data["address"].split(":")
-    	spice_password=self.data["spice_password"]
-	tmpname=(''.join(choice(ascii_uppercase+ascii_lowercase+digits) for i in range(13)))
-	viewer_config=ConfigParser()
-    	viewer_config.add_section('virt-viewer')
-    	viewer_config.set('virt-viewer', 'type', 'spice')
-    	viewer_config.set('virt-viewer', 'host', tmp[0])
-    	viewer_config.set('virt-viewer', 'port', tmp[1])
-    	viewer_config.set('virt-viewer', 'delete-this-file', '0')
-    	viewer_config.set('virt-viewer', 'password', spice_password)
-    	with open('/tmp/' + tmpname + '.cfg', 'wb') as configfile:
-	    viewer_config.write(configfile)
-	os.system("/usr/bin/remote-viewer --kiosk-quit=on-disconnect  --kiosk /tmp/" + tmpname + ".cfg ")
-	#os.system("/usr/bin/remote-viewer /tmp/" + tmpname + ".cfg ")
-	dashboard_reload();
-	logger.info("Exiting virt-viewer")
-	refresh_run=1
-	t.stop()
-	t.join()
-	self.stop()
+        global refresh_run
+        vmname=self.data['name']
+        t = vm_heartbeat(vmname)
+        t.daemon=True
+        t.start()
+        tmp=self.data["address"].split(":")
+        spice_password=self.data["spice_password"]
+        tmpname=(''.join(choice(ascii_uppercase+ascii_lowercase+digits) for i in range(13)))
+        viewer_config=ConfigParser()
+        viewer_config.add_section('virt-viewer')
+        viewer_config.set('virt-viewer', 'type', 'spice')
+        viewer_config.set('virt-viewer', 'host', tmp[0])
+        viewer_config.set('virt-viewer', 'port', tmp[1])
+        viewer_config.set('virt-viewer', 'delete-this-file', '0')
+        viewer_config.set('virt-viewer', 'password', spice_password)
+        with open('/tmp/' + tmpname + '.cfg', 'wb') as configfile:
+            viewer_config.write(configfile)
+        os.system("/usr/bin/remote-viewer --kiosk-quit=on-disconnect  --kiosk /tmp/" + tmpname + ".cfg ")
+        #os.system("/usr/bin/remote-viewer /tmp/" + tmpname + ".cfg ")
+        dashboard_reload();
+        logger.info("Exiting virt-viewer")
+        refresh_run=1
+        t.stop()
+        t.join()
+        self.stop()
 
 
 
@@ -165,38 +165,38 @@ def pool_click(v, param):
     if not v.get_title():
         return
     if v.get_title().startswith("kvm-vdi-msg:"):
-	vdi_message=v.get_title().replace("kvm-vdi-msg:","")
-	if vdi_message.startswith("PM:"):
-	    vdi_message=vdi_message.replace("PM:","")
-	    vdi_PM=vdi_message.split(":")
-	    if vdi_PM[0]=="shutdown":
-		PM_reply=http_session.post(dashboard_path+"client_power.php", data={'vm': vdi_PM[1], 'action': "shutdown"}, verify=False, headers=http_headers)
-	    if vdi_PM[0]=="destroy":
-		PM_reply=http_session.post(dashboard_path+"client_power.php", data={'vm': vdi_PM[1], 'action': "destroy"}, verify=False, headers=http_headers)
-	    dashboard_reload()
-	else:
-	    global refresh_run
-	    refresh_run=0;
-	    poolid=vdi_message
-	    reply=http_session.post(dashboard_path+"client.php", data={'pool': poolid, 'protocol': "SPICE", 'username': username, 'password': password} ,verify=False, headers=http_headers);
-	    data=json.loads(reply.text)
-	    if data['status']=='MAINTENANCE':
-		dashboard_reload()
-		refresh_run=1
-	    if data['status']=='NO_FREE_VMS':
-		dashboard_reload()
-		refresh_run=1
-	    retries=0
-	    while data['status']=="BOOTUP" and retries < 10 :
-		logger.info("BOOTUP, waiting")
-		reply=http_session.post(dashboard_path+"client.php", data={'pool': poolid, 'protocol': "SPICE", 'username': username, 'password': password} ,verify=False, headers=http_headers);
-		data=json.loads(reply.text)
-		time.sleep(1)
-	    if data['status']=='OK':
-		#dashboard_reload()
-		logger.info("OK, starting HB thread & viewer")
-		viewer=remote_viewer(data)
-		viewer.start()
+        vdi_message=v.get_title().replace("kvm-vdi-msg:","")
+        if vdi_message.startswith("PM:"):
+            vdi_message=vdi_message.replace("PM:","")
+            vdi_PM=vdi_message.split(":")
+            if vdi_PM[0]=="shutdown":
+                PM_reply=http_session.post(dashboard_path+"client_power.php", data={'vm': vdi_PM[1], 'action': "shutdown"}, verify=False, headers=http_headers)
+            if vdi_PM[0]=="destroy":
+                PM_reply=http_session.post(dashboard_path+"client_power.php", data={'vm': vdi_PM[1], 'action': "destroy"}, verify=False, headers=http_headers)
+            dashboard_reload()
+        else:
+            global refresh_run
+            refresh_run=0;
+            poolid=vdi_message
+            reply=http_session.post(dashboard_path+"client.php", data={'pool': poolid, 'protocol': "SPICE", 'username': username, 'password': password} ,verify=False, headers=http_headers);
+            data=json.loads(reply.text)
+            if data['status']=='MAINTENANCE':
+                dashboard_reload()
+                refresh_run=1
+            if data['status']=='NO_FREE_VMS':
+                dashboard_reload()
+                refresh_run=1
+            retries=0
+            while data['status']=="BOOTUP" and retries < 10 :
+                logger.info("BOOTUP, waiting")
+                reply=http_session.post(dashboard_path+"client.php", data={'pool': poolid, 'protocol': "SPICE", 'username': username, 'password': password} ,verify=False, headers=http_headers);
+                data=json.loads(reply.text)
+                time.sleep(1)
+            if data['status']=='OK':
+                #dashboard_reload()
+                logger.info("OK, starting HB thread & viewer")
+                viewer=remote_viewer(data)
+                viewer.start()
 
 
 app = QtGui.QApplication(sys.argv)
