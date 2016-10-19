@@ -63,8 +63,9 @@ set_lang();
     </script>
 
     <script>
-	function countdown(filepath,container) {
-	    var $container = $(container);
+	function countdown(filepath,id) {
+        
+	    var $container = $("#progress-"+id);
 	    (function step() {
 		$.get(filepath, function(count){
 		    if (count==0){

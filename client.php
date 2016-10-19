@@ -31,12 +31,12 @@ if ($protocol=="SPICE"){
     $reset=0;
 
     //First lets check if theres already machine provided for this user and it was last acessed within 5mins (takeover from another thin client).
-    $suggested_vm=get_SQL_array("SELECT * FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id WHERE poolmap_vm.poolid='$pool' AND vms.lastused > DATE_SUB(NOW(), INTERVAL '$return_to_pool_after' MINUTE) AND vms.clientid='$userid' AND vms.maintenance='false' LIMIT 1");
+    $suggested_vm=get_SQL_array("SELECT * FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id WHERE poolmap_vm.poolid='$pool' AND vms.lastused > DATE_SUB(NOW(), INTERVAL '$return_to_pool_after' MINUTE) AND vms.clientid='$userid' AND vms.maintenance='false' AND vms.locked='false' LIMIT 1");
     if (empty($suggested_vm)){//if there's no VMs to take over, get new available VM (the one which was accesed more than '$return_to_pool_after' minutes ago).
 	//we update first available machine first (to avoid race conditions)
-	add_SQL_line("UPDATE vms JOIN (SELECT poolmap_vm.vmid FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id WHERE poolmap_vm.poolid='$pool' AND vms.lastused < DATE_SUB(NOW(), INTERVAL '$return_to_pool_after' MINUTE) ORDER BY RAND() LIMIT 1) tmp ON vms.id=tmp.vmid SET vms.clientid='$userid',vms.lastused=NOW()");
-	$suggested_vm=get_SQL_array("SELECT * FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id WHERE poolmap_vm.poolid='$pool' AND vms.lastused > DATE_SUB(NOW(), INTERVAL '$return_to_pool_after' MINUTE) AND vms.clientid='$userid' AND vms.maintenance='false'");
-	$reset=1;
+        add_SQL_line("UPDATE vms JOIN (SELECT poolmap_vm.vmid FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id WHERE poolmap_vm.poolid='$pool' AND vms.locked='false' AND vms.lastused < DATE_SUB(NOW(), INTERVAL '$return_to_pool_after' MINUTE) ORDER BY RAND() LIMIT 1) tmp ON vms.id=tmp.vmid SET vms.clientid='$userid',vms.lastused=NOW()");
+        $suggested_vm=get_SQL_array("SELECT * FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id WHERE poolmap_vm.poolid='$pool' AND vms.locked='false' AND vms.lastused > DATE_SUB(NOW(), INTERVAL '$return_to_pool_after' MINUTE) AND vms.clientid='$userid' AND vms.maintenance='false'");
+        $reset=1;
     }
     if (empty($suggested_vm)){//if there are no available VMs in pool, return error and exit
         echo json_encode(array('status'=>"NO_FREE_VMS"));
@@ -56,12 +56,12 @@ if ($protocol=="SPICE"){
     $status=str_replace("\n","",$status);
     $status=str_replace("localhost",$h_reply[0]['address2'],$status);
     if ($reset_vm&&$reset)
-	ssh_command("sudo virsh reset ".$machine_name,true);
+        ssh_command("sudo virsh reset ".$machine_name,true);
     if (empty($status)){
-	if ($_SESSION['ad_user']=='yes'&&$vm[0]['os_type']=='windows')//we only need to pass username@domainname to windows login.
-	    $username=$username."@".$domain_name;
-	$agent_command=json_encode(array('vmname' => $machine_name, 'username' => $username, 'password' => $password, 'os_type' => $vm[0]['os_type']));
-	$status='BOOTUP';
+        if ($_SESSION['ad_user']=='yes'&&$vm[0]['os_type']=='windows')//we only need to pass username@domainname to windows login.
+            $username=$username."@".$domain_name;
+            $agent_command=json_encode(array('vmname' => $machine_name, 'username' => $username, 'password' => $password, 'os_type' => $vm[0]['os_type']));
+            $status='BOOTUP';
         ssh_command('echo "' . addslashes($agent_command) . '"| socat /usr/local/VDI/kvm-vdi.sock - ',true);
 	reload_vm_info();	
     }

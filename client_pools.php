@@ -193,6 +193,7 @@ function call_vm(poolid){
 	        //console.log("VM is booting");
 	    }
 	    if (vm.status=='NO_FREE_VMS'){
+            $('#loadingVM').modal('hide');
 	        $("#warningbox").html("<strong><?php echo _("Warning!");?></strong> <?php echo _("No free VMs available.");?><a class=\"close\" href=\"#\"  onclick=\"$('#warningbox').addClass('hidden')\">&times;</a>");
 	        $("#warningbox").removeClass('hidden');
 	        retries=0;
@@ -212,7 +213,7 @@ function statusChecker(poolid){
 }
     //$('.pools').click(function() {
     $(document).delegate(".pools","click",function(){
-	$('#loadingVM').modal('show');
+    $('#loadingVM').modal('show');
 	if (!html5_client){
 	    document.title = ""
 	    document.title = "kvm-vdi-msg:" + $(this).attr('id')

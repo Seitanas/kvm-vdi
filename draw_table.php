@@ -132,7 +132,7 @@ while ($x<sizeof($sql_reply)){
                             </div>
                     	  </div>
                           <script>
-                            countdown("' . $serviceurl . '/progress.php?vm=' . $vms_query[$y]['id']  . '","#progress-' . $vms_query[$y]['id'] . '");
+                            countdown("' . $serviceurl . '/progress.php?vm=' . $vms_query[$y]['id']  . '","' . $vms_query[$y]['id'] . '");
                           </script>';
                         }
                         echo  '</td>
