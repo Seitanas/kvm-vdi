@@ -91,14 +91,17 @@ set_lang();
 <script>
 $('#poollist').on('change', function(){
     $poolid=$('#poollist').val();
-    load_vm_pool_list($poolid, "");
+    var $non_VDI=false;
+    if ($("#show-non-vdi-vms-checkbox").data('status')=='checked')
+        $non_VDI=true;
+    load_vm_pool_list($poolid, $non_VDI);
 });
 </script>
 <script>
 $(document).ready(function(){
     $('#multiselect').multiselect();
     $poolid=$('#poollist').val();
-    load_vm_pool_list($poolid);
+    load_vm_pool_list($poolid,false);
     $("#submit").click(function(){
 	var multivalues="";
 	$("#multiselect_to option").each(function(){
