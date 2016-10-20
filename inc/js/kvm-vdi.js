@@ -103,8 +103,7 @@ function show_non_vdi_vms(status){
 }
 $(document).ready(function(){
     $('#create-vm-button-click').click(function() {
-//	$("#new_vm_creation_info_box").addClass('hide');
-        $("#new_vm_creation_info_box").html("<i class=\"fa fa-thumbs-o-up fa-fw\"></i>Success");
+        $("#new_vm_creation_info_box").addClass('hide');
         if(!$('#new_vm')[0].checkValidity()){
             $('#new_vm').find('input[type="submit"]').click();    
         }
