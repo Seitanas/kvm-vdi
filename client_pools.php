@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-10-19
+2016-10-20
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -123,7 +123,6 @@ set_lang();
 </div>
 <!-- Modal end -->
 
-
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -140,18 +139,22 @@ set_lang();
 	?>
     </ul>
 </nav>
-<div class="row">
-    <div class="col-md-3"></div>
-    <div class="col-md-6">
-	<div class="alert alert-warning hidden" id="warningbox"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <div class="alert alert-warning hidden" id="warningbox"></div>
+        </div>
+        <div class="col-md-3"></div>
     </div>
-    <div class="col-md-3"></div>
+    <div id="mainscreen"></div>
+    <?php
+        if (!$html5_client)
+            draw_html5_buttons();?>
 </div>
-<div id="mainscreen">
-</div>
-    <script src="inc/js/jquery.min.js"></script>
-    <script src="inc/js/bootstrap.min.js"></script>
-    <script src="inc/js/kvm-vdi.js"></script>
+<script src="inc/js/jquery.min.js"></script>
+<script src="inc/js/bootstrap.min.js"></script>
+<script src="inc/js/kvm-vdi.js"></script>
 <script>
 $(document).ready(function(){
 var vm_booted=0;
