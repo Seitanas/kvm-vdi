@@ -58,9 +58,9 @@ function ssh_command($command,$blocking){
     stream_set_blocking($errorReply, $blocking);
     $output= stream_get_contents($reply);
     $error=stream_get_contents($errorReply);
-    if (!empty($output))
-        return $output;
-    else return $error;
+    if (!empty($error))
+        $output=$error . $output;
+    return $output;
 }
 //#############################################################################
 function reload_vm_info(){
