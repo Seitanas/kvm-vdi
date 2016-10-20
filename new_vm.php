@@ -2,14 +2,13 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-tadas at ring.lt
 
 Vilnius University.
 Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-05-13
+2016-10-20
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -194,8 +193,8 @@ set_lang();
 		    <div class="alert hide text-left" id="new_vm_creation_info_box"></div>
 		</div>
 		<div class="col-md-5">
-        	    <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _("Close");?></button>
-        	    <button type="button" class="btn btn-primary" id="create-vm-button-click"><?php echo _("Create VMs");?></button>
+        	    <button type="button" class="btn btn-default create_vm_buttons" data-dismiss="modal"><?php echo _("Close");?></button>
+        	    <button type="button" class="btn btn-primary create_vm_buttons" id="create-vm-button-click"><?php echo _("Create VMs");?></button>
 		    <input type="submit" class="hide">
 		</div>
 	    </div>

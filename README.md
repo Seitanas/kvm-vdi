@@ -105,9 +105,7 @@ If apache mod_rewrite is enabled, you can access HTML5 console via: http://YOUR_
 
 
 ### Hypervisor installation
-  
-KVM-VDI uses Python version 2. You may experience problems with Python version 3.
-  
+
 **On Debian based systems:**
 
     apt-get install qemu-kvm libvirt-bin sudo python python-requests virtinst socat libxml-xpath-perl
