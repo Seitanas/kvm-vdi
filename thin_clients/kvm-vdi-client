@@ -23,6 +23,7 @@ config.read('/usr/local/VDI-client/config')
 logging.config.fileConfig('/usr/local/VDI-client/config')
 logger = logging.getLogger('root')
 dashboard_path = config.get('server', 'address')
+use_hypervisor_address = config.get('remote_viewer', 'use_hypervisor_address')
 
 http_headers = {
     'User-Agent': 'KVM-VDI client',
@@ -178,7 +179,7 @@ def pool_click(v, param):
             global refresh_run
             refresh_run=0;
             poolid=vdi_message
-            reply=http_session.post(dashboard_path+"client.php", data={'pool': poolid, 'protocol': "SPICE", 'username': username, 'password': password} ,verify=False, headers=http_headers);
+            reply=http_session.post(dashboard_path+"client.php", data={'pool': poolid, 'protocol': "SPICE", 'username': username, 'password': password, 'use_hypervisor_address': use_hypervisor_address} ,verify=False, headers=http_headers);
             data=json.loads(reply.text)
             if data['status']=='MAINTENANCE':
                 dashboard_reload()
@@ -189,7 +190,7 @@ def pool_click(v, param):
             retries=0
             while data['status']=="BOOTUP" and retries < 10 :
                 logger.info("BOOTUP, waiting")
-                reply=http_session.post(dashboard_path+"client.php", data={'pool': poolid, 'protocol': "SPICE", 'username': username, 'password': password} ,verify=False, headers=http_headers);
+                reply=http_session.post(dashboard_path+"client.php", data={'pool': poolid, 'protocol': "SPICE", 'username': username, 'password': password, 'use_hypervisor_address': use_hypervisor_address} ,verify=False, headers=http_headers);
                 data=json.loads(reply.text)
                 time.sleep(1)
             if data['status']=='OK':

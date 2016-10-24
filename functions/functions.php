@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2016-10-20
+2016-10-24
 Vilnius, Lithuania.
 */
 function SQL_connect(){
@@ -375,11 +375,11 @@ function draw_html5_buttons(){
                 $vm_image="text-success";
                 $provided_vm=get_SQL_array("SELECT vms.name,vms.state,vms.id FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id LEFT JOIN hypervisors ON vms.hypervisor=hypervisors.id  WHERE poolmap_vm.poolid='{$pool_reply[$x]['id']}'AND vms.maintenance!='true' AND hypervisors.maintenance!=1 AND vms.clientid='$userid' AND vms.lastused > DATE_SUB(NOW(), INTERVAL '$return_to_pool_after' MINUTE)");
             }
-            $pm_icons="";
-            if ($vm_count_available[0][0]==0)
+            else if ($vm_count_available[0][0]==0)
                 $vm_image="text-muted";
             if (!isset($provided_vm[0]['state']))
                 $provided_vm[0]['state']='';
+            $pm_icons="";
             if ($provided_vm[0]['state']=='running'||$provided_vm[0]['state']=='pmsuspended'||$provided_vm[0]['state']=='paused'){
                 $pm_icons='<a href="#" class="shutdown"  id="' . $provided_vm[0]['id'] . '"><i class="pull-left fa fa-stop-circle-o text-danger" title="' . _("Shutdown machine") . '"></i></a>';
                 $pm_icons=$pm_icons.'<a href="#" class="terminate"  id="' . $provided_vm[0]['id'] . '"><i class="pull-left fa fa-times-circle-o text-danger" title="' . ("Terminate machine") . '"></i></a>';
