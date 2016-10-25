@@ -173,13 +173,13 @@ while ($x<sizeof($sql_reply)){
 
                         }
                          echo '<div class="btn-group">
-                                <button class="btn btn-default dropdown-toggle" type="button" id="VDIActionMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <button class="btn btn-default dropdown-toggle" type="button" id="VMSActionMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                     ' . _("VM Actions") . '
                                     <span class="caret"></span>
                                 </button>
-                                <ul class="dropdown-menu" aria-labelledby="VDIActionMenu">';
+                                <ul class="dropdown-menu" aria-labelledby="VMSActionMenu">';
                                     if ($vms_query[$y]['state']=='shut'){
-                                        echo  '<li class="lockable-vm-buttons-' . $vms_query[$y]['id'] . ' ' . $lockstatus . '"><a href="power.php?action=single&state=up&vm=' . $VDI_query[$q]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '"><i class="text-success fa fa-play fa-fw text-success"></i>Power up</a></li>';
+                                        echo  '<li class="lockable-vm-buttons-' . $vms_query[$y]['id'] . ' ' . $lockstatus . '"><a href="power.php?action=single&state=up&vm=' . $vms_query[$q]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '"><i class="text-success fa fa-play fa-fw text-success"></i>Power up</a></li>';
                                     }
                                     if ($pwr_status=="on"){
                                       echo '<li><a data-toggle="modal" data-target="#vmConsole" href="vm_screen.php?vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '">
