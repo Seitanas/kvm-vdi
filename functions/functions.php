@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2016-10-24
+2016-10-27
 Vilnius, Lithuania.
 */
 function SQL_connect(){
@@ -58,6 +58,8 @@ function ssh_command($command,$blocking){
     stream_set_blocking($errorReply, $blocking);
     $output= stream_get_contents($reply);
     $error=stream_get_contents($errorReply);
+    if (!empty($error))
+        write_log($error);
     if (!empty($output))
         return $output;
     if (!empty($error)){
@@ -69,43 +71,49 @@ function ssh_command($command,$blocking){
 function reload_vm_info(){
     $x=0;
     $sql_reply=get_SQL_array("SELECT * FROM hypervisors WHERE maintenance=0");
+    $error_return=0;
     while ($x<sizeof($sql_reply)){
-	$ip=$sql_reply[$x]['ip'];
-	$port=$sql_reply[$x]['port'];
-	$hyper_id=$sql_reply[$x]['id'];
-    	$reply=ssh_connect($ip . ":" . $port);
-	if (!$reply){//if connection is successfull
-        $output=ssh_command("sudo virsh list --all |tail -n +3|head -n -1|awk '{print $2" . '" "' . "$3}'",true);
-        $vms_in_db=get_SQL_array("SELECT * FROM vms WHERE hypervisor='$hyper_id'");
-        $vms=array();
-        $PlainVMS=array();
-        $output=str_replace("\n"," ",$output);
-	    $vms=explode(" ",$output);
-	    $y=0;
-	    while ($vms[$y]){
-            $PlainVMS[]="'" . $vms[$y] . "'";
-    		$vms_reply=get_SQL_line("SELECT id,maintenance FROM vms WHERE name='$vms[$y]' AND hypervisor='$hyper_id'"); 
-		if (!$vms_reply[1])
-		    $maint="false";
-		else
-		    $maint=$vms_reply[1];
-    	$state=$vms[$y+1];
-        if (empty($vms_reply[0]))//New VM is found
-            add_SQL_line("INSERT INTO  vms (name,hypervisor,state,maintenance) VALUES ('$vms[$y]','$hyper_id','$state','$maint')");
-        else
-            add_SQL_line("UPDATE vms SET name='$vms[$y]', hypervisor='$hyper_id', state='$state', maintenance='$maint' WHERE id='$vms_reply[0]'");
-        $y=$y+2;
-	    }
-
-	}
-	else
-	    add_SQL_line("UPDATE hypervisors SET maintenance='1' WHERE id='$hyper_id'");
-	++$x;
+        $ip=$sql_reply[$x]['ip'];
+        $port=$sql_reply[$x]['port'];
+        $hyper_id=$sql_reply[$x]['id'];
+        $reply=ssh_connect($ip . ":" . $port);
+        if (!$reply){//if connection is successfull
+            $output=ssh_command("sudo virsh list --all |tail -n +3|head -n -1|awk '{print $2" . '" "' . "$3}'",true);
+            $vms_in_db=get_SQL_array("SELECT * FROM vms WHERE hypervisor='$hyper_id'");
+            $vms=array();
+            $PlainVMS=array();
+            $output=str_replace("\n"," ",$output);
+            $vms=explode(" ",$output);
+            $y=0;
+            $error_reply=0;
+            if (strpos($output, 'error:') !== false){
+                $error_reply=1;
+                write_log($output);
+                $error_return=$error_return.'ERROR:'.$hyper_id.',';
+            }
+            while ($vms[$y]&&!$error_reply){
+                $PlainVMS[]="'" . $vms[$y] . "'";
+                $vms_reply=get_SQL_line("SELECT id,maintenance FROM vms WHERE name='$vms[$y]' AND hypervisor='$hyper_id'"); 
+                if (!$vms_reply[1])
+                    $maint="false";
+                else
+                    $maint=$vms_reply[1];
+                $state=$vms[$y+1];
+                if (empty($vms_reply[0]))//New VM is found
+                    add_SQL_line("INSERT INTO  vms (name,hypervisor,state,maintenance) VALUES ('$vms[$y]','$hyper_id','$state','$maint')");
+                else
+                    add_SQL_line("UPDATE vms SET name='$vms[$y]', hypervisor='$hyper_id', state='$state', maintenance='$maint' WHERE id='$vms_reply[0]'");
+                $y=$y+2;
+            }
+            $PlainVMS = join(', ', $PlainVMS);
+            if (!empty($PlainVMS)&&!$error_reply)//remove all VMS, that do not exist on hypervisor, but still are in database
+                $TrashVMS=add_SQL_line("DELETE FROM vms WHERE hypervisor='$hyper_id' AND name NOT IN ($PlainVMS)");
+        }
+        else//put hypervisor to maintenance if cannot connect to it
+            add_SQL_line("UPDATE hypervisors SET maintenance='1' WHERE id='$hyper_id'");
+        ++$x;
     }
-    $PlainVMS = join(', ', $PlainVMS);
-    if (!empty($PlainVMS))
-    //remove all VMS, that do not exist on hypervisor, but still are in database
-       $TrashVMS=add_SQL_line("DELETE FROM vms WHERE hypervisor='$hyper_id' AND name NOT IN ($PlainVMS)");
+    return $error_return;
 }
 //##############################################################################
 function check_session(){
