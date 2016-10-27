@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-10-20
+2016-10-27
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -24,34 +24,33 @@ if (isset ($_POST['username'])){
     $sql_reply=mysqli_fetch_row(mysqli_query($mysql_conn, "SELECT id,password FROM clients WHERE username LIKE '$username' AND isdomain=0"));
     mysqli_close($mysql_conn);
     if(!empty($sql_reply[1])){
-	if (password_verify($password, $sql_reply[1])){
-	    if (session_status() == PHP_SESSION_NONE) 
-		session_start();
-	    $_SESSION['client_logged']='yes';
-	    $_SESSION['userid']=$sql_reply[0];
-	    $_SESSION['username']=$username;
-	    $ip = $_SERVER['REMOTE_ADDR'];
-	    add_SQL_line("UPDATE clients SET lastlogin=now(), ip='$ip' WHERE id='$sql_reply[0]'");
-	    header("Location: $serviceurl/client_pools.php");
-	    exit;
-	}
+        if (password_verify($password, $sql_reply[1])){
+            if (session_status() == PHP_SESSION_NONE) 
+                session_start();
+            $_SESSION['client_logged']='yes';
+            $_SESSION['userid']=$sql_reply[0];
+            $_SESSION['username']=$username;
+            $ip = $_SERVER['REMOTE_ADDR'];
+            add_SQL_line("UPDATE clients SET lastlogin=now(), ip='$ip' WHERE id='$sql_reply[0]'");
+            header("Location: $serviceurl/client_pools.php");
+            exit;
+        }
     }
     else if ($LDAP_backend){
-	$group_array='';
+	    $group_array='';
 	if ($LDAP_backend=='activedir'){
 	    $query_user = $username."@".$domain_name;
 	    $group_array=list_ad_groups($username,$password,$query_user,$html5_client);
-	    $group_array = substr($group_array, 2); 
-	    $group_array=$group_array."'";
+	    $group_array=join("', '",$group_array);
 	}
 	else if ($LDAP_backend=='ldap'){
 	    $query_user= $username;
 	    $group_array=list_ldap_groups($username,$password,$query_user,$html5_client);
-	    $group_array = substr($group_array, 2); 
-	    $group_array=$group_array."'";
+	    $group_array = join("', '",$group_array); 
 	}
 	write_log("Groups for $query_user: " . $group_array);
 	if(!empty($group_array)){
+        $group_array="'" . $group_array . "'";
 	    $ip = $_SERVER['REMOTE_ADDR'];
 	    add_SQL_line("INSERT INTO clients (username,ip,isdomain,lastlogin) VALUES ('$query_user','$ip','1',NOW()) ON DUPLICATE KEY UPDATE ip='$ip', lastlogin=NOW()");
 	    $sql_reply=get_SQL_line("SELECT id FROM clients WHERE username LIKE '$query_user'");

@@ -281,12 +281,12 @@ function list_ad_groups($username,$password,$query_user,$html5_client){
             break;
         }
     }
-    $group_array='';
+    $group_array=array();
     foreach ($output as &$value) {
         $tmp_CN=explode(",",$value);
         $tmp_CN[0]=str_replace("CN=","",$tmp_CN[0]);
         if (!empty($tmp_CN[0]))
-            $group_array= $group_array . "','" . $tmp_CN[0];
+            $group_array[]= $tmp_CN[0];
     }
     return ($group_array);
 }
@@ -338,10 +338,10 @@ function list_ldap_groups($username,$password,$query_user,$html5_client){
     	    $result = ldap_search($ldap,$base_dn, "(cn=*)", array($LDAP_attribute_name)) or die ("Error in search query: ".ldap_error($ldap));
     	    $data = ldap_get_entries($ldap, $result);
     	    $x=0;
-	    $group_array='';
+	    $group_array=array();
     	    while ($x<$data[0][strtolower($LDAP_attribute_name)]['count']){
         	if (!empty($data[0][strtolower($LDAP_attribute_name)][$x]))
-		    $group_array= $group_array . "','" . $data[0][strtolower($LDAP_attribute_name)][$x];
+		        $group_array[]=$data[0][strtolower($LDAP_attribute_name)][$x];
         	++$x;
     	    }
 	}
@@ -370,7 +370,9 @@ function draw_html5_buttons(){
         }
         if ($_SESSION['ad_user']=='yes'||$_SESSION['ad_user']=='LDAP'){
             $group_array=$_SESSION['group_array'];
-            $pool_reply=get_SQL_array("SELECT DISTINCT(pool.id), pool.name FROM poolmap_ad  LEFT JOIN pool ON poolmap_ad.poolid=pool.id LEFT JOIN ad_groups ON poolmap_ad.groupid=ad_groups.id WHERE ad_groups.name IN ($group_array)");
+            if(!empty($group_array)){
+                $pool_reply=get_SQL_array("SELECT DISTINCT(pool.id), pool.name FROM poolmap_ad  LEFT JOIN pool ON poolmap_ad.poolid=pool.id LEFT JOIN ad_groups ON poolmap_ad.groupid=ad_groups.id WHERE ad_groups.name IN ($group_array)");
+            }
         }
         else
             $pool_reply=get_SQL_array("SELECT pool.id, pool.name FROM poolmap  LEFT JOIN pool ON poolmap.poolid=pool.id WHERE clientid='$userid'");
