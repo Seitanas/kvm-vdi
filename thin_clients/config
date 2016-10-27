@@ -4,6 +4,10 @@ address=http://192.168.0.20/kvm-vdi/
 [remote_viewer]
 #If set to 1, SPICE address from dashboard config will be substituted with hypervisor address
 use_hypervisor_address=0
+#If autologin set to 1 then client will try to automaticly login with `username` and `password`
+autologin=0
+username=someuser
+password=secret
 
 [loggers]
 keys=root

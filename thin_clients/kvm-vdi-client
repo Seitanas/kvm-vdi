@@ -24,6 +24,10 @@ logging.config.fileConfig('/usr/local/VDI-client/config')
 logger = logging.getLogger('root')
 dashboard_path = config.get('server', 'address')
 use_hypervisor_address = config.get('remote_viewer', 'use_hypervisor_address')
+autologin = int(config.get('remote_viewer', 'autologin'))
+cfg_username = config.get('remote_viewer', 'username')
+cfg_password = config.get('remote_viewer', 'password')
+
 
 http_headers = {
     'User-Agent': 'KVM-VDI client',
@@ -59,21 +63,28 @@ class Login(QtGui.QDialog):
         layout.addWidget(self.LabelPass)
         layout.addWidget(self.Pass)
         layout.addWidget(self.buttonLogin)
-
     def handleLogin(self):
         global username
         global password
-        reply=http_session.post(dashboard_path+"client_pools.php", data={'username': str(self.User.text()), 'password': str(self.Pass.text())}, verify=False, headers=http_headers)
+        username=str(self.User.text())
+        password=str(self.Pass.text())
+        reply=http_session.post(dashboard_path+"client_pools.php", data={'username': username, 'password': password}, verify=False, headers=http_headers)
         if reply.text!='LOGIN_FAILURE':
-            username=str(self.User.text())
-            password=str(self.Pass.text())
             v.connect("notify::title", pool_click)
             v.load_html_string(str(reply.text),dashboard_path)
             self.accept()
         else:
             QtGui.QMessageBox.warning(self, 'Error', 'Bad user or password')
 
-
+def AutoLogin():
+    global username
+    global password
+    username=cfg_username
+    password=cfg_password
+    reply=http_session.post(dashboard_path+"client_pools.php", data={'username': username, 'password': password}, verify=False, headers=http_headers)
+    if reply.text!='LOGIN_FAILURE':
+        v.connect("notify::title", pool_click)
+        v.load_html_string(str(reply.text),dashboard_path)
 
 class vm_heartbeat(threading.Thread):
     def __init__(self, vmname):
@@ -201,14 +212,21 @@ def pool_click(v, param):
 
 
 app = QtGui.QApplication(sys.argv)
-login = Login()
-if login.exec_() == QtGui.QDialog.Accepted:
+if not autologin:
+    login = Login()
+    if login.exec_() == QtGui.QDialog.Accepted:
+        r_t=refresh_timer()
+        r_t.start()
+        w.set_title("KVM-VDI client")
+        w.show_all()
+        gtk.main()
+else:
+    AutoLogin()
     r_t=refresh_timer()
     r_t.start()
     w.set_title("KVM-VDI client")
     w.show_all()
     gtk.main()
-
 r_t.stop()
 r_t.join()
 #t.stop()
