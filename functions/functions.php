@@ -88,7 +88,7 @@ function reload_vm_info(){
             $error_reply=0;
             if (strpos($output, 'error:') !== false){
                 $error_reply=1;
-                write_log($output);
+                write_log("Error occured on hypervisor id: $hyper_id Output: " . $output);
                 $error_return=$error_return.'ERROR:'.$hyper_id.',';
             }
             while ($vms[$y]&&!$error_reply){
