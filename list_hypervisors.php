@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-06-29
+2016-10-28
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -17,7 +17,7 @@ if (!check_session()){
     exit;
 }
 set_lang();
-$hypervisors_reply=get_SQL_array("SELECT * FROM hypervisors ORDER BY id");
+$hypervisors_reply=get_SQL_array("SELECT * FROM hypervisors ORDER BY name,ip DESC");
 ?>
 <!DOCTYPE html>
 <html>
