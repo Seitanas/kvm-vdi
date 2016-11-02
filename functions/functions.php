@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2016-10-27
+2016-11-02
 Vilnius, Lithuania.
 */
 function SQL_connect(){
@@ -335,16 +335,19 @@ function list_ldap_groups($username,$password,$query_user,$html5_client){
     	    }
 	}
         if ($ldapbind) {
-    	    $result = ldap_search($ldap,$base_dn, "(cn=*)", array($LDAP_attribute_name)) or die ("Error in search query: ".ldap_error($ldap));
-    	    $data = ldap_get_entries($ldap, $result);
-    	    $x=0;
-	    $group_array=array();
-    	    while ($x<$data[0][strtolower($LDAP_attribute_name)]['count']){
-        	if (!empty($data[0][strtolower($LDAP_attribute_name)][$x]))
-		        $group_array[]=$data[0][strtolower($LDAP_attribute_name)][$x];
-        	++$x;
-    	    }
-	}
+            $LDAP_attribute_name=explode(",",$LDAP_attribute_name);
+            $result = ldap_search($ldap,$base_dn, "(cn=*)", $LDAP_attribute_name) or die ("Error in search query: ".ldap_error($ldap));
+            $data = ldap_get_entries($ldap, $result);
+            $group_array=array();
+            foreach ($LDAP_attribute_name as $AttrName){
+                $x=0;
+                while ($x<$data[0][strtolower($AttrName)]['count']){
+                    if (!empty($data[0][strtolower($AttrName)][$x]))
+                        $group_array[]=$data[0][strtolower($AttrName)][$x];
+                    ++$x;
+                }
+            }
+        }
     }
     ldap_close($ldap);
     return $group_array;
