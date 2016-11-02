@@ -27,6 +27,7 @@ use_hypervisor_address = config.get('remote_viewer', 'use_hypervisor_address')
 autologin = int(config.get('remote_viewer', 'autologin'))
 cfg_username = config.get('remote_viewer', 'username')
 cfg_password = config.get('remote_viewer', 'password')
+autoexit = config.getboolean('remote_viewer', 'autoexit')
 
 
 http_headers = {
@@ -169,6 +170,9 @@ class remote_viewer(threading.Thread):
         refresh_run=1
         t.stop()
         t.join()
+        if autoexit:
+            logger.debug("autoexit is set to 1, exiting kvm-vdi-client")
+            os._exit(0)
         self.stop()
 
 
