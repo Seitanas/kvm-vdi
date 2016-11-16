@@ -2,7 +2,6 @@
 
 This project aims to provide fully functional VDI solution by using open source virtualization.
 
-**NOTICE: KVM-VDI versions prior to 2016/06/01**  
   
 Older versions are no longer compatible with new release! Older versions need to be manually upgraded to a new db schema from sql/vdi.sql file  
 Also you must edit you VM to change to the new KVM wrapper script:
@@ -52,7 +51,7 @@ Ubuntu 16
 
 Debian, Ubuntu 15 and earlier.
 
-    apt-get install mariadb-server apache2 php5 git libapache2-mod-php5 php-gettext php5-ssh2 php5-imagick php5-mysql php-mail
+    apt-get install mariadb-server apache2 php5 git libapache2-mod-php5 php-gettext php5-ssh2 php5-imagick php5-mysql php5-mail
 
 Create empty database/user on db server.
 
