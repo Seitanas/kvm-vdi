@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2016-11-02
+2016-11-16
 Vilnius, Lithuania.
 */
 function SQL_connect(){
@@ -109,8 +109,22 @@ function reload_vm_info(){
             if (!empty($PlainVMS)&&!$error_reply)//remove all VMS, that do not exist on hypervisor, but still are in database
                 $TrashVMS=add_SQL_line("DELETE FROM vms WHERE hypervisor='$hyper_id' AND name NOT IN ($PlainVMS)");
         }
-        else//put hypervisor to maintenance if cannot connect to it
+        else {//put hypervisor to maintenance if cannot connect to it
             add_SQL_line("UPDATE hypervisors SET maintenance='1' WHERE id='$hyper_id'");
+            include (dirname(__FILE__).'/config.php');
+            if ($send_email_alerts){
+                require_once "Mail.php";
+                $email_message = _("KVM-VDI is unable to connect to hypervisor with address: " . $sql_reply[$x]['ip'] . "\nPutting hypervisor to maintenance mode.");
+                $headers = array ('From' => $alert_email_from, 'To' => $alert_email_to, 'Subject' => 'KVM-VDI alert', 'Reply-To' => $alert_email_from);
+                if($smtp_ssl)
+                        $smtp_server_address='ssl://' . $smtp_server_address;
+                if ($smtp_auth)
+                    $smtp = Mail::factory('smtp', array ('host' => $smtp_server_address, 'port' => $smtp_server_port, 'auth' => true, 'username' => $smtp_auth_username, 'password' => $smtp_auth_password));
+                else 
+                    $smtp = Mail::factory('smtp', array ('host' => $smtp_server_address, 'port' => $smtp_server_port, 'auth' => false));
+                $mail = $smtp->send($alert_email_to, $headers, $email_message);
+                }
+            }
         ++$x;
     }
     return $error_return;

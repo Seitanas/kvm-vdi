@@ -48,11 +48,11 @@ Create snapshots for all VDI VM's from "Initial machine's" disk image ("Populate
 Note: you can use mysql server instead of Maria-db  
 Ubuntu 16
 
-    apt-get install mariadb-server apache2 php git libapache2-mod-php php-mbstring php-gettext php-ssh2 php-imagick php-mysql
+    apt-get install mariadb-server apache2 php git libapache2-mod-php php-mbstring php-gettext php-ssh2 php-imagick php-mysql php-mail
 
 Debian, Ubuntu 15 and earlier.
 
-    apt-get install mariadb-server apache2 php5 git libapache2-mod-php5 php-gettext php5-ssh2 php5-imagick php5-mysql
+    apt-get install mariadb-server apache2 php5 git libapache2-mod-php5 php-gettext php5-ssh2 php5-imagick php5-mysql php-mail
 
 Create empty database/user on db server.
 
@@ -72,6 +72,7 @@ Since Centos uses too old php version, we must install newer one from different 
     rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
     rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
     yum install php56w php56w-pecl-imagick php56w-devel libssh2-devel gcc php56w-mbstring
+    pear install Mail
     pecl install ssh2
     echo "extension=ssh2.so" > /etc/php.d/ssh2.ini
     systemctl restart httpd.service
