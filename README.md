@@ -3,11 +3,6 @@
 This project aims to provide fully functional VDI solution by using open source virtualization.
 
   
-Older versions are no longer compatible with new release! Older versions need to be manually upgraded to a new db schema from sql/vdi.sql file  
-Also you must edit you VM to change to the new KVM wrapper script:
-
-     /usr/local/VDI/vdi-xmledit -name yourvmname
-
 **"KVM-VDI"** consists of three parts:
 
 * **Dashboard**. A webservice, which provides virtual machine control.
