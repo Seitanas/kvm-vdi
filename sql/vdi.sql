@@ -59,7 +59,7 @@ CREATE TABLE `config` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `valueint` int(11) DEFAULT NULL,
-  `valuechar` varchar(255) NOT NULL,
+  `valuechar` varchar(255) NOT NULL DEFAULT '',
   `valuedate` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
@@ -68,7 +68,7 @@ CREATE TABLE `config` (
 
 
 INSERT INTO `config` (`id`, `name`, `valueint`, `valuechar`, `valuedate`) VALUES
-(1, 'dbversion', 0, '20160831001', '0000-00-00 00:00:00');
+(1, 'dbversion', 0, '20161129001', '0000-00-00 00:00:00');
 
 --
 -- Table structure for table `hypervisors`
