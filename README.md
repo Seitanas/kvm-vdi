@@ -63,9 +63,10 @@ If installation is successful, you will be redirected to login page. Default cre
   
 Since Centos uses too old php version, we must install newer one from different repository:  
 
-    rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    yum install epel-release
     rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
-    yum install php56w php56w-pecl-imagick php56w-devel libssh2-devel gcc php56w-mbstring
+    yum install php56w php56w-pecl-imagick php56w-devel libssh2-devel gcc php56w-mbstring php-pear-Mail php-pecl-ssh2
+If php-pear-Mail or php-pecl-ssh2 fails to install because of dependencies problem, use:
     pear install Mail
     pecl install ssh2
     echo "extension=ssh2.so" > /etc/php.d/ssh2.ini
