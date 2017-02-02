@@ -181,7 +181,7 @@ set_lang();
 	    <div class="row">
 		<div class="col-md-5">
 		    <label><?php echo _("Prepend machine name:");?></label>		    
-		    <input type="text" name="machinename" id="machinename" placeholder="somename-" class="form-control" required pattern="[a-zA-Z0-9-]+" oninvalid="setCustomValidity(<?php echo ("'Illegal characters detected'");?>)" onchange="try{setCustomValidity('')}catch(e){}" >
+		    <input type="text" name="machinename" id="machinename" placeholder="somename-" class="form-control" required pattern="[a-zA-Z0-9-_]+" oninvalid="setCustomValidity(<?php echo ("'Illegal characters detected'");?>)" onchange="try{setCustomValidity('')}catch(e){}" >
 		</div>
 		<div class="col-md-5">
 		    <label><?php echo _("Number of machines to create:");?></label>		    
