@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-10-20
+2017-02-02
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -16,7 +16,7 @@ if (!check_session()){
     header ("Location: $serviceurl/?error=1");
     exit;
 }
-$h_reply=get_SQL_array("SELECT * FROM hypervisors WHERE maintenance=0");
+$h_reply=get_SQL_array("SELECT * FROM hypervisors WHERE maintenance=0 ORDER BY name,ip");
 set_lang();
 ?>
 <!DOCTYPE html>
@@ -56,7 +56,10 @@ set_lang();
 			<?php
 			$x=0;
 			while ($x<sizeof($h_reply)){
-			    echo '<option value="' . $h_reply[$x]['id'] .  '">' . $h_reply[$x]['ip'] . '</option>';
+                if ($h_reply[$x]['name'])
+    			    echo '<option value="' . $h_reply[$x]['id'] .  '">' . $h_reply[$x]['name'] . '</option>';
+                else
+                    echo '<option value="' . $h_reply[$x]['id'] .  '">' . $h_reply[$x]['ip'] . '</option>';
 			    ++$x;
 			}?>
 	    	    </select>
