@@ -2,8 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-tadas at ring.lt
-2016-05-30
+2017-02-03
 Vilnius, Lithuania.
 */
 include ('functions/config.php');
@@ -12,7 +11,7 @@ slash_vars();
 $hypervisor=$_POST['hypervisor'];
 $type=$_POST['type'];
 $pass=$_POST['pass'];
-if ($pass!=$backend_pass)
+if ($pass!=$backend_pass&&!check_session())
     exit;
 if (empty($hypervisor)||empty($type))
     exit;

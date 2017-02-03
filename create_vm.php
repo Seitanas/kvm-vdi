@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2016-10-10
+2017-02-03
 Vilnius, Lithuania.
 */
 include ('functions/config.php');
@@ -14,6 +14,7 @@ if (!check_session()){
 slash_vars();
 $machine_type=remove_specialchars($_POST['machine_type']);
 $hypervisor=remove_specialchars($_POST['hypervisor']);
+$source_hypervisor=remove_specialchars($_POST['source_hypervisor']);
 $source_volume=remove_specialchars($_POST['source_volume']);
 $source_drivepath=remove_specialchars($_POST['source_drivepath']);
 $source_drive_size=remove_specialchars($_POST['source_drive_size']);
@@ -42,7 +43,8 @@ if ($iso_image=='on'&&!empty($iso_path)){
 else 
     $boot_cmd="--pxe --noautoconsole";
 $h_reply=get_SQL_line("SELECT ip, port FROM hypervisors WHERE id='$hypervisor'");
-ssh_connect($h_reply[0].":".$h_reply[1]);
+if ($machine_type!='import')
+    ssh_connect($h_reply[0].":".$h_reply[1]);
 if ($machine_type=='simplemachine'||$machine_type=='sourcemachine'){
     $x=0;
     while ($x<$machinecount){
@@ -133,7 +135,23 @@ if ($machine_type=='vdimachine'){
 
     }
 }
-
+if ($machine_type=='import'){
+    $s_reply=get_SQL_line("SELECT ip, port FROM hypervisors WHERE id='$source_hypervisor'");
+    ssh_connect($s_reply[0].":".$s_reply[1]);
+    $machine_xml=ssh_command("sudo virsh dumpxml $machinename",true);
+    ssh_disconnect();
+    $source_vm=get_SQL_array("SELECT * FROM vms WHERE BINARY name='$machinename' AND hypervisor='$source_hypervisor'");
+    $existing_vm=get_SQL_array("SELECT * FROM vms WHERE BINARY name='$machinename' AND hypervisor='$hypervisor'");
+    if (!empty($existing_vm)){
+        echo 'VMNAME_EXISTS';
+        exit;
+    }
+    ssh_connect($h_reply[0].":".$h_reply[1]);
+    ssh_command("echo " . "'" . $machine_xml . "'" . " > $temp_folder/$machinename.xml",true);
+    write_log(ssh_command("sudo virsh create $temp_folder/$machinename.xml",true));
+    ssh_command("rm $temp_folder/$machinename.xml",true);
+    add_SQL_line("INSERT INTO  vms (name,hypervisor,machine_type,source_volume,os_type) VALUES ('$machinename','$hypervisor','sourcemachine','','{$source_vm[0]['os_type']}')");
+}
 echo "SUCCESS";
 exit;
 ?>

@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2016-11-16
+2017-02-03
 Vilnius, Lithuania.
 */
 function SQL_connect(){
@@ -48,6 +48,10 @@ function ssh_connect($address){
     if (!ssh2_auth_pubkey_file($connection, $ssh_user, $ssh_key_path.'id_rsa.pub',$ssh_key_path.'id_rsa'))
 	return 'BAD_SSH_CREDENTIALS';
 
+}
+function ssh_disconnect(){
+    global $connection;
+    ssh2_exec($connection, 'exit;');
 }
 function ssh_command($command,$blocking){
     global $connection;

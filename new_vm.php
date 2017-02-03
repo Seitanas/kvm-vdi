@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2017-02-02
+2017-02-03
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -38,7 +38,7 @@ set_lang();
              <h4 class="modal-title"><?php echo _("Create virtual machine(s)");?></h4>
         </div>
         <div class="modal-body">
-	    <div class="row">
+	    <div class="row targetConfig">
 		 <div class="col-md-5">
 		    <label><?php echo _("Machine type:");?></label>
 		    <select class="form-control selectClass" name="machine_type" id="machine_type" required tabindex="1">
@@ -47,6 +47,7 @@ set_lang();
         		<option value="initialmachine"><?php echo _("Initial machine");?></option>
 			<option value="sourcemachine"><?php echo _("Source machine");?></option>
 			<option value="vdimachine"><?php echo _("VDI machine");?></option>
+            <option value="import"><?php echo _("Import from another hypervisor");?></option>
 	    	    </select>
 		</div>
 		 <div class="col-md-5">
@@ -121,7 +122,7 @@ set_lang();
 		    </div>
 		</div>
 	    </div>
-	    <div class="row">
+	    <div class="row machineConfig">
 		<div class="col-md-4">
 		    <label><?php echo _("Hardware info:");?></label>
 		    <div class="input-group">
@@ -172,46 +173,90 @@ set_lang();
 		    </div>
 		</div>
 	    </div>
-	    <div class="row">
-		<hr class="divider">	
-		<div class="col-md-5">
-        	    <label><?php echo _("Mass deployment");?></label>
-		</div>
-	    </div>
-	    <div class="row">
-		<div class="col-md-5">
-		    <label><?php echo _("Prepend machine name:");?></label>		    
-		    <input type="text" name="machinename" id="machinename" placeholder="somename-" class="form-control" required pattern="[a-zA-Z0-9-_]+" oninvalid="setCustomValidity(<?php echo ("'Illegal characters detected'");?>)" onchange="try{setCustomValidity('')}catch(e){}" >
-		</div>
-		<div class="col-md-5">
-		    <label><?php echo _("Number of machines to create:");?></label>		    
-		    <input type="number" name="machinecount" id="machinecount" min="1" value="1" class="form-control" required>
-		</div>
-	    </div>
+        <div class="row massDeployment">
+            <hr class="divider">	
+            <div class="col-md-5">
+                <label><?php echo _("Mass deployment");?></label>
+            </div>
         </div>
-	
-        <div class="modal-footer">
-	    <div class="row">
-		<div class="col-md-7">
-		    <div class="alert hide text-left" id="new_vm_creation_info_box"></div>
-		</div>
-		<div class="col-md-5">
-        	    <button type="button" class="btn btn-default create_vm_buttons" data-dismiss="modal"><?php echo _("Close");?></button>
-        	    <button type="button" class="btn btn-primary create_vm_buttons" id="create-vm-button-click"><?php echo _("Create VMs");?></button>
-		    <input type="submit" class="hide">
-		</div>
-	    </div>
+        <div class="row machineDeployInfo">
+            <div class="col-md-5">
+                <label><?php echo _("Prepend machine name:");?></label>		    
+                <input type="text" name="machinename" id="machinename" placeholder="somename-" class="form-control" required pattern="[a-zA-Z0-9-_]+" oninvalid="setCustomValidity(<?php echo ("'Illegal characters detected'");?>)" onchange="try{setCustomValidity('')}catch(e){}" >
+            </div>
+            <div class="col-md-5">
+                <label><?php echo _("Number of machines to create:");?></label>		    
+                <input type="number" name="machinecount" id="machinecount" min="1" value="1" class="form-control" required>
+            </div>
         </div>
+        <div class="row sourceHypervisor hide">
+            <div class="col-md-5">
+                <label><?php echo _("Source hypervisor:");?></label>
+                <select class="form-control" name="source-hypervisor" id="source-hypervisor">
+                <option selected value=""><?php echo _("Please select hypervisor");?></option>
+        <?php 
+            $x=0;
+            while ($x<sizeof($h_reply)){
+                if ($h_reply[$x]['name'])
+                    echo '<option value="' . $h_reply[$x]['id'] .  '">' . $h_reply[$x]['name'] . '</option>';
+                else
+                    echo '<option value="' . $h_reply[$x]['id'] .  '">' . $h_reply[$x]['ip'] . '</option>';
+                ++$x;
+            }
+            echo '</select>' . "\n";
+            echo '</div>' . "\n";
+            ?>
+            <div class="col-md-5">
+                 <label><?php echo _("Source VM:");?></label>
+                <select class="form-control" name="source-machine" id="source-machine" tabindex="2">
+                </select>
+            </div>
+        </div>
+        <div class="row sourceHypervisor hide">
+            <div class="col-md-1"></div>
+            <div class="col-md-10 text-warning">
+                <i class="fa fa-hand-pointer-o fa-lg"></i>
+                <?php echo _("Attention: this assumes, that VM image is on shared storage and is accesible on target hypervisor.");?>
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="row">
+            <div class="col-md-7">
+                <div class="alert hide text-left" id="new_vm_creation_info_box"></div>
+                </div>
+            <div class="col-md-5">
+                <button type="button" class="btn btn-default create_vm_buttons" data-dismiss="modal"><?php echo _("Close");?></button>
+                <button type="button" class="btn btn-primary create_vm_buttons" id="create-vm-button-click"><?php echo _("Create VMs");?></button>
+                <input type="submit" class="hide">
+            </div>
+        </div>
+   </div>
     </div>
 </form>
 <script>
+
+$('#source-hypervisor').on('change', function(){
+   fill_source_machines($('#source-hypervisor').val());
+})
+
+
 $('.selectClass').on('change', function(){
     $('#hypervisor-sourceimage').addClass('hide');
     $('#hypervisor-imagepath').addClass('hide');
+    $('#hypervisor-manualpath').addClass('hide');
     $('.sourcemachine').hide();	
     $('.initialmachine').hide();	
-    $('.iso_option').hide();	
+    $('.iso_option').hide();
+    $('.machineConfig').removeClass('hide');
+    $('.massDeployment').removeClass('hide');
+    $('.machineDeployInfo').removeClass('hide');
+    $('.sourceHypervisor').addClass('hide');
     $hypervisor_id=$('#hypervisor').val();
+    $('#source-machine').prop('required',false);
+    $('#machinename').prop('required',true);
+    $('#machinecount').prop('required',true);
     if (($('#machine_type').val() == 'initialmachine' || $('#machine_type').val() == 'vdimachine') && $hypervisor_id!='') {
 	$('#hypervisor-sourceimage').removeClass('hide');	    
 	$('.hypervisor-'+$hypervisor_id).show();
@@ -230,14 +275,27 @@ $('.selectClass').on('change', function(){
 	$('.osselection').prop('required',false);
     }
     if (($('#machine_type').val() == 'simplemachine' || $('#machine_type').val() == 'sourcemachine') && $hypervisor_id!='') {
-	$('.hypervisor_iso-'+$hypervisor_id).show();	
-	$('#hypervisor-manualpath').removeClass('hide');
-	$('#hypervisor-imagepath').removeClass('hide');
-	$('#source_drivepath').prop('required',true);
-	$('#source_volume').prop('required',false);
-	$('.osselection').prop('required',true);
+        $('.hypervisor_iso-'+$hypervisor_id).show();	
+        $('#hypervisor-manualpath').removeClass('hide');
+        $('#hypervisor-imagepath').removeClass('hide');
+        $('#source_drivepath').prop('required',true);
+        $('#source_volume').prop('required',false);
+        $('.osselection').prop('required',true);
     }
-	
+    if ($('#machine_type').val() == 'import') {
+        $('.machineConfig').addClass('hide');
+        $('.massDeployment').addClass('hide');
+        $('.machineDeployInfo').addClass('hide');
+        $('.sourceHypervisor').removeClass('hide');
+        $('#source-machine').prop('required',true);
+        $('#source_drivepath').prop('required',true);
+        $('#source_volume').prop('required',false);
+        $('.osselection').prop('required',false);
+        $('#machinename').prop('required',false);
+        $('#machinecount').prop('required',false);
+    }
+
+
 })
 $('#os_type').on('change', function(){
     if ($('#os_type').val()=='linux'){
