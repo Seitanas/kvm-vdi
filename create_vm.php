@@ -139,6 +139,7 @@ if ($machine_type=='import'){
     $s_reply=get_SQL_line("SELECT ip, port FROM hypervisors WHERE id='$source_hypervisor'");
     ssh_connect($s_reply[0].":".$s_reply[1]);
     $machine_xml=ssh_command("sudo virsh dumpxml $machinename",true);
+    exit;
     ssh_disconnect();
     $source_vm=get_SQL_array("SELECT * FROM vms WHERE BINARY name='$machinename' AND hypervisor='$source_hypervisor'");
     $existing_vm=get_SQL_array("SELECT * FROM vms WHERE BINARY name='$machinename' AND hypervisor='$hypervisor'");
@@ -147,7 +148,7 @@ if ($machine_type=='import'){
         exit;
     }
     ssh_connect($h_reply[0].":".$h_reply[1]);
-    ssh_command("echo " . "'" . $machine_xml . "'" . " > $temp_folder/$machinename.xml",true);
+    ssh_command("echo " . '"' . $machine_xml . '"' . " > $temp_folder/$machinename.xml",true);
     write_log(ssh_command("sudo virsh create $temp_folder/$machinename.xml",true));
     ssh_command("rm $temp_folder/$machinename.xml",true);
     add_SQL_line("INSERT INTO  vms (name,hypervisor,machine_type,source_volume,os_type) VALUES ('$machinename','$hypervisor','sourcemachine','','{$source_vm[0]['os_type']}')");
