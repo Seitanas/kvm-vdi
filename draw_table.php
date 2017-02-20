@@ -18,7 +18,6 @@ if (!check_session()){
     exit;
 }
 set_lang();
-$userConfig=get_userconf();
 while ($upgradedfrom=check_upgrade()){
     echo '<div class="row">
 	    <div class="col-md-6 col-md-offset-2 text-center">
@@ -28,6 +27,7 @@ while ($upgradedfrom=check_upgrade()){
 	    </div>
 	</div>';
     }
+$userConfig=get_userconf();
 reload_vm_info();
 $sql_reply=get_SQL_array("SELECT * FROM hypervisors ORDER BY name,ip ASC");
 $x=0;
