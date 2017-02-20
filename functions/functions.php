@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-02-03
+2017-02-20
 Vilnius, Lithuania.
 */
 function SQL_connect(){
@@ -11,6 +11,7 @@ function SQL_connect(){
     mysqli_select_db($mysql_connection, $mysql_db);
     return $mysql_connection;
 }
+//##############################################################################
 function add_SQL_line($sql_line){
     $mysql_connection=SQL_connect();
     mysqli_query($mysql_connection, $sql_line) or die (mysqli_error($mysql_connection));
@@ -136,23 +137,23 @@ function reload_vm_info(){
 //##############################################################################
 function check_session(){
     if (session_status() == PHP_SESSION_NONE) 
-	session_start();
+        session_start();
     if (isset($_SESSION['logged']))
-	return $_SESSION['logged'];
+        return $_SESSION['logged'];
     else return 0;
 }
 //##############################################################################
 function check_client_session(){
     if (session_status() == PHP_SESSION_NONE) 
-	session_start();
-    if ($_SESSION['client_logged'])
-	return $_SESSION['client_logged'];
+        session_start();
+   if ($_SESSION['client_logged'])
+        return $_SESSION['client_logged'];
     else return 0;
 }
 //##############################################################################
 function close_session(){
     if (session_status() == PHP_SESSION_NONE) 
-	session_start();
+        session_start();
     $_SESSION['logged']='';
 
 }
@@ -462,4 +463,14 @@ function draw_html5_buttons(){
     echo '</div>
         </div>';
 
+}
+//############################################################################################
+function get_userconf(){
+    $configEntry=get_SQL_array("SELECT config FROM users WHERE id='{$_SESSION['userid']}'");
+    return unserialize($configEntry[0]['config']);
+}
+//############################################################################################
+function write_userconf($userConfig){
+    $userConfig=serialize($userConfig);
+    add_SQL_line("UPDATE users SET config='$userConfig' WHERE id='{$_SESSION['userid']}'");
 }

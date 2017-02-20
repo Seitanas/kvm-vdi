@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2016-09-01
+2017-02-20
 Vilnius, Lithuania.
 */
 include dirname(__FILE__) . '/../../functions/config.php';
@@ -16,6 +16,6 @@ if (!isset($_POST['parentid']))
     exit;
 if (!isset($_POST['status']))
     exit;
-$parentid=$_POST['parentid'];
-$status=$_POST['status'];
-$_SESSION['table_section-'.$parentid]=$status;
+$userConfig=get_userconf();
+$userConfig['table_section-' . $_POST['parentid']]=$_POST['status'];
+write_userconf($userConfig);

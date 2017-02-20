@@ -9,7 +9,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-10-25
+2017-02-20
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -18,6 +18,7 @@ if (!check_session()){
     exit;
 }
 set_lang();
+$userConfig=get_userconf();
 while ($upgradedfrom=check_upgrade()){
     echo '<div class="row">
 	    <div class="col-md-6 col-md-offset-2 text-center">
@@ -111,15 +112,15 @@ while ($x<sizeof($sql_reply)){
 		$vdi_collapse_button='fa-minus';
 		if ($vms_query[$y]['machine_type']=='initialmachine'){
 		    $VDI_query=get_SQL_array("SELECT vms.id,vms.name,vms.hypervisor,vms.machine_type,vms.source_volume,vms.snapshot,vms.maintenance,vms.filecopy,vms.state,vms.os_type,vms.lastused,clients.username,vms_tmp.name AS sourcename  FROM vms LEFT JOIN vms AS vms_tmp ON vms.source_volume=vms_tmp.id LEFT JOIN clients ON clients.id=vms.clientid WHERE vms.source_volume='{$vms_query[$y]['id']}' AND vms.machine_type = 'vdimachine' ORDER BY vms.name");
-		    if (isset($_SESSION['table_section-'.$vms_query[$y]['id']])){
-			if ($_SESSION['table_section-'.$vms_query[$y]['id']] == 'hide'){
-			    $vdi_table_section_collapse='';
-			    $vdi_collapse_button='fa-plus';
-			    }
-		    }
-		}
-            	echo '<tr class="table-stripe-bottom-line">
-                	  <td colspan="2" class="col-md-1 clickable parent" id="' . $vms_query[$y]['id'] . '" data-toggle="collapse" data-target=".child-' . $vms_query[$y]['id'] . '" >' . ($y+1);
+            if (isset($userConfig['table_section-'.$vms_query[$y]['id']])){
+                if ($userConfig['table_section-'.$vms_query[$y]['id']] == 'hide'){
+                    $vdi_table_section_collapse='';
+                    $vdi_collapse_button='fa-plus';
+                }
+            }
+        }
+                echo '<tr class="table-stripe-bottom-line">
+                      <td colspan="2" class="col-md-1 clickable parent" id="' . $vms_query[$y]['id'] . '" data-toggle="collapse" data-target=".child-' . $vms_query[$y]['id'] . '" >' . ($y+1);
 		if (!empty($VDI_query))
 		    echo '<i class="fa ' . $vdi_collapse_button . ' fa-fw" id="childof-' . $vms_query[$y]['id'] . '"></i>';
 		echo '</td> 
