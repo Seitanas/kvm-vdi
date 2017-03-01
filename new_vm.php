@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2017-02-03
+2017-03-01
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -86,7 +86,7 @@ set_lang();
 		    	    <label><?php echo _("Specify disk path:");?></label>		    
 			    <input type="text" name="source_drivepath" class="form-control" id="source_drivepath" value="<?php echo $default_imagepath; ?>">
 			</div>
-			<div class="col-md-4">
+			<div class="col-md-4" id="SourceDriveSize">
     				<label><?php echo _("Disk size");?></label>		    
 			    <div class="input-group">
 				<input type="number" min="1" value="10" name="source_drive_size" id="source_drive_size" class="form-control" type="number">
@@ -252,13 +252,15 @@ $('.selectClass').on('change', function(){
     $('.machineConfig').removeClass('hide');
     $('.massDeployment').removeClass('hide');
     $('.machineDeployInfo').removeClass('hide');
+    $('#SourceDriveSize').removeClass('hide');
     $('.sourceHypervisor').addClass('hide');
     $hypervisor_id=$('#hypervisor').val();
     $('#source-machine').prop('required',false);
     $('#machinename').prop('required',true);
     $('#machinecount').prop('required',true);
     if (($('#machine_type').val() == 'initialmachine' || $('#machine_type').val() == 'vdimachine') && $hypervisor_id!='') {
-	$('#hypervisor-sourceimage').removeClass('hide');	    
+	$('#hypervisor-sourceimage').removeClass('hide');
+        $('#hypervisor-manualpath').removeClass('hide');
 	$('.hypervisor-'+$hypervisor_id).show();
 	if ($('#machine_type').val() == 'initialmachine'){
 	    $('.initialmachine').hide();	
@@ -268,9 +270,11 @@ $('.selectClass').on('change', function(){
 	    $('.sourcemachine').hide();	
 	    $('#source_volume').prop('selectedIndex',0);
 	}
+	if ($('#machine_type').val() == 'vdimachine')
+	    $('#SourceDriveSize').addClass('hide');
         $('#hypervisor-'+$hypervisor_id).removeClass('hide');
 	$('#hypervisor-manualpath').removeAttr('required');
-	$('#source_drivepath').prop('required',false);
+	$('#source_drivepath').prop('required',true);
 	$('#source_volume').prop('required',true);
 	$('.osselection').prop('required',false);
     }
