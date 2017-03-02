@@ -31,11 +31,11 @@ if ($protocol=="vmView"){
 if ($protocol=="SPICE"){
     $reset=0;
     //First lets check if theres already machine provided for this user and it was last acessed within 5mins (takeover from another thin client).
-    $suggested_vm=get_SQL_array("SELECT vms.*, poolmap_vm.* FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id LEFT JOIN hypervisors ON vms.hypervisor=hypervisors.id WHERE hypervisors.maintenance='0' AND poolmap_vm.poolid='$pool' AND vms.lastused > DATE_SUB(NOW(), INTERVAL '$return_to_pool_after' MINUTE) AND vms.clientid='$userid' AND vms.maintenance='false' AND vms.locked='false' LIMIT 1");
+    $suggested_vm=get_SQL_array("SELECT vms.*, poolmap_vm.poolid, poolmap_vm.vmid FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id LEFT JOIN hypervisors ON vms.hypervisor=hypervisors.id WHERE hypervisors.maintenance='0' AND poolmap_vm.poolid='$pool' AND vms.lastused > DATE_SUB(NOW(), INTERVAL '$return_to_pool_after' MINUTE) AND vms.clientid='$userid' AND vms.maintenance='false' AND vms.locked='false' LIMIT 1");
     if (empty($suggested_vm)){//if there's no VMs to take over, get new available VM (the one which was accesed more than '$return_to_pool_after' minutes ago).
     //we update first available machine first (to avoid race conditions)
         add_SQL_line("UPDATE vms JOIN (SELECT poolmap_vm.vmid FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id LEFT JOIN hypervisors ON vms.hypervisor=hypervisors.id WHERE hypervisors.maintenance='0' AND poolmap_vm.poolid='$pool' AND vms.locked='false' AND vms.lastused < DATE_SUB(NOW(), INTERVAL '$return_to_pool_after' MINUTE) ORDER BY RAND() LIMIT 1) tmp ON vms.id=tmp.vmid SET vms.clientid='$userid',vms.lastused=NOW()");
-        $suggested_vm=get_SQL_array("SELECT vms.*, poolmap_vm.* FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id LEFT JOIN hypervisors ON vms.hypervisor=hypervisors.id WHERE hypervisors.maintenance='0' AND poolmap_vm.poolid='$pool' AND vms.locked='false' AND vms.lastused > DATE_SUB(NOW(), INTERVAL '$return_to_pool_after' MINUTE) AND vms.clientid='$userid' AND vms.maintenance='false'");
+        $suggested_vm=get_SQL_array("SELECT vms.*, poolmap_vm.poolid, poolmap_vm.vmid FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.id LEFT JOIN hypervisors ON vms.hypervisor=hypervisors.id WHERE hypervisors.maintenance='0' AND poolmap_vm.poolid='$pool' AND vms.locked='false' AND vms.lastused > DATE_SUB(NOW(), INTERVAL '$return_to_pool_after' MINUTE) AND vms.clientid='$userid' AND vms.maintenance='false'");
         $reset=1;
     }
     if (empty($suggested_vm)){//if there are no available VMs in pool, return error and exit
