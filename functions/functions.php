@@ -484,7 +484,7 @@ function get_mac_address($vm){
     $macAddr=array();
         while ($x<sizeof($vmEntry)){
             if (empty($vmEntry[$x]['mac'])){
-                $sql_reply=get_SQL_array("SELECT * FROM hypervisors WHERE id='{$vmEntry[0]['hypervisor']}'");
+                $sql_reply=get_SQL_array("SELECT * FROM hypervisors WHERE id='{$vmEntry[$x]['hypervisor']}'");
                 $ip=$sql_reply[0]['ip'];
                 $port=$sql_reply[0]['port'];
                 $reply=ssh_connect($ip . ":" . $port);
