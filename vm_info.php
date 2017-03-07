@@ -9,7 +9,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-08-03
+2017-03-06
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -43,15 +43,25 @@ set_lang();
              <h4 class="modal-title">VM name: <?php echo $v_reply[0]['name']; ?></h4>
         </div>
         <div class="modal-body">
-	    <div class="row">
-		<div class="col-md-3">
-		    <label><?php echo _("OS type:");?></label>
-		    <select class="form-control" name="os_type" id="os_type">
-	    	        <option value="linux"><?php echo _("Linux");?></option>
+        <div class="row">
+            <div class="col-md-3">
+            <label><?php echo _("OS type:");?></label>
+            <select class="form-control" name="os_type" id="os_type">
+                <option value="linux"><?php echo _("Linux");?></option>
         		<option value="windows"><?php echo _("Windows");?></option>
 		    </select>
-		</div>
-		<div class="col-md-9"></div>
+		    </div>
+            <div class="col-md-2">
+                
+            </div>
+		    <div class="col-md-7">
+                <label><?php echo _("MAC address:");?></label>
+                <div>
+                    <?php 
+                        $mac=get_mac_address($vm);
+                        echo $mac[0]['mac'];?>
+                </div>
+            </div>
 	    </div>
 	    <div class="row">
 		 <div class="col-md-5">

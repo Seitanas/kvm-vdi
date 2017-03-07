@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-02-20
+2017-03-07
 Vilnius, Lithuania.
 */
 function SQL_connect(){
@@ -473,4 +473,29 @@ function get_userconf(){
 function write_userconf($userConfig){
     $userConfig=serialize($userConfig);
     add_SQL_line("UPDATE users SET config='$userConfig' WHERE id='{$_SESSION['userid']}'");
+}
+//############################################################################################
+function get_mac_address($vm){
+    if (!is_array($vm))//get_mac_address() acepts single vm or array of vms. We need to do form array of single-value variable
+        $vm=array($vm);
+    $vm=join(',',$vm);
+    $vmEntry=get_SQL_array("SELECT id,name,hypervisor,mac FROM vms WHERE id IN ($vm) ORDER by name");
+    $x=0;
+    $macAddr=array();
+        while ($x<sizeof($vmEntry)){
+            if (empty($vmEntry[$x]['mac'])){
+                $sql_reply=get_SQL_array("SELECT * FROM hypervisors WHERE id='{$vmEntry[0]['hypervisor']}'");
+                $ip=$sql_reply[0]['ip'];
+                $port=$sql_reply[0]['port'];
+                $reply=ssh_connect($ip . ":" . $port);
+                $output=ssh_command("sudo virsh domiflist  " . $vmEntry[$x]['name'] . "|tail -n +3|head -n -1|awk '{print $5}'",true);
+                $output=str_replace("\n"," ",$output);
+                add_SQL_line("UPDATE vms SET mac='$output' WHERE id='{$vmEntry[$x]['id']}'");
+                array_push($macAddr, array('name' => $vmEntry[$x]['name'], 'mac' => $output));
+            }
+            else
+                array_push($macAddr, array('name' => $vmEntry[$x]['name'], 'mac' => $vmEntry[$x]['mac']));
+            ++$x;
+        }
+    return $macAddr;
 }

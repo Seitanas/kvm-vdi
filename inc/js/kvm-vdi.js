@@ -85,7 +85,14 @@ function load_vm_pool_list(poolid, non_VDI_vms){
             });
     });
 }
-
+function load_vm_list(){
+    $.getJSON("inc/infrastructure/ListVms.php?type=ALL", {},  function(json){
+            $('#multiselect').empty();
+            $.each(json, function(i, obj){
+                     $('#multiselect').append($('<option>').text(obj.name).attr('value', obj.id));
+            });
+    });
+}
 function show_non_vdi_vms(status){
     var $poolid=$('#poollist').val();
     if (status=='checked'){

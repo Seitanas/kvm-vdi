@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-09-13
+2017-03-17
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -130,7 +130,6 @@ set_lang();
     $sql_reply=get_SQL_array("SELECT * FROM hypervisors");
 ?>
 <body>
-<!-- Modal vm info-->
 <div class="modal fade" id="modalWm" tabindex="-1" role="dialog" aria-labelledby="modalWm" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -149,6 +148,27 @@ set_lang();
     </div>
     <!-- /.modal-dialog -->
 </div>
+
+<div class="modal fade" id="modalWmLg" tabindex="-1" role="dialog" aria-labelledby="modalWm" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                 <h4 class="modal-title">Modal title</h4>
+
+            </div>
+            <div class="modal-body"><div class="te"></div></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
 <!-- /.modal -->
 
 <!-- Modal vm console-->
@@ -228,6 +248,12 @@ set_lang();
 		    </ul>
 		</li>
     	        <li><a href="new_vm.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-laptop fa-fw"></i><?php echo _("Create Virtual Machines");?></a></li>
+        <li>
+                <a href="#" aria-expanded="false"><span class="fa arrow"></span><i class="fa fa-wrench fa-fw"></i><?php echo _("Tools");?></a>
+                <ul aria-expanded="false">
+                    <li class="nav"><a href="dhcpconf_gen.php" data-toggle="modal" data-target="#modalWmLg"><i class="fa fa-cubes fa-fw"></i><?php echo _("Generate DHCP config");?></a></li>
+                </ul>
+        </li>
 		<li>
 	    	    <a href="#" aria-expanded="false"><span class="fa arrow"></span><i class="fa fa-cogs fa-fw"></i><?php echo _("System");?></a>
 		    <ul aria-expanded="false">
