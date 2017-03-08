@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-03-07
+2017-03-08
 Vilnius, Lithuania.
 */
 function SQL_connect(){
@@ -489,9 +489,15 @@ function get_mac_address($vm){
                 $port=$sql_reply[0]['port'];
                 $reply=ssh_connect($ip . ":" . $port);
                 $output=ssh_command("sudo virsh domiflist  " . $vmEntry[$x]['name'] . "|tail -n +3|head -n -1|awk '{print $5}'",true);
-                $output=str_replace("\n"," ",$output);
-                add_SQL_line("UPDATE vms SET mac='$output' WHERE id='{$vmEntry[$x]['id']}'");
-                array_push($macAddr, array('name' => $vmEntry[$x]['name'], 'mac' => $output));
+                $output=str_replace("\n","",$output);
+                if (strpos($output, ' ') == false){//simple hack to check if reply contains anything more than single word (error reply instead of VM name)
+                    add_SQL_line("UPDATE vms SET mac='$output' WHERE id='{$vmEntry[$x]['id']}'");
+                    array_push($macAddr, array('name' => $vmEntry[$x]['name'], 'mac' => $output));
+                }
+                else {
+                    write_log("Error occured: " . $output);
+                    array_push($macAddr, array('name' => $vmEntry[$x]['name'], 'mac' => 'FF:FF:FF:FF:FF:FF'));
+                }
             }
             else
                 array_push($macAddr, array('name' => $vmEntry[$x]['name'], 'mac' => $vmEntry[$x]['mac']));
