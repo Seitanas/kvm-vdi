@@ -5,7 +5,8 @@ Tadas Ustinavičius
 2017-03-10
 Vilnius, Lithuania.
 */
-function memcacheReadConfig(){
+//############################################################################################
+function memcachedReadConfig(){
     include (dirname(__FILE__) . '/../../../functions/config.php');
     $memcache = new Memcache;
     $memcache->connect($memcached_address, $memcached_port) or die ("Could not connect to memcached");
@@ -15,6 +16,7 @@ function memcacheReadConfig(){
     $config['computeURL']=memcache_get($memcache, 'computeURL');
     return $config;
 }
+//############################################################################################
 function OpenStackConnect(){
     include (dirname(__FILE__) . '/../../../functions/config.php');
     $memcache = new Memcache;
@@ -37,11 +39,13 @@ function OpenStackConnect(){
     memcache_set($memcache, 'token', $token);
     memcache_set($memcache, 'tokenExpire', $tokenExpire);
     memcache_set($memcache, 'computeURL', $computeURL);
+ //   print_r($result);
 }
+//############################################################################################
 function updateHypervisorList(){
     include (dirname(__FILE__) . '/../../../functions/config.php');
     $config=array();
-    $config=memcacheReadConfig();
+    $config=memcachedReadConfig();
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL,$config['computeURL'] . '/os-hypervisors/detail');
     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
@@ -55,12 +59,10 @@ function updateHypervisorList(){
         $hypervisorName=$result['hypervisors'][$x]['service']['host'];
         $hypervisorIP=$result['hypervisors'][$x]['host_ip'];
         $hypervisorAddress=$result['hypervisors'][$x]['hypervisor_hostname'];
-        echo $hypervisorIP;
         if (!empty($hypervisorName) && !empty($hypervisorIP) && !empty($hypervisorAddress)){
             $hypervisorEntry=get_SQL_ARRAY("SELECT * FROM hypervisors WHERE name='$hypervisorName'");
             if (sizeof($hypervisorEntry) == 0){
                 add_SQL_line("INSERT INTO hypervisors (name, ip, address2) VALUES ('$hypervisorName', '$hypervisorIP', '$hypervisorAddress')");
-                echo "INSERT INTO hypervisors (name, ip, address2) VALUES ('$hypervisorName', '$hypervisorIP', '$hypervisorAddress')";
             }
             else
                 add_SQL_line("UPDATE hypervisors SET name='$hypervisorName', ip='$hypervisorIP', address2='$hypervisorAddress' WHERE name='$hypervisorName'");
@@ -69,8 +71,49 @@ function updateHypervisorList(){
     }
 //    print_r($result);
 }
-function reload_vm_info(){
-    OpenStackConnect();
-//    echo memcacheReadToken();
+//############################################################################################
+function updateVmList(){
+    include (dirname(__FILE__) . '/../../../functions/config.php');
+    $config=array();
+    $config=memcachedReadConfig();
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL,$config['computeURL'] . '/servers/detail');
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'X-Auth-Token: ' . $config['token']
+    ));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    $result = json_decode(curl_exec($ch), TRUE);
+    curl_close($ch);
+    $x=0;
+    $instanceList=array();
+    while ($x <  sizeof($result['servers'])){
+        $vmName=$result['servers'][$x]['name'];
+        $vmHypervisor=$result['servers'][$x]['OS-EXT-SRV-ATTR:host'];
+        $vmInstanceName=$result['servers'][$x]['OS-EXT-SRV-ATTR:instance_name'];
+        $vmInstanceId=$result['servers'][$x]['id'];
+        if (!empty($vmName) && !empty($vmHypervisor) && !empty($vmInstanceName) && !empty($vmInstanceId)){
+            $vmEntry=get_SQL_ARRAY("SELECT * FROM vms WHERE osInstanceId='$vmInstanceId'");
+            array_push($instanceList,"'" . $vmInstanceId . "'");
+            if (sizeof($vmEntry) == 0){
+                add_SQL_line("INSERT INTO vms  (name, osHypervisorName,  osInstanceName,  osInstanceId) VALUES ('$vmName', '$vmHypervisor', '$vmInstanceName', '$vmInstanceId')");
+            }
+            else
+                add_SQL_line("UPDATE vms SET name='$vmName', osHypervisorName='$vmHypervisor', osInstanceName='$vmInstanceName', osInstanceId='$vmInstanceId' WHERE osInstanceId='$vmInstanceId'");
+        }
+        ++$x;
+    }
+    $notToDelete=join(', ', $instanceList);
+    if (!empty($toDelete))//delete all instances, that still exists in DB, but are removed in OpenStack
+        add_SQL_line("DELETE FROM vms WHERE osInstanceId NOT IN ($notToDelete)");
+    //print_r($result);
 }
+//############################################################################################
+function reload_vm_info(){
+}
+//############################################################################################
+function draw_dashboard_table(){
+    openStackConnect();
+  //  updateHypervisorList();
+    updateVmList();
 
+}

@@ -1,0 +1,2 @@
+ALTER TABLE `vms` ADD `osHypervisorName` VARCHAR(255) NOT NULL DEFAULT '' AFTER `mac`, ADD `osInstanceName` VARCHAR(255) NOT NULL DEFAULT '' AFTER `osHypervisorName`, ADD `osInstanceId` VARCHAR(255) NOT NULL DEFAULT '' AFTER `osInstanceName` ;
+UPDATE `config` SET `valuechar`='20170310001' WHERE `name`='dbversion';

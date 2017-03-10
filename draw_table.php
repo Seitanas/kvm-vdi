@@ -28,6 +28,5 @@ while ($upgradedfrom=check_upgrade()){
 	</div>';
     }
 $userConfig=get_userconf();
-if ($engine=='KVM')
-    draw_dashboard_table();
+draw_dashboard_table();
 echo '</div>';
