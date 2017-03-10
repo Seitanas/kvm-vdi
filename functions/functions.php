@@ -71,7 +71,7 @@ function check_empty(){
 }
 //#############################################################################
 function set_lang(){
-    include (dirname(__FILE__) . '/../../../functions/config.php');
+    include (dirname(__FILE__) . '/config.php');
     $domain = 'kvm-vdi';
     setlocale(LC_ALL, $language.'.UTF-8');
     putenv('LC_ALL='.$language);
@@ -125,7 +125,7 @@ function check_upgrade(){
 }
 //#########################################################################
 function write_log($message){
-    include (dirname(__FILE__) . '/../../../functions/config.php');
+    include (dirname(__FILE__) . '/config.php');
     if ($write_debug_log)
         error_log($message);
 }
@@ -162,7 +162,7 @@ function remove_specialchars($item){
 }
 //#############################################################################
 function list_ad_groups($username,$password,$query_user,$html5_client){
-    include (dirname(__FILE__) . '/../../../functions/config.php');
+    include (dirname(__FILE__) . '/config.php');
     $ldap_login_err=0;
     $ldap = ldap_connect($LDAP_host) or $ldap_login_err=1;
     ldap_bind($ldap,$query_user,$password) or  $ldap_login_err=1;
@@ -213,7 +213,7 @@ function list_ad_groups($username,$password,$query_user,$html5_client){
 }
 //###########################################################################################
 function list_ldap_groups($username,$password,$query_user,$html5_client){
-    include (dirname(__FILE__) . '/../../../functions/config.php');
+    include (dirname(__FILE__) . '/config.php');
     $ldap_login_err=0;
     $ldap = ldap_connect($LDAP_host) or  $ldap_login_err=1;
     ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
@@ -285,5 +285,7 @@ function write_userconf($userConfig){
 }
 //############################################################################################
 include (dirname(__FILE__).'/config.php');
-if (!isset($engine) || $engine=='KVM')
+if (!isset($engine) || $engine == 'KVM')
     require_once(dirname(__FILE__) . '/../inc/modules/KVM/functions.php');
+if ($engine == 'OpenStack')
+    require_once(dirname(__FILE__) . '/../inc/modules/OpenStack/functions.php');
