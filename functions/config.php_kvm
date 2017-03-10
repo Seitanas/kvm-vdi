@@ -11,7 +11,7 @@ Vilnius,Lithuania.
 2017-03-10
 */
 
-$engine=['KVM'];
+
 ###################Dashboard config##########################
 $serviceurl='http://192.168.0.20/kvm-vdi';
 $language='en_EN';
@@ -102,3 +102,5 @@ $mysql_db='vdi';
 $mysql_user='vdi';
 $mysql_pass='vdi';
 ############################################################
+
+$engine='KVM';
