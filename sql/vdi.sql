@@ -68,7 +68,7 @@ CREATE TABLE `config` (
 
 
 INSERT INTO `config` (`id`, `name`, `valueint`, `valuechar`, `valuedate`) VALUES
-(1, 'dbversion', 0, '20161129001', '0000-00-00 00:00:00');
+(1, 'dbversion', 0, '20170306001', '0000-00-00 00:00:00');
 
 --
 -- Table structure for table `hypervisors`
@@ -176,6 +176,7 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL DEFAULT '',
   `ip` varchar(255) NOT NULL DEFAULT '',
   `lastlogin` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `config` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -195,14 +196,15 @@ CREATE TABLE `vms` (
   `machine_type` varchar(25) NOT NULL DEFAULT '',
   `source_volume` varchar(255) NOT NULL DEFAULT '',
   `snapshot` varchar(11) NOT NULL DEFAULT '',
-  `maintenance` varchar(11) NOT NULL DEFAULT 'false',
+  `maintenance` varchar(11) NOT NULL DEFAULT '',
   `filecopy` varchar(255) NOT NULL DEFAULT '',
   `state` varchar(255) NOT NULL DEFAULT '',
   `spice_password` varchar(255) NOT NULL DEFAULT '',
   `clientid` int(11) NOT NULL,
   `lastused` datetime NOT NULL,
-  `os_type` varchar(255) NOT NULL DEFAULT '',
+  `os_type` varchar(255) NOT NULL,
   `locked` varchar(11) NOT NULL DEFAULT 'false',
+  `mac` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -216,4 +218,4 @@ CREATE TABLE `vms` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-07-21 10:37:08
+-- Dump completed on 2017-03-10  8:52:42
