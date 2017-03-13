@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-03-10
+2017-03-13
 Vilnius, Lithuania.
 */
 //############################################################################################
@@ -21,6 +21,14 @@ function OpenStackConnect(){
     include (dirname(__FILE__) . '/../../../functions/config.php');
     $memcache = new Memcache;
     $memcache->connect($memcached_address, $memcached_port) or die ("Could not connect to memcached");
+    $tokenExpire=memcache_get($memcache, 'tokenExpire');
+    $currDateTime = new DateTime('now');
+    $expireDateTime = new DateTime($tokenExpire);
+    $interval = $currDateTime->diff($expireDateTime);
+    $minutesLeft=$interval->format('%a') * 1440 + $interval->format('%H') * 60 + $interval->format('%I');
+    if ($minutesLeft>30){ //if there is still more than 30mins left of token time, do not generate a new one
+        return 0;
+    }
     $ch = curl_init();
     $data_string='{"auth": {"tenantName": "' . $OpenStack_tenant_name . '", "passwordCredentials": {"username": "' . $OpenStack_user_name . '", "password": "' . $OpenStack_user_password . '"}}}';
     curl_setopt($ch, CURLOPT_URL, $OpenStack_service_url . ':35357/v2.0/tokens');
@@ -113,7 +121,26 @@ function reload_vm_info(){
 //############################################################################################
 function draw_dashboard_table(){
     openStackConnect();
-  //  updateHypervisorList();
+    updateHypervisorList();
     updateVmList();
+    echo '<div class="table-responsive"  style="overflow: inherit;">
+            <table class="table table-striped table-hover" >
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th></th>
+                        <th>' . _("Machine name") . '</th>
+                        <th>' . _("Machine type") . '</th>
+                        <th>' . _("Source image") . '</th>
+                        <th>' . _("Virt-snapshot") . '</th>
+                        <th>' . _("Maintenance") . '</th>
+                        <th>' . _("Operations") . '</th>
+                        <th>' . _("OS type/Status/Used by") . '</th>
+                    </tr>
+                </thead>
+                <tbody id="OpenstackVmTable">
+                </tbody>
+            </table>
+        </div>';
 
 }

@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2017-03-17
+2017-03-13
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -55,6 +55,10 @@ set_lang();
     <script src="inc/js/ie10-viewport-bug-workaround.js"></script>
     <script src="inc/metisMenu/metisMenu.min.js"></script>
     <script src="inc/js/kvm-vdi.js"></script>
+    <?php
+        if ($engine == 'OpenStack')
+            echo '<script src="inc/js/kvm-vdi-openstack.js"></script>'
+    ?>
     <!--clear remote modal forms -->
     <script type="text/javascript">
 	$(document).on("hidden.bs.modal", function (e) {
@@ -292,7 +296,12 @@ set_lang();
 </body>
 <script>
 $("#left-menu").metisMenu({ toggle: false });
-draw_table()
+$(document).ready(function(){
+    var engine=<?php echo "'" . $engine . "'";?>;
+    draw_table();
+    if (engine == 'OpenStack')
+        reloadOpenStackVmTable();
+});
 </script>
 
 </html>

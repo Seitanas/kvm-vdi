@@ -2,14 +2,13 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-tadas at ring.lt
 
 Vilnius University.
 Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2017-03-06
+2017-03-13
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -20,23 +19,33 @@ if (!check_session()){
 slash_vars();
 $vm=$_GET['vm'];
 $hypervisor=$_GET['hypervisor'];
-if (empty($vm)||empty($hypervisor)){
+if (empty($vm)||empty($hypervisor)&&$engine!='OpenStack'){
     exit;
 }
-$h_reply=get_SQL_line("SELECT * FROM hypervisors WHERE id='$hypervisor'");
-$v_reply=get_SQL_array("SELECT * FROM vms WHERE id='$vm'");
-$source_machines_reply=get_SQL_array("SELECT * FROM vms WHERE hypervisor='$hypervisor' AND (machine_type='sourcemachine' OR machine_type='initialmachine') AND id<>'$vm'  ORDER BY name");
+if ($engine=='OpenStack'){
+    $v_reply=get_SQL_array("SELECT * FROM vms WHERE osInstanceId='$vm'");
+    $source_machines_reply=get_SQL_array("SELECT * FROM vms WHERE (machine_type='sourcemachine' OR machine_type='initialmachine') AND id<>'$vm' ORDER BY name");
+}
+else {
+    $h_reply=get_SQL_line("SELECT * FROM hypervisors WHERE id='$hypervisor'");
+    $v_reply=get_SQL_array("SELECT * FROM vms WHERE id='$vm'");
+    $source_machines_reply=get_SQL_array("SELECT * FROM vms WHERE hypervisor='$hypervisor' AND (machine_type='sourcemachine' OR machine_type='initialmachine') AND id<>'$vm'  ORDER BY name");
+}
 set_lang();
 ?>
 <!DOCTYPE html>
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <?php
+        if ($engine == 'OpenStack')
+            echo '<script src="inc/js/kvm-vdi-openstack.js"></script>'
+    ?>
 </head>
 <body>
 <form method="POST" action="vm_update.php">
     <input type="hidden" name="hypervisor" value="<?php echo $hypervisor; ?>">
-    <input type="hidden" name="vm" value="<?php echo $vm; ?>">
+    <input type="hidden" name="vm" id="vm" value="<?php echo $vm; ?>">
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -48,20 +57,22 @@ set_lang();
             <label><?php echo _("OS type:");?></label>
             <select class="form-control" name="os_type" id="os_type">
                 <option value="linux"><?php echo _("Linux");?></option>
-        		<option value="windows"><?php echo _("Windows");?></option>
-		    </select>
-		    </div>
+                <option value="windows"><?php echo _("Windows");?></option>
+            </select>
+            </div>
             <div class="col-md-2">
-                
             </div>
-		    <div class="col-md-7">
-                <label><?php echo _("MAC address:");?></label>
+            <div class="col-md-7">
+               <?php
+                 if ($engine!='OpenStack'){
+                    $mac=get_mac_address($vm);
+                    echo '
+                <label>' . _("MAC address:") . '</label>
                 <div>
-                    <?php 
-                        $mac=get_mac_address($vm);
-                        echo $mac[0]['mac'];?>
+                        ' .  $mac[0]['mac'] . '
                 </div>
-            </div>
+            </div>';
+            }?>
 	    </div>
 	    <div class="row">
 		 <div class="col-md-5">
@@ -96,7 +107,12 @@ set_lang();
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _("Close");?></button>
-            <button type="submit" class="btn btn-primary"><?php echo _("Save changes");?></button>
+            <?php
+            if ($engine!='OpenStack')
+                echo '<button type="submit" class="btn btn-primary">' .  _("Save changes") . '</button>';
+            else
+                echo '<button type="button" class="btn btn-primary" id="OpenstackEditVmButton">' .  _("Save changes") . '</button>';
+            ?>
         </div>
     </div>
 </form>
