@@ -1,0 +1,54 @@
+#!/usr/bin/python
+
+from ConfigParser import ConfigParser
+
+import os
+import requests
+import sys
+
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+from random import choice
+from string import ascii_lowercase
+from string import ascii_uppercase
+from string import digits
+
+
+config = ConfigParser()
+config.read('/etc/kvm-vdi/kvm-vdi.cfg')
+address = config.get('dashboard', 'address')
+password = config.get('dashboard', 'password')
+path_to_kvm = config.get('emulator', 'path_to_kvm')
+spice_password = (''.join(choice(ascii_uppercase+ascii_lowercase+digits)
+                          for i in range(26)))
+'''define if vdi-wrapper is executed for
+vm startup or for other libvirt routine'''
+startup_procedure = 0
+y = len(sys.argv)
+sys.argv[0] = path_to_kvm
+kvm_paths = ['/usr/libexec/qemu-kvm',
+             '/usr/bin/qemu-kvm', '/usr/bin/qemu-system-x86_64']
+for kvm in kvm_paths:
+    if os.path.isfile(kvm):
+        path_to_kvm = kvm
+x = 1
+while (x != y):
+    namearg = str(sys.argv[x])
+    if (namearg == "-name"):
+        vmname_tmp = str(sys.argv[x+1])
+        vmname_tmp = vmname_tmp.split(",")
+        vmname = vmname_tmp[0]
+        vmname = vmname.replace("guest=", "")
+        startup_procedure = 1
+    if "-spice" in namearg:
+        sys.argv[x+1] = sys.argv[x+1] + ",password=" + spice_password
+        sys.argv[x+1] = sys.argv[x+1].replace("disable-ticketing,", "")
+    x += 1
+command_args = sys.argv
+if (startup_procedure):
+    response = requests.post(address+"/backend.php",
+                             data={'pass': password, 'vm': vmname,
+                                   'spice_password': spice_password},
+                             verify=False)
+os.execv(path_to_kvm, command_args)
+# call kvm via execv() to replace parent process with it

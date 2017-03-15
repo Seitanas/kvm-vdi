@@ -94,6 +94,8 @@ function updateVmList(){
     curl_close($ch);
     $x=0;
     $instanceList=array();
+//    print_r( $result);
+    $power_state=['Shutoff', 'Running', 'Paused', 'Crashed', 'Shutoff', 'Suspended'];
     while ($x <  sizeof($result['servers'])){
         $vmName=$result['servers'][$x]['name'];
         $vmHypervisor=$result['servers'][$x]['OS-EXT-SRV-ATTR:host'];
@@ -103,10 +105,10 @@ function updateVmList(){
             $vmEntry=get_SQL_ARRAY("SELECT * FROM vms WHERE osInstanceId='$vmInstanceId'");
             array_push($instanceList,"'" . $vmInstanceId . "'");
             if (sizeof($vmEntry) == 0){
-                add_SQL_line("INSERT INTO vms  (name, osHypervisorName,  osInstanceName,  osInstanceId) VALUES ('$vmName', '$vmHypervisor', '$vmInstanceName', '$vmInstanceId')");
+                add_SQL_line("INSERT INTO vms  (name, state, osHypervisorName,  osInstanceName,  osInstanceId) VALUES ('$vmName', '{$power_state[$result['servers'][$x]['OS-EXT-STS:power_state']]}', '$vmHypervisor', '$vmInstanceName', '$vmInstanceId')");
             }
             else
-                add_SQL_line("UPDATE vms SET name='$vmName', osHypervisorName='$vmHypervisor', osInstanceName='$vmInstanceName', osInstanceId='$vmInstanceId' WHERE osInstanceId='$vmInstanceId'");
+                add_SQL_line("UPDATE vms SET name='$vmName', state='{$power_state[$result['servers'][$x]['OS-EXT-STS:power_state']]}', osHypervisorName='$vmHypervisor', osInstanceName='$vmInstanceName', osInstanceId='$vmInstanceId' WHERE osInstanceId='$vmInstanceId'");
         }
         ++$x;
     }

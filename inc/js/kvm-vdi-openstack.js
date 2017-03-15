@@ -36,7 +36,7 @@ function drawOpenstackVmTable(){
         </div>\
     </td>\
     <td class=\"col-md-3\">\
-        " + obj['os_type'] + " &#47; <i class=\"text-danger\">" + obj['state'] + "</i><h5><small>Nobody</small></h5>\
+        " + obj['os_type'] + " &#47; " + obj['state'] + " &#47; <i class=\"text-muted\">Nobody</i>\
     </td>\
 </tr>");
 

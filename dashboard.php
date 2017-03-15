@@ -287,7 +287,10 @@ set_lang();
 		<div class="alert alert-info" id="copyalert" style="display:none;">
 		    <?php echo _("<strong>Please wait!</strong> Copying image.");?>
 		</div>
-		<div id="main_table"></div>
+		<div id="main_table"><?php if ($engine=='OpenStack')
+                                        draw_dashboard_table();
+                                    ?>
+                </div>
 	    </div>
 	</div>
     </div>
@@ -298,9 +301,10 @@ set_lang();
 $("#left-menu").metisMenu({ toggle: false });
 $(document).ready(function(){
     var engine=<?php echo "'" . $engine . "'";?>;
-    draw_table();
     if (engine == 'OpenStack')
         reloadOpenStackVmTable();
+    else 
+        draw_table();
 });
 </script>
 
