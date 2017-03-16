@@ -15,7 +15,7 @@ slash_vars();
 $vm=$_GET['vm'];
 $hypervisor=$_GET['hypervisor'];
 $action=$_GET['action'];
-if ($engine != 'OpenStack')
+if ($engine != 'OpenStack'){
     if (empty($vm) || empty($hypervisor)){
         exit;
     }
