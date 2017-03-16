@@ -27,6 +27,8 @@ while ($upgradedfrom=check_upgrade()){
 	    </div>
 	</div>';
     }
+
 $userConfig=get_userconf();
 draw_dashboard_table();
 echo '</div>';
+

@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-03-10
+2017-03-16
 Vilnius, Lithuania.
 */
 
@@ -498,4 +498,46 @@ function draw_dashboard_table(){
         <?php';
         ++$x;
      }
+}
+//############################################################################################
+function vmPowerCycle($hypervisor, $vm, $action){
+    $h_reply=get_SQL_line("SELECT * FROM hypervisors WHERE id='$hypervisor'");
+    ssh_connect($h_reply[2].":".$h_reply[3]);
+    if ($action=="mass_on" || $action == "mass_off" || $action == "mass_destroy"){
+        $child_vms=get_SQL_array("SELECT name,os_type FROM vms WHERE source_volume='$vm'");
+        $x=0;
+        while ($child_vms[$x]['name']){
+            if ($action=="mass_on"){
+                $agent_command=json_encode(array('vmname' => $child_vms[$x]['name'], 'username' => '', 'password' => '', 'os_type' => $child_vms[$x]['os_type']));
+                ssh_command('echo "' . addslashes($agent_command) . '"| socat /usr/local/VDI/kvm-vdi.sock - ',true);
+            }
+            if ($action=="mass_off")
+                ssh_command("sudo virsh shutdown " . $child_vms[$x]['name'], true);
+            if ($action=="mass_destroy")
+                ssh_command("sudo virsh destroy " . $child_vms[$x]['name'], true);
+            ++$x;
+        }
+    }
+    if ($action=="single"){
+        $v_reply=get_SQL_array("SELECT id,name,os_type,machine_type FROM vms WHERE id='$vm'");
+        $state=$_GET['state'];
+        if ($state=="up"){
+            if ($v_reply[0]['machine_type']=='initialmachine'){//if we are powering initial machine up, we should power down all child VMs and put them to maintenance mode
+                $child_vms=get_SQL_array("SELECT name,os_type FROM vms WHERE source_volume='{$v_reply[0]['id']}' AND state<>'shut'");
+                $x=0;
+                while ($x<sizeof($child_vms)){
+                    write_log(ssh_command("sudo virsh destroy " . $child_vms[$x]['name'], true));
+                    ++$x;
+                }
+                add_SQL_line("UPDATE vms SET maintenance='true' WHERE source_volume='{$v_reply[0]['id']}'");
+            }
+        $agent_command=json_encode(array('vmname' => $v_reply[0]['name'], 'username' => '', 'password' => '', 'os_type' => $v_reply[0]['os_type']));
+        ssh_command('echo "' . addslashes($agent_command) . '"| socat /usr/local/VDI/kvm-vdi.sock - ',true);
+        }
+    if ($state=="down")
+        ssh_command("sudo virsh shutdown " . $v_reply[0]['name'], true);
+    if ($state=="destroy")
+        ssh_command("sudo virsh destroy " . $v_reply[0]['name'], true);
+
+    }
 }

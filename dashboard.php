@@ -134,6 +134,7 @@ set_lang();
     $sql_reply=get_SQL_array("SELECT * FROM hypervisors");
 ?>
 <body>
+
 <div class="modal fade" id="modalWm" tabindex="-1" role="dialog" aria-labelledby="modalWm" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">

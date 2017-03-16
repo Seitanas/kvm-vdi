@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-03-13
+2017-03-16
 Vilnius, Lithuania.
 */
 //############################################################################################
@@ -12,8 +12,8 @@ function memcachedReadConfig(){
     $memcache->connect($memcached_address, $memcached_port) or die ("Could not connect to memcached");
     $config=array();
     $config['token']=memcache_get($memcache, 'token');
-    $config['tokenExpire']=memcache_get($memcache, 'tokenExpire');
-    $config['computeURL']=memcache_get($memcache, 'computeURL');
+    $config['token_expire']=memcache_get($memcache, 'token_expire');
+    $config['compute_url']=memcache_get($memcache, 'compute_url');
     return $config;
 }
 //############################################################################################
@@ -21,9 +21,9 @@ function OpenStackConnect(){
     include (dirname(__FILE__) . '/../../../functions/config.php');
     $memcache = new Memcache;
     $memcache->connect($memcached_address, $memcached_port) or die ("Could not connect to memcached");
-    $tokenExpire=memcache_get($memcache, 'tokenExpire');
+    $token_expire=memcache_get($memcache, 'token_expire');
     $currDateTime = new DateTime('now');
-    $expireDateTime = new DateTime($tokenExpire);
+    $expireDateTime = new DateTime($token_expire);
     $interval = $currDateTime->diff($expireDateTime);
     $minutesLeft=$interval->format('%a') * 1440 + $interval->format('%H') * 60 + $interval->format('%I');
     if ($minutesLeft>30){ //if there is still more than 30mins left of token time, do not generate a new one
@@ -42,11 +42,11 @@ function OpenStackConnect(){
     $result = json_decode(curl_exec($ch), TRUE);
     curl_close($ch);
     $token = $result['access']['token']['id'];
-    $tokenExpire=$result['access']['token']['expires'];
-    $computeURL = $result['access']['serviceCatalog'][0]['endpoints'][0]['adminURL'];
+    $token_expire=$result['access']['token']['expires'];
+    $compute_url = $result['access']['serviceCatalog'][0]['endpoints'][0]['adminURL'];
     memcache_set($memcache, 'token', $token);
-    memcache_set($memcache, 'tokenExpire', $tokenExpire);
-    memcache_set($memcache, 'computeURL', $computeURL);
+    memcache_set($memcache, 'token_expire', $token_expire);
+    memcache_set($memcache, 'compute_url', $compute_url);
  //   print_r($result);
 }
 //############################################################################################
@@ -55,7 +55,7 @@ function updateHypervisorList(){
     $config=array();
     $config=memcachedReadConfig();
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL,$config['computeURL'] . '/os-hypervisors/detail');
+    curl_setopt($ch, CURLOPT_URL,$config['compute_url'] . '/os-hypervisors/detail');
     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
         'X-Auth-Token: ' . $config['token']
     ));
@@ -85,7 +85,7 @@ function updateVmList(){
     $config=array();
     $config=memcachedReadConfig();
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL,$config['computeURL'] . '/servers/detail');
+    curl_setopt($ch, CURLOPT_URL,$config['compute_url'] . '/servers/detail');
     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
         'X-Auth-Token: ' . $config['token']
     ));
@@ -94,7 +94,7 @@ function updateVmList(){
     curl_close($ch);
     $x=0;
     $instanceList=array();
-//    print_r( $result);
+   // print_r( $result);
     $power_state=['Shutoff', 'Running', 'Paused', 'Crashed', 'Shutoff', 'Suspended'];
     while ($x <  sizeof($result['servers'])){
         $vmName=$result['servers'][$x]['name'];
@@ -130,7 +130,6 @@ function draw_dashboard_table(){
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th></th>
                         <th>' . _("Machine name") . '</th>
                         <th>' . _("Machine type") . '</th>
                         <th>' . _("Source image") . '</th>
@@ -144,5 +143,8 @@ function draw_dashboard_table(){
                 </tbody>
             </table>
         </div>';
+}
+//############################################################################################
+function vmPowerCycle($vm, $action){
 
 }
