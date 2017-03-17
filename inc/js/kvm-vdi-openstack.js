@@ -1,28 +1,38 @@
-function drawOpenstackVmTable(){
-    $.getJSON("inc/infrastructure/OpenStack/ListVms.php", {},  function(json){
-            var machine_types=[];
-            machine_types['sourcemachine']='Source machine';
-            machine_types['initialmachine']='Initial machine';
-            machine_types['vdimachine']='VDI machine';
-            machine_types['simplemachine']='Simple machine';
-            var initial_machines=[];
-            var vdi_machines=[];
-        $.each(json, function(i, obj){
-            if (!obj['source_volume_machine'])//remove NULL
-                obj['source_volume_machine']='';
-            if (!obj['machine_type'])
-                obj['machine_type'] = 'simplemachine';
-            if (obj['machine_type'] == 'initialmachine')
-                initial_machines.push(obj)
-            if (obj['machine_type'] == 'vdimachine')
-                vdi_machines.push(obj);
-            var power_button="<a href=\"#\" class=\"power-button\" id=\"" + obj['osInstanceId'] + "\" data-power=\"down\" data-power-button-rowid=\"" + obj['id'] +"\"><i class=\"text-danger fa fa-stop fa-fw\"></i>Power down</i></a>";
-            if (obj['state'] != "Running")
-                power_button="<a href=\"#\" class=\"power-button\" id=\"" + obj['osInstanceId'] + "\" data-power=\"up\" data-power-button-rowid=\"" + obj['id'] +"\"><i class=\"text-success fa fa-play fa-fw\"></i>Power up</a>";
-            if (obj['machine_type'] == 'sourcemachine' || obj['machine_type'] == 'simplemachine')
-                $('#OpenstackVmTable').append("\
+function drawOpenStackVMTable(obj, type, i){
+    var machine_types=[];
+    machine_types['sourcemachine']='Source machine';
+    machine_types['initialmachine']='Initial machine';
+    machine_types['vdimachine']='VDI machine';
+    machine_types['simplemachine']='Simple machine';
+    var tab=['1','11'];
+    var power_button="<a href=\"#\" class=\"power-button\" id=\"" + obj['osInstanceId'] + "\" data-power=\"down\" data-power-button-rowid=\"" + obj['id'] +"\"><i class=\"text-danger fa fa-stop fa-fw\"></i>Power down</i></a>";
+    if (obj['state'] != "Running")
+        power_button="<a href=\"#\" class=\"power-button\" id=\"" + obj['osInstanceId'] + "\" data-power=\"up\" data-power-button-rowid=\"" + obj['id'] +"\"><i class=\"text-success fa fa-play fa-fw\"></i>Power up</a>";
+    var additional_buttons='';
+    var rowclass='';
+    if (type == 'Initial'){
+        rowclass = ' info';
+        tab=['3','9 glyphicon glyphicon-menu-down'];
+        additional_buttons="\
+        <div class=\"btn-group\">\
+            <button class=\"btn btn-default dropdown-toggle\" aria-expanded=\"false\" aria-haspopup=\"true\" data-toggle=\"dropdown\" type=\"button\">\
+                VDI control\
+                <span class=\"caret\"></span>\
+            </button>\
+        </div>";
+    }
+    if (type == 'VDI'){
+        tab=['5','7 glyphicon glyphicon-menu-right'];
+        rowclass = ' warning';
+    }
+    var table_rows="\
 <tr class=\"table-stripe-bottom-line\" id=\"row-name-" + obj['id'] + "\">\
-    <td \"col-md-1 clickable parent\" id=\"" + obj['id'] + "\" data-toggle=\"collapse\" data-target=\".child-" + obj['id'] + "\" >" + (++i) + "</td>\
+    <td class=\"col-md-1 clickable parent\" id=\"" + obj['id'] + "\" data-toggle=\"collapse\" data-target=\".child-" + obj['id'] + "\" >\
+        <div class=\"row\">\
+            <div class=\"col-md-" + tab[0] + "\"></div>\
+            <div class=\"col-md-" + tab[1] + "\">" + i + "</div>\
+        </div>\
+    </td>\
     <td class=\"col-md-2\"><a data-toggle=\"modal\" href=\"vm_info.php?vm=" + obj['osInstanceId'] + "\" data-target=\"#modalWm\">" + obj['name'] + "</a> </td>\
     <td class=\"col-md-1\">" + machine_types[obj['machine_type']] + "</td>\
     <td class=\"col-md-1\">" + obj['source_volume_machine'] + "</td>\
@@ -43,6 +53,7 @@ function drawOpenstackVmTable(){
                 </li>\
             </ul>\
         </div>\
+        " + additional_buttons + "\
     </td>\
     <td class=\"col-md-3\">\
         <i id=\"os-type-" + obj['id'] + "\">" + obj['os_type'] +"</i>\
@@ -61,97 +72,49 @@ function drawOpenstackVmTable(){
             </div>\
         </div>\
     </td>\
-</tr>");
+</tr>"
+    if (type == 'SimpleSource')
+        $('#OpenstackVmTable').append(table_rows);
+    else {
+        var parent_row = document.getElementById("row-name-" + obj['source_volume']);
+        var row = document.createElement('tr');
+        row.setAttribute("class","table-stripe-bottom-line" + rowclass);
+        row.setAttribute("id","row-name-" + obj['id']);
+        row.innerHTML = table_rows;
+        parent_row.parentNode.insertBefore(row, parent_row.nextSibling);
+    }
+}
+function drawOpenstackVmTable(){
+    $.getJSON("inc/infrastructure/OpenStack/ListVms.php", {},  function(json){
+
+        var initial_machines=[];
+        var vdi_machines=[];
+        var x=0;;
+        $.each(json, function(i, obj){
+            if (!obj['source_volume_machine'])//remove NULL
+                obj['source_volume_machine']='';
+            if (!obj['machine_type'])
+                obj['machine_type'] = 'simplemachine';
+            if (obj['machine_type'] == 'initialmachine')
+                initial_machines.push(obj)
+            if (obj['machine_type'] == 'vdimachine')
+                vdi_machines.push(obj);
+            if (obj['machine_type'] == 'sourcemachine' || obj['machine_type'] == 'simplemachine')
+               drawOpenStackVMTable(obj, 'SimpleSource', ++x);
         });
         //insert initial machine as child to source machine
         var i=initial_machines.length;
+        x=0;
         while (initial_machines.length > 0){
             var obj = initial_machines.pop();
-            var parent_row = document.getElementById("row-name-" + obj['source_volume']);
-            var row = document.createElement('tr');
-            row.setAttribute("class","table-stripe-bottom-line");
-            row.setAttribute("id","row-name-" + obj['id']);
-            row.innerHTML = "\
-    <td class=\"col-md-1 clickable parent\" id=\"" + obj['id'] + "\" data-toggle=\"collapse\" data-target=\".child-" + obj['id'] + "\" >\
-        <div class=\"row\">\
-            <div class=\"col-md-3\"></div>\
-            <div class=\"col-md-9\">" + i + "</div>\
-        </div>\
-    </td>\
-    <td class=\"col-md-2\"><a data-toggle=\"modal\" href=\"vm_info.php?vm=" + obj['osInstanceId'] + "\" data-target=\"#modalWm\">" + obj['name'] + "</a> </td>\
-    <td class=\"col-md-1\">" + machine_types[obj['machine_type']] + "</td>\
-    <td class=\"col-md-1\">" + obj['source_volume_machine'] + "</td>\
-    <td class=\"col-md-1\"><input type=\"checkbox\" checked onclick='handleSnapshot(this);' id=\"" + obj['osInstanceId'] + "\"></td>\
-    <td class=\"col-md-1\"><input type=\"checkbox\"  onclick='handleMaintenance(this);' id=\"" + obj['osInstanceId'] + "\"></td>\
-    <td class=\"col-md-2\">\
-        <div class=\"btn-group\">\
-            <button class=\"btn btn-default dropdown-toggle\" type=\"button\" id=\"VMSActionMenu\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"true\">VM Actions\
-                <span class=\"caret\"></span>\
-            </button>\
-            <ul class=\"dropdown-menu\" aria-labelledby=\"VMSActionMenu\">\
-                <li class=\"lockable-vm-buttons-" + obj['id'] + "\">\
-                    <a href=\"power.php?action=single&state=up&vm=" + obj['osInstanceId'] + "\"><i class=\"text-success fa fa-play fa-fw text-success\"></i>Power up</a>\
-                </li>\
-                <li role=\"separator\" class=\"divider\"></li>\
-                <li class=\"lockable-vm-buttons-" + obj['id'] + "\"><a href=\"delete_vm.php?vm=43" + obj['osInstanceId'] + "\" onclick=\"return confirmBox('Are you sure?');\">\
-                    <i class=\"fa fa-trash-o fa-fw text-danger\"></i>Delete machine</a>\
-                </li>\
-            </ul>\
-        </div>\
-        <div class=\"btn-group\">\
-            <button class=\"btn btn-default dropdown-toggle\" aria-expanded=\"false\" aria-haspopup=\"true\" data-toggle=\"dropdown\" type=\"button\">\
-                VDI control\
-                <span class=\"caret\"></span>\
-            </button>\
-        </div>\
-    </td>\
-    <td class=\"col-md-3\">\
-        " + obj['os_type'] + " &#47; " + obj['state'] + " &#47; <i class=\"text-muted\">Nobody</i>\
-    </td>";
-            parent_row.parentNode.insertBefore(row, parent_row.nextSibling);
+            drawOpenStackVMTable(obj, 'Initial', '');
             --i;
         }
-
         //insert vdi machine as child to initial machine
         var i=vdi_machines.length;
         while (vdi_machines.length > 0){
             var obj = vdi_machines.pop();
-            var parent_row = document.getElementById("row-name-" + obj['source_volume']);
-            var row = document.createElement('tr');
-            row.setAttribute("class","table-stripe-bottom-line");
-            row.setAttribute("id","row-name-" + obj['id']);
-            row.innerHTML = "\
-    <td class=\"col-md-1 clickable parent\" id=\"" + obj['id'] + "\" data-toggle=\"collapse\" data-target=\".child-" + obj['id'] + "\" >\
-        <div class=\"row\">\
-            <div class=\"col-md-5\"></div>\
-            <div class=\"col-md-7\">" + (i) + "</div>\
-        </div>\
-    </td>\
-    <td class=\"col-md-2\"><a data-toggle=\"modal\" href=\"vm_info.php?vm=" + obj['osInstanceId'] + "\" data-target=\"#modalWm\">" + obj['name'] + "</a> </td>\
-    <td class=\"col-md-1\">" + machine_types[obj['machine_type']] + "</td>\
-    <td class=\"col-md-1\">" + obj['source_volume_machine'] + "</td>\
-    <td class=\"col-md-1\"><input type=\"checkbox\" checked onclick='handleSnapshot(this);' id=\"" + obj['osInstanceId'] + "\"></td>\
-    <td class=\"col-md-1\"><input type=\"checkbox\"  onclick='handleMaintenance(this);' id=\"" + obj['osInstanceId'] + "\"></td>\
-    <td class=\"col-md-2\">\
-        <div class=\"btn-group\">\
-            <button class=\"btn btn-default dropdown-toggle\" type=\"button\" id=\"VMSActionMenu\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"true\">VM Actions\
-                <span class=\"caret\"></span>\
-            </button>\
-            <ul class=\"dropdown-menu\" aria-labelledby=\"VMSActionMenu\">\
-                <li class=\"lockable-vm-buttons-" + obj['id'] + "\">\
-                    <a href=\"power.php?action=single&state=up&vm=" + obj['osInstanceId'] + "\"><i class=\"text-success fa fa-play fa-fw text-success\"></i>Power up</a>\
-                </li>\
-                <li role=\"separator\" class=\"divider\"></li>\
-                <li class=\"lockable-vm-buttons-" + obj['id'] + "\"><a href=\"delete_vm.php?vm=43" + obj['osInstanceId'] + "\" onclick=\"return confirmBox('Are you sure?');\">\
-                    <i class=\"fa fa-trash-o fa-fw text-danger\"></i>Delete machine</a>\
-                </li>\
-            </ul>\
-        </div>\
-    </td>\
-    <td class=\"col-md-3\">\
-        " + obj['os_type'] + " &#47; " + obj['state'] + " &#47; <i class=\"text-muted\">Nobody</i>\
-    </td>";
-            parent_row.parentNode.insertBefore(row, parent_row.nextSibling);
+            drawOpenStackVMTable(obj, 'VDI', '');
             --i;
         }
     });
