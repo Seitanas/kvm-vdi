@@ -138,6 +138,9 @@ function drawVMStatus(row_id, vm_id, power_state){
                 },
                 success:function (data) {
                     var reply=jQuery.parseJSON(data);
+                    if (reply['server']['OS-EXT-STS:task_state'] == 'Powering on'){
+                            $('#vm-state-' + row_id).text('Powering on');
+                        }
                     if (reply['server']['OS-EXT-STS:power_state'] == state_should_be){ //machine is in wanted state
                         $('#progress-bar-' + row_id).addClass('hide');
                         if (power_state == 'up'){
