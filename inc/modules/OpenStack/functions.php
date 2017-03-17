@@ -145,6 +145,41 @@ function draw_dashboard_table(){
         </div>';
 }
 //############################################################################################
-function vmPowerCycle($vm, $action){
-
+function getVMInfo($vm){
+    include (dirname(__FILE__) . '/../../../functions/config.php');
+    $config=array();
+    $config=memcachedReadConfig();
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL,$config['compute_url'] . '/servers/' . $vm);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'X-Auth-Token: ' . $config['token']
+    ));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    $result = curl_exec($ch);
+    curl_close($ch);
+    return $result;
 }
+//############################################################################################
+function vmPowerCycle($vm, $action){
+    include (dirname(__FILE__) . '/../../../functions/config.php');
+    $config=array();
+    $config=memcachedReadConfig();
+    if ($action=='up')
+        $data = array('os-start' => null);
+    if ($action=='down')
+        $data = array('os-stop' => null);
+    $ch = curl_init();
+    $data=json_encode($data);
+    curl_setopt($ch, CURLOPT_URL,$config['compute_url'] . '/servers/' . $vm . '/action');
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'X-Auth-Token: ' . $config['token'],
+        'Content-type: application/json',
+    ));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    $result = curl_exec($ch);
+    curl_close($ch);
+    return $result;
+}
+

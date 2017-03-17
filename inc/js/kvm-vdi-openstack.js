@@ -16,9 +16,9 @@ function drawOpenstackVmTable(){
                 initial_machines.push(obj)
             if (obj['machine_type'] == 'vdimachine')
                 vdi_machines.push(obj);
-            var power_button="<a href=\"#\" class=\"power-button\" id=\"" + obj['osInstanceId'] + "\" data-power=\"down\"><i class=\"text-danger fa fa-stop fa-fw\"></i>Power down</a>";
+            var power_button="<a href=\"#\" class=\"power-button\" id=\"" + obj['osInstanceId'] + "\" data-power=\"down\" data-power-button-rowid=\"" + obj['id'] +"\"><i class=\"text-danger fa fa-stop fa-fw\"></i>Power down</i></a>";
             if (obj['state'] != "Running")
-                power_button="<a href=\"#\" class=\"power-button\" id=\"" + obj['osInstanceId'] + "\" data-power=\"up\"><i class=\"text-success fa fa-play fa-fw\"></i>Power up</a>";
+                power_button="<a href=\"#\" class=\"power-button\" id=\"" + obj['osInstanceId'] + "\" data-power=\"up\" data-power-button-rowid=\"" + obj['id'] +"\"><i class=\"text-success fa fa-play fa-fw\"></i>Power up</a>";
             if (obj['machine_type'] == 'sourcemachine' || obj['machine_type'] == 'simplemachine')
                 $('#OpenstackVmTable').append("\
 <tr class=\"table-stripe-bottom-line\" id=\"row-name-" + obj['id'] + "\">\
@@ -45,7 +45,21 @@ function drawOpenstackVmTable(){
         </div>\
     </td>\
     <td class=\"col-md-3\">\
-        " + obj['os_type'] + " &#47; " + obj['state'] + " &#47; <i class=\"text-muted\">Nobody</i>\
+        <i id=\"os-type-" + obj['id'] + "\">" + obj['os_type'] +"</i>\
+        <i> &#47; </i>\
+        <i id=\"vm-state-" + obj['id'] + "\">" + obj['state'] + "</i>\
+        <i> &#47; </i>\
+        <i id=\"vm-user\"><i class=\"text-muted\">Nobody</i></i>\
+        <div class=\"row hide\" id=\"progress-bar-" + obj['id'] + "\">\
+            <div class=\"col-md-5\">\
+                <div class=\"progress\">\
+                    <div class=\"progress-bar progress-bar-info progress-bar-striped active\" role=\"progressbar\"\
+                        aria-valuenow=\"100\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"width:100%\">\
+                    </div>\
+                </div>\
+                <div class=\"col-md-7\"></div>\
+            </div>\
+        </div>\
     </td>\
 </tr>");
         });
@@ -146,8 +160,55 @@ function reloadOpenStackVmTable(){
     $('#OpenstackVmTable').html('');
     drawOpenstackVmTable();
 }
+function drawVMStatus(row_id, vm_id, power_state){
+    var state_should_be=0;
+    if (power_state=='up') //define what powerstate we called
+        state_should_be=1; //we need machine state to become running (1)
+    else
+        state_should_be=4; //we need machine state to become shutdown (4)
+    run_query();
+    function run_query(){
+        $.post({
+            url : 'inc/infrastructure/OpenStack/GetVMInfo.php',
+                data: {
+                    vm_id: vm_id,
+                },
+                success:function (data) {
+                    var reply=jQuery.parseJSON(data);
+                    if (reply['server']['OS-EXT-STS:power_state'] == state_should_be){ //machine is in wanted state
+                        $('#progress-bar-' + row_id).addClass('hide');
+                        if (power_state == 'up'){
+                            $('#vm-state-' + row_id).text('Running');
+                            $('#' + vm_id + '.power-button').html('<i class=\"text-danger fa fa-stop fa-fw\"></i>Power down</i>');
+                            $('#' + vm_id + '.power-button').attr('data-power', 'down');
+                        }
+                        else{
+                            $('#vm-state-' + row_id).text('Shutoff');
+                            $('#' + vm_id + '.power-button').html('<i class=\"text-success fa fa-play fa-fw\"></i>Power up</a>');
+                            $('#' + vm_id + '.power-button').attr('data-power', 'up');
+                        }
+                    }
+                    else{
+                        setTimeout(function() {run_query()}, 4000);
+                    }
+                }
+            });
+    }
+}
 function vmPowerCycle(vm_array){
-
+    $.each(vm_array, function(i, obj){
+        $("#progress-bar-" + obj['row_id']).removeClass('hide');
+        $.post({
+            url : 'inc/infrastructure/OpenStack/PowerCycle.php',
+            data: {
+                vm_id: obj['vm_id'],
+                power_state: obj['power_state']
+            },
+            success:function (data) {
+                drawVMStatus(obj['row_id'], obj['vm_id'], obj['power_state']);
+            }
+          });
+    });
 }
 
 $(document).ready(function(){
@@ -172,6 +233,7 @@ $(document).ready(function(){
         vm_array.push({
             vm_id : $(this).attr('id'),
             power_state : $(this).attr('data-power'),
+            row_id : $(this).attr('data-power-button-rowid'),
         });
         vmPowerCycle(vm_array);
     });
