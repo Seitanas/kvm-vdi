@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-03-16
+2017-03-17
 Vilnius, Lithuania.
 */
 //############################################################################################
@@ -22,11 +22,11 @@ function OpenStackConnect(){
     $memcache = new Memcache;
     $memcache->connect($memcached_address, $memcached_port) or die ("Could not connect to memcached");
     $token_expire=memcache_get($memcache, 'token_expire');
-    $currDateTime = new DateTime('now');
-    $expireDateTime = new DateTime($token_expire);
-    $interval = $currDateTime->diff($expireDateTime);
-    $minutesLeft=$interval->format('%a') * 1440 + $interval->format('%H') * 60 + $interval->format('%I');
-    if ($minutesLeft>30){ //if there is still more than 30mins left of token time, do not generate a new one
+    $curr_date_time = new DateTime('now');
+    $expire_date_time = new DateTime($token_expire);
+    $interval = $curr_date_time->diff($expire_date_time);
+    $minutes_left=$interval->format('%d') * 1440 + $interval->format('%h') * 60 + $interval->format('%i');
+    if ($minutes_left>30){ //if there is still more than 30mins left of token time, do not generate a new one
         return 0;
     }
     $ch = curl_init();
@@ -94,7 +94,7 @@ function updateVmList(){
     curl_close($ch);
     $x=0;
     $instanceList=array();
-   // print_r( $result);
+    //print_r( $result);
     $power_state=['Shutoff', 'Running', 'Paused', 'Crashed', 'Shutoff', 'Suspended'];
     while ($x <  sizeof($result['servers'])){
         $vmName=$result['servers'][$x]['name'];
