@@ -51,7 +51,7 @@ function drawOpenStackVMTable(obj, type, i){
                 <li class=\"lockable-vm-buttons-" + obj['id'] + "\"><a href=\"delete_vm.php?vm=" + obj['osInstanceId'] + "\" onclick=\"return confirmBox('Are you sure?');\">\
                     <i class=\"fa fa-trash-o fa-fw text-danger\"></i>Delete machine</a>\
                 </li>\
-                <li class=\"lockable-vm-buttons-" + obj['id'] + "\"><a data-target=\"#vmConsole\" data-toggle=\"modal\" href=\"vm_screen.php?vm=" + obj['osInstanceId'] + "\">\
+                <li class=\"lockable-vm-buttons-" + obj['id'] + "\"><a data-target=\"#modalWm\" data-toggle=\"modal\" href=\"vm_screen.php?vm=" + obj['osInstanceId'] + "\">\
                     <i class=\"fa fa-window-maximize fa-fw text-info\"></i>Open Console</a>\
                 </li>\
             </ul>\
@@ -179,6 +179,30 @@ function vmPowerCycle(vm_array){
           });
     });
 }
+function getVMConsole(vm_id, console_type){
+    $("#ConsoleMessage").addClass("alert alert-info");
+    $("#ConsoleMessage").html('<p class="text-left"><i class="fa fa-spinner fa-spin fa-1x fa-fw"></i>Please wait</p>');
+    $.post({
+        url : 'inc/infrastructure/OpenStack/GetConsole.php',
+            data: {
+                vm_id: vm_id,
+                console_type: console_type,
+            },
+            success:function (data) {
+                reply = $.parseJSON(data);
+                if (reply['error']){
+                    $("#ConsoleMessage").addClass("alert alert-danger");
+                    $("#ConsoleMessage").html('<p class="text-left"><i class="fa fa-remove fa-1x fa-fw text-left"></i>Error occured: ' + reply['error']);
+                }
+                else {
+                    window.open("spice://" + reply['spice_address'] + ":" + reply['spice_port'] + "?password=" + reply['spice_password']);
+                    $("#ConsoleMessage").removeClass("alert alert-info");
+                    $("#ConsoleMessage").html('');
+                    $('#modalWm').modal('toggle');
+                }
+            }
+    });
+}
 
 $(document).ready(function(){
     $('#OpenstackEditVmButton').click(function() {
@@ -196,6 +220,9 @@ $(document).ready(function(){
                     $('#modalWm').modal('toggle');
                 }
         });
+    });
+    $('#SpiceConsoleButton').click(function() {
+        getVMConsole($("#vm_id").val(), 'spice');
     });
     $('#main_table').on("click", "a.power-button", function() { //since table items are dynamically generated, we will not get ordinary .click() event
         var vm_array=[];

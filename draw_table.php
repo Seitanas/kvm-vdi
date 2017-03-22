@@ -18,7 +18,7 @@ if (!check_session()){
     exit;
 }
 set_lang();
-while ($upgradedfrom=check_upgrade()){
+/* while ($upgradedfrom=check_upgrade()){
     echo '<div class="row">
             <div class="col-md-6 col-md-offset-2 text-center">
                 <div class="alert alert-info" role="alert">' . _("Database upgraded from: $upgradedfrom") . '
@@ -27,6 +27,7 @@ while ($upgradedfrom=check_upgrade()){
             </div>
         </div>';
 }
+*/
 reload_vm_info();
 $userConfig=get_userconf();
 draw_dashboard_table();

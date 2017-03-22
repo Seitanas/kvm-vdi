@@ -41,6 +41,10 @@ while (x != y):
         vmname = vmname.replace("guest=", "")
         startup_procedure = 1
     if "-spice" in namearg:
+        port_tmp = str(sys.argv[x+1])
+        port_tmp = port_tmp.split(",")
+        spice_port = port_tmp[0]
+        spice_port = spice_port.replace("port=", "")
         sys.argv[x+1] = sys.argv[x+1] + ",password=" + spice_password
         sys.argv[x+1] = sys.argv[x+1].replace("disable-ticketing,", "")
     x += 1
@@ -48,7 +52,8 @@ command_args = sys.argv
 if (startup_procedure):
     response = requests.post(address+"/backend.php",
                              data={'pass': password, 'vm': vmname,
-                                   'spice_password': spice_password},
+                                   'spice_password': spice_password,
+                                   'spice_port': spice_port},
                              verify=False)
 os.execv(path_to_kvm, command_args)
 # call kvm via execv() to replace parent process with it

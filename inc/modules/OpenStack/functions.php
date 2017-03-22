@@ -186,8 +186,15 @@ function vmPowerCycle($vm, $action){
 }
 //############################################################################################
 function sendToBroker($command){
+    $socket = socket_create(AF_UNIX, SOCK_STREAM, 0);
     socket_connect($socket, '/usr/local/kvm-vdi/kvm-vdi-broker.sock');
-    socket_send ( $socket , $command , strlen($command));
+    socket_set_option($socket,SOL_SOCKET, SO_RCVTIMEO, array("sec"=>5, "usec"=>0));
+    $result = socket_write($socket , $command , strlen($command));
+    if (!$result)
+        return $result;
+    else
+        $result = socket_read($socket, 1024);
+    return $result;
 }
 //############################################################################################
 function draw_dashboard_table(){
@@ -220,6 +227,7 @@ function drawVMScreen($vm){
          <html>
             <head>
                 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+                <script src="inc/js/kvm-vdi-openstack.js"></script>
                 <title>' . _("VM screen") . '</title>
             </head>
         <body>
@@ -229,12 +237,23 @@ function drawVMScreen($vm){
                     <h4 class="modal-title">' . _("VM name: ") . $v_reply[0]['name'] . '</h4>
                 </div>
                 <div class="modal-body">
-                    <img src="screenshot.php?vm=' . $vm . '&hypervisor=' . $hypervisor . '&' . $rnd . '">
+                    <div class="row">
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" onclick="javascript:window.location=\'' . $address . '\'" target="_new" data-dismiss="modal">' . _("SPICE console") . '</button>
-                    <button type="button" class="btn btn-success" onclick="dashboard_open_html5_console_click()" data-dismiss="modal">' . _("HTML5 console") . '</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">' . _("Close") .'</button>
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-3"></div>
+                        <div class="col-md-8">
+                            <input type="hidden" id="vm_id" value="' . $vm . '">
+                            <button type="button" class="btn btn-success" id="SpiceConsoleButton">' . _("SPICE console") . '</button>
+                            <button type="button" class="btn btn-success" onclick="dashboard_open_html5_console_click()" data-dismiss="modal">' . _("HTML5 console") . '</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">' . _("Close") .'</button>
+                        </div>
+                    </div>
+                    <div class="row>
+                        <div class="col-md-12 text-center" id="ConsoleMessage"></div>
+                    </div>
                 </div>
             </div>
         </body>
