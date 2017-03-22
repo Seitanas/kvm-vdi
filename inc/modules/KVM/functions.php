@@ -557,7 +557,7 @@ function drawVMScreen($vm, $hypervisor){
          <html>
             <head>
                 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-                <title>' . _("VM screen") . '</title>..
+                <title>' . _("VM screen") . '</title>
             </head>
         <body>
             <div class="modal-content">
