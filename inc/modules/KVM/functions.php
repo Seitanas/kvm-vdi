@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-03-16
+2017-03-22
 Vilnius, Lithuania.
 */
 
@@ -540,4 +540,45 @@ function vmPowerCycle($hypervisor, $vm, $action){
         ssh_command("sudo virsh destroy " . $v_reply[0]['name'], true);
 
     }
+}
+//############################################################################################
+function drawVMScreen($vm, $hypervisor){
+    $h_reply=get_SQL_line("SELECT * FROM hypervisors WHERE id='$hypervisor'");
+    $v_reply=get_SQL_array("SELECT * FROM vms WHERE id='$vm'");
+    ssh_connect($h_reply[2].":".$h_reply[3]);
+    $address=ssh_command("sudo virsh domdisplay " . $v_reply[0]['name'], true);
+    $address=str_replace("localhost",$h_reply[2],$address);
+    $address=str_replace("\n","",$address);
+    $html5_token_value=$address;
+    $html5_token_value=str_replace('spice://',"",$html5_token_value);
+    $address=$address . "?password=" . $v_reply[0]['spice_password'];
+    $rnd=uniqid();
+    echo '<!DOCTYPE html>
+         <html>
+            <head>
+                <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+                <title>' . _("VM screen") . '</title>..
+            </head>
+        <body>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">' . _("VM name: ") . $v_reply[0]['name'] . '</h4>
+                </div>
+                <div class="modal-body">
+                    <img src="screenshot.php?vm=' . $vm . '&hypervisor=' . $hypervisor . '&' . $rnd . '">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" onclick="javascript:window.location=\'' . $address . '\'" target="_new" data-dismiss="modal">' . _("SPICE console") . '</button>
+                    <button type="button" class="btn btn-success" onclick="dashboard_open_html5_console_click()" data-dismiss="modal">' . _("HTML5 console") . '</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">' . _("Close") .'</button>
+                </div>
+            </div>
+        </body>
+        <script>
+            function dashboard_open_html5_console_click(){
+                send_token(\'' . $websockets_address . '\', \'' . $websockets_port . '\', \'' . $v_reply[0]['name'] . '\', \'' . $html5_token_value . '\', \'' . $v_reply[0]['spice_password'] . '\');
+            }
+        </script>
+    </html>';
 }

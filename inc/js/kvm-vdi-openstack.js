@@ -48,8 +48,11 @@ function drawOpenStackVMTable(obj, type, i){
                     " + power_button + "\
                 </li>\
                 <li role=\"separator\" class=\"divider\"></li>\
-                <li class=\"lockable-vm-buttons-" + obj['id'] + "\"><a href=\"delete_vm.php?vm=43" + obj['osInstanceId'] + "\" onclick=\"return confirmBox('Are you sure?');\">\
+                <li class=\"lockable-vm-buttons-" + obj['id'] + "\"><a href=\"delete_vm.php?vm=" + obj['osInstanceId'] + "\" onclick=\"return confirmBox('Are you sure?');\">\
                     <i class=\"fa fa-trash-o fa-fw text-danger\"></i>Delete machine</a>\
+                </li>\
+                <li class=\"lockable-vm-buttons-" + obj['id'] + "\"><a data-target=\"#vmConsole\" data-toggle=\"modal\" href=\"vm_screen.php?vm=" + obj['osInstanceId'] + "\">\
+                    <i class=\"fa fa-window-maximize fa-fw text-info\"></i>Open Console</a>\
                 </li>\
             </ul>\
         </div>\

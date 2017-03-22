@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-03-17
+2017-03-22
 Vilnius, Lithuania.
 */
 //############################################################################################
@@ -24,8 +24,9 @@ function OpenStackConnect(){
     $token_expire=memcache_get($memcache, 'token_expire');
     $curr_date_time = new DateTime('now');
     $expire_date_time = new DateTime($token_expire);
-    $interval = $curr_date_time->diff($expire_date_time);
-    $minutes_left=$interval->format('%d') * 1440 + $interval->format('%h') * 60 + $interval->format('%i');
+    $interval = $curr_date_time->diff($expire_date_time, false);
+    $minutes_left=$interval->format('%R%d') * 1440 + $interval->format('%R%h') * 60 + $interval->format('%R%i');
+//    echo $minutes_left;
     if ($minutes_left>30){ //if there is still more than 30mins left of token time, do not generate a new one
         return 0;
     }
@@ -94,7 +95,7 @@ function updateVmList(){
     curl_close($ch);
     $x=0;
     $instanceList=array();
-   // print_r( $result);
+    //print_r( $result);
     $power_state=['Shutoff', 'Running', 'Paused', 'Crashed', 'Shutoff', 'Suspended'];
     while ($x <  sizeof($result['servers'])){
         $vmName=$result['servers'][$x]['name'];
@@ -124,31 +125,26 @@ function updateVmList(){
     //print_r($result);
 }
 //############################################################################################
-function reload_vm_info(){
+function listConsoles($vm){
+    include (dirname(__FILE__) . '/../../../functions/config.php');
+    $config=array();
+    $config=memcachedReadConfig();
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL,$config['compute_url'] . '/servers/a17ac994-8311-42ab-84d0-614e1ef8f1cd/consoles');
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'X-Auth-Token: ' . $config['token']
+    ));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+    $result = curl_exec($ch);
+//   $result = json_decode(curl_exec($ch), TRUE);
+//    $information = curl_getinfo($ch);
+//    print_r( $information);
+    curl_close($ch);
+//    print_r($result);
 }
 //############################################################################################
-function draw_dashboard_table(){
-    openStackConnect();
-    updateHypervisorList();
-    updateVmList();
-    echo '<div class="table-responsive"  style="overflow: inherit;">
-            <table class="table table-striped table-hover" >
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>' . _("Machine name") . '</th>
-                        <th>' . _("Machine type") . '</th>
-                        <th>' . _("Source image") . '</th>
-                        <th>' . _("Virt-snapshot") . '</th>
-                        <th>' . _("Maintenance") . '</th>
-                        <th>' . _("Operations") . '</th>
-                        <th>' . _("OS type/Status/Used by") . '</th>
-                    </tr>
-                </thead>
-                <tbody id="OpenstackVmTable">
-                </tbody>
-            </table>
-        </div>';
+function reload_vm_info(){
 }
 //############################################################################################
 function getVMInfo($vm){
@@ -188,4 +184,64 @@ function vmPowerCycle($vm, $action){
     curl_close($ch);
     return $result;
 }
-
+//############################################################################################
+function sendToBroker($command){
+    socket_connect($socket, '/usr/local/kvm-vdi/kvm-vdi-broker.sock');
+    socket_send ( $socket , $command , strlen($command));
+}
+//############################################################################################
+function draw_dashboard_table(){
+    openStackConnect();
+    updateHypervisorList();
+    updateVmList();
+    echo '<div class="table-responsive"  style="overflow: inherit;">
+            <table class="table table-striped table-hover" >
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>' . _("Machine name") . '</th>
+                        <th>' . _("Machine type") . '</th>
+                        <th>' . _("Source image") . '</th>
+                        <th>' . _("Virt-snapshot") . '</th>
+                        <th>' . _("Maintenance") . '</th>
+                        <th>' . _("Operations") . '</th>
+                        <th>' . _("OS type/Status/Used by") . '</th>
+                    </tr>
+                </thead>
+                <tbody id="OpenstackVmTable">
+                </tbody>
+            </table>
+        </div>';
+}
+//############################################################################################
+function drawVMScreen($vm){
+    $v_reply=get_SQL_array("SELECT * FROM vms WHERE osInstanceId='$vm'");
+    echo '<!DOCTYPE html>
+         <html>
+            <head>
+                <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+                <title>' . _("VM screen") . '</title>..
+            </head>
+        <body>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">' . _("VM name: ") . $v_reply[0]['name'] . '</h4>
+                </div>
+                <div class="modal-body">
+                    <img src="screenshot.php?vm=' . $vm . '&hypervisor=' . $hypervisor . '&' . $rnd . '">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" onclick="javascript:window.location=\'' . $address . '\'" target="_new" data-dismiss="modal">' . _("SPICE console") . '</button>
+                    <button type="button" class="btn btn-success" onclick="dashboard_open_html5_console_click()" data-dismiss="modal">' . _("HTML5 console") . '</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">' . _("Close") .'</button>
+                </div>
+            </div>
+        </body>
+        <script>
+            function dashboard_open_html5_console_click(){
+                send_token(\'' . $websockets_address . '\', \'' . $websockets_port . '\', \'' . $v_reply[0]['name'] . '\', \'' . $html5_token_value . '\', \'' . $v_reply[0]['spice_password'] . '\');
+            }
+        </script>
+    </html>';
+}
