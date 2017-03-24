@@ -9,8 +9,50 @@ import json
 from threading import Thread
 from ConfigParser import ConfigParser
 import ConsoleProxy 
+import threading
 
-
+class createChannel(threading.Thread):
+    def __init__(self, target_ip, target_port, bind_port, vm_id):
+        super(createChannel, self).__init__()
+        self._stop = threading.Event()
+        self.target_ip = target_ip
+        self.target_port = target_port
+        self.bind_port = bind_port
+        self.vm_id = vm_id
+    def stop(self):
+        self._stop.set()
+    def stopped(self):
+        return self._stop.isSet()
+    def run(self):
+        global redirectorExit
+        logger = logging.getLogger('kvm-vdi-broker')
+        logger.debug("spiceChannel listener started on port %s", self.bind_port)
+        Client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        Client.settimeout(5)
+        Client.bind(('0.0.0.0', self.bind_port))
+        Client.listen(5)
+        x = 0;
+        th = {};
+        while True:
+            try:
+                spiceClient, addr = Client.accept()
+                logger.debug("Client connected on port %s", self.bind_port)
+            except KeyboardInterrupt:
+                redirectorExit = True
+                break
+            except socket.timeout:
+                break
+            th[x] = ConsoleProxy.spiceChannel(spiceClient, self.target_ip, self.target_port) #we need to thread client sockets, because SPICE client opens more than one stream to server.
+            th[x].start()
+            x += 1
+        logger.debug("Waiting for spiceChannel client exit on port %s", self.bind_port)
+        while x > 0: # Waiting for all redirector threads to exit
+            x -= 1
+            th[x].join()
+        logger.debug("Closing spiceChannel listener on port %s", self.bind_port)
+        active_vms.pop(self.vm_id, None) # Removing vm from active sessions list
+        ports.append(self.bind_port) # making listener port available for next client session
+        Client.close()
 
 def main():
     sockfile = "/usr/local/kvm-vdi/kvm-vdi-broker.sock"
@@ -29,6 +71,8 @@ def main():
     config.read('/etc/kvm-vdi/kvm-vdi.cfg')
     port_range = config.get('broker', 'port_range')
     port_range = port_range.split(':')
+    global ports
+    global active_vms
     ports = list(range(int(port_range[0]), int(port_range[1]) + 1))
     ports.reverse()
     terminate = 0
@@ -47,14 +91,14 @@ def main():
                         if active_vms.get(command['vm_id'], None) is not None:
                             logger.debug("Channel for vm %s is already initialised", command['vm_id'])
                             bind_port = active_vms[command['vm_id']]
-                            conn.send(json.dumps({"spice_port": bind_port}))
+                            conn.send(json.dumps({"error": "in use"}))
                         elif not command['hypervisor_ip'] or not command['spice_port']:
                             logger.debug("Got empty hypervisor ip / port")
                             conn.send(json.dumps({"error": "empty-values"}))
                         else:
                             bind_port = ports.pop()
                             active_vms[command['vm_id']]=bind_port
-                            t=ConsoleProxy.createChannel(command['hypervisor_ip'], command['spice_port'], bind_port)
+                            t=createChannel(command['hypervisor_ip'], command['spice_port'], bind_port, command['vm_id'])
                             t.start()
                             conn.send(json.dumps({"spice_port": bind_port}))
 #                    except:

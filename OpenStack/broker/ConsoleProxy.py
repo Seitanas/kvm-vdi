@@ -56,37 +56,8 @@ class spiceChannel(threading.Thread):
                     reply = spiceServer.send(dataToServer)
                     if reply > 0:
                         dataToServer = dataToServer[reply:] #remove sent bytes from string
-        logger.debug("spiceChannel redirector exit for hypervisor: " + self.target_ip + ":" + str(self.target_port))
+        logger.debug("spiceChannel redirector exit for SPICE address: " + self.target_ip + ":" + str(self.target_port))
         self.__spiceClient.close()
         spiceServer.close()
-
-class createChannel(threading.Thread):
-    def __init__(self, target_ip, target_port, bind_port):
-        super(createChannel, self).__init__()
-        self._stop = threading.Event()
-        self.target_ip = target_ip
-        self.target_port = target_port
-        self.bind_port = bind_port
-    def stop(self):
-        self._stop.set()
-    def stopped(self):
-        return self._stop.isSet()
-    def run(self):
-        global redirectorExit
-        logger = logging.getLogger('kvm-vdi-broker')
-        logger.debug("spiceChannel listener started on port %s", self.bind_port)
-        Client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        Client.bind(('0.0.0.0', self.bind_port))
-        Client.listen(5)
-        while True:
-            try:
-                spiceClient, addr = Client.accept()
-                logger.debug("Client connected on port %s", self.bind_port)
-            except KeyboardInterrupt:
-                redirectorExit = True
-                break
-            spiceChannel(spiceClient, self.target_ip, self.target_port).start() #we need to thread client sockets, because SPICE client opens more than one stream to server.
-        logger.debug("spiceChannel listener exit on port %s", self.bind_port)
-        Client.close()
 
 
