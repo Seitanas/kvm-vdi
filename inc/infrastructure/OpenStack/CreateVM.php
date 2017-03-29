@@ -5,7 +5,9 @@ if (!check_session()){
     exit;
 }
 slash_vars();
-$vm_id = $_POST['vm_id'];
-$power_state = $_POST['power_state'];
-if (!empty ($vm_id) && !empty ($power_state))
-   echo vmPowerCycle($vm_id, $power_state);
+$vm_type = $_POST['vm_type'];
+$source = $_POST['source'];
+$os_type = $_POST['os_type'];
+$flavor = $_POST['flavor'];
+$vm_name = $_POST['vm_name'];
+

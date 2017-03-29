@@ -36,6 +36,18 @@ function get_SQL_array($sql_line){
     mysqli_close($mysql_connection);
     return $query_array;
 }
+
+//##############################################################################
+function getSQLArray($sql_line){
+    $query_array=array();
+    $mysql_connection=SQL_connect();
+    $q_string = mysqli_query($mysql_connection, $sql_line)or die (mysqli_error($mysql_connection));
+    while ($row=mysqli_fetch_array($q_string, MYSQLI_ASSOC)){
+        $query_array[]=$row;
+    }
+    mysqli_close($mysql_connection);
+    return $query_array;
+}
 //##############################################################################
 function check_session(){
     if (session_status() == PHP_SESSION_NONE) 

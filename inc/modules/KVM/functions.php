@@ -582,3 +582,8 @@ function drawVMScreen($vm, $hypervisor){
         </script>
     </html>';
 }
+//############################################################################################
+function drawNewVMScreen(){
+    require_once('NewVM.php');
+    draw_html();
+}

@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2017-03-22
+2017-03-29
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -264,22 +264,26 @@ set_lang();
 		    </ul>
 		</li>
     	        <li><a href="new_vm.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-laptop fa-fw"></i><?php echo _("Create Virtual Machines");?></a></li>
+        <?php if  ($engine != 'OpenStack'){
+        echo '
         <li>
-                <a href="#" aria-expanded="false"><span class="fa arrow"></span><i class="fa fa-wrench fa-fw"></i><?php echo _("Tools");?></a>
+                <a href="#" aria-expanded="false"><span class="fa arrow"></span><i class="fa fa-wrench fa-fw"></i>' . _("Tools") .'</a>
                 <ul aria-expanded="false">
-                    <li class="nav"><a href="dhcpconf_gen.php" data-toggle="modal" data-target="#modalWmLg"><i class="fa fa-cubes fa-fw"></i><?php echo _("Generate DHCP config");?></a></li>
+                    <li class="nav"><a href="dhcpconf_gen.php" data-toggle="modal" data-target="#modalWmLg"><i class="fa fa-cubes fa-fw"></i>' . _("Generate DHCP config") . '</a></li>
                 </ul>
-        </li>
+        </li>';}?>
 		<li>
 	    	    <a href="#" aria-expanded="false"><span class="fa arrow"></span><i class="fa fa-cogs fa-fw"></i><?php echo _("System");?></a>
-		    <ul aria-expanded="false">
-			<li class="nav"><a href="add_hypervisor.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-database fa-fw"></i><?php echo _("Add hypervisor");?></a></li>
-	    		<li class="nav"><a href="list_hypervisors.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-cloud fa-fw"></i><?php echo _("Modify hypervisors");?></a></li>
-			<li class="nav-divider"></li>
-			<li class="nav"><a href="add_credential.php?credentialtype=user" data-toggle="modal" data-target="#modalWm"><i class="fa fa-user-plus fa-fw"></i><?php echo _("Add administrator");?></a></li>
-			<li class="nav"><a href="list_credentials.php?credentialtype=user" data-toggle="modal" data-target="#modalWm"><i class="fa fa-recycle fa-fw"></i><?php echo _("Manage administrators");?></a></li>
-			<li class="nav-divider"></li>
-			<li class="nav"><a data-target="#modalWm" data-toggle="modal" href="about.php"><i class="fa fa-star-o fa-fw"></i>About</a></li>
+            <ul aria-expanded="false">
+                <?php if ($engine != 'OpenStack'){
+                echo '
+                <li class="nav"><a href="add_hypervisor.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-database fa-fw"></i>' . _("Add hypervisor") . '</a></li>
+                <li class="nav"><a href="list_hypervisors.php" data-toggle="modal" data-target="#modalWm"><i class="fa fa-cloud fa-fw"></i>' . _("Modify hypervisors") . '</a></li>
+                <li class="nav-divider"></li>';}?>
+                <li class="nav"><a href="add_credential.php?credentialtype=user" data-toggle="modal" data-target="#modalWm"><i class="fa fa-user-plus fa-fw"></i><?php echo _("Add administrator");?></a></li>
+                <li class="nav"><a href="list_credentials.php?credentialtype=user" data-toggle="modal" data-target="#modalWm"><i class="fa fa-recycle fa-fw"></i><?php echo _("Manage administrators");?></a></li>
+                <li class="nav-divider"></li>
+                <li class="nav"><a data-target="#modalWm" data-toggle="modal" href="about.php"><i class="fa fa-star-o fa-fw"></i>About</a></li>
 		    </ul>
 		</li>
 		<li>

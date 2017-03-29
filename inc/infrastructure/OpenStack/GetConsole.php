@@ -5,6 +5,7 @@ require_once(dirname(__FILE__) . '/../../../functions/functions.php');
 if (!check_session()){
     exit;
 }
+slash_vars();
 $vm_id = $_POST['vm_id'];
 $console_type = $_POST['console_type'];
 if (!empty ($vm_id) && !empty($console_type)){

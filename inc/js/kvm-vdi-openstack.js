@@ -88,11 +88,11 @@ function drawOpenStackVMTable(obj, type, i){
     }
 }
 function drawOpenstackVmTable(){
-    $.getJSON("inc/infrastructure/OpenStack/ListVms.php", {},  function(json){
+    $.getJSON("inc/infrastructure/OpenStack/ListVMS.php", {},  function(json){
 
         var initial_machines=[];
         var vdi_machines=[];
-        var x=0;;
+        var x=0;
         $.each(json, function(i, obj){
             if (!obj['source_volume_machine'])//remove NULL
                 obj['source_volume_machine']='';
@@ -203,6 +203,57 @@ function getVMConsole(vm_id, console_type){
             }
     });
 }
+function fillSourceImages(vm_type){
+    var source;
+    if (vm_type == 'vdimachine')
+        source = 'initialmachine';
+    if (vm_type == 'initialmachine')
+        source = 'sourcemachine';
+    if (vm_type == 'sourcemachine')
+        source = 'images';
+    if (source){
+        $.post({
+            url : 'inc/infrastructure/OpenStack/GetSourceImage.php',
+                data: {
+                    vm_type: source,
+                },
+                success:function (data) {
+                    reply = $.parseJSON(data);
+                    $('#OSSource').empty();
+                    var x=0;
+                    while (reply[x]){
+                        $("#OSSource").append($("<option></option>").attr("value",reply[x]['id']).text(reply[x]['name']));
+                        ++x;
+                    }
+                }
+        });
+    }
+}
+function createOSVM(){
+    vm_type = $('#OSMachineType').val();
+    source = $('#OSSource').val();
+    os_type = $('#os_type').val();
+    flavor = $('#OSFlavor').val();
+    vm_name = $('#machinename').val();
+    vm_count = $('#machinecount').val();
+    if (vm_name){
+        $.post({
+            url : 'inc/infrastructure/OpenStack/CreateVM.php',
+                data: {
+                    vm_type: vm_type,
+                    source: source,
+                    os_type: os_type,
+                    flavor: flavor,
+                    vm_name: vm_name,
+                    vm_count: vm_count,
+                },
+                success:function (data) {
+                    reply = $.parseJSON(data);
+                    console.log(reply)
+                }
+        });
+    }
+}
 
 $(document).ready(function(){
     $('#OpenstackEditVmButton').click(function() {
@@ -224,6 +275,9 @@ $(document).ready(function(){
     $('#SpiceConsoleButton').click(function() {
         getVMConsole($("#vm_id").val(), 'spice');
     });
+    $('#OSMachineType').change(function() {
+        fillSourceImages($("#OSMachineType").val());
+    });
     $('#main_table').on("click", "a.power-button", function() { //since table items are dynamically generated, we will not get ordinary .click() event
         var vm_array=[];
         vm_array.push({
@@ -232,5 +286,14 @@ $(document).ready(function(){
             row_id : $(this).attr('data-power-button-rowid'),
         });
         vmPowerCycle(vm_array);
+    });
+     $('#create-vm-button-click').click(function() {
+        $("#new_vm_creation_info_box").addClass('hide');
+        if(!$('#new_vm')[0].checkValidity()){
+            $('#new_vm').find('input[type="submit"]').click();
+        }
+        else{
+            createOSVM();
+        }
     });
 })

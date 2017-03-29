@@ -14,6 +14,8 @@ function memcachedReadConfig(){
     $config['token']=memcache_get($memcache, 'token');
     $config['token_expire']=memcache_get($memcache, 'token_expire');
     $config['compute_url']=memcache_get($memcache, 'compute_url');
+    $config['volumev2_url']=memcache_get($memcache, 'volumev2_url');
+    $config['glance_url']=memcache_get($memcache, 'glance_url');
     return $config;
 }
 //############################################################################################
@@ -42,12 +44,21 @@ function OpenStackConnect(){
     );
     $result = json_decode(curl_exec($ch), TRUE);
     curl_close($ch);
+    foreach ($result['access']['serviceCatalog'] as $item){
+        if ($item['type'] == 'compute')
+            $compute_url = $item['endpoints'][0]['adminURL'];
+        if ($item['type'] == 'volumev2')
+            $volumev2_url = $item['endpoints'][0]['adminURL'];
+        if ($item['type'] == 'image')
+            $glance_url = $item['endpoints'][0]['adminURL'];
+    }
     $token = $result['access']['token']['id'];
     $token_expire=$result['access']['token']['expires'];
-    $compute_url = $result['access']['serviceCatalog'][0]['endpoints'][0]['adminURL'];
     memcache_set($memcache, 'token', $token);
     memcache_set($memcache, 'token_expire', $token_expire);
     memcache_set($memcache, 'compute_url', $compute_url);
+    memcache_set($memcache, 'volumev2_url', $volumev2_url);
+    memcache_set($memcache, 'glance_url', $glance_url);
  //   print_r($result);
 }
 //############################################################################################
@@ -107,10 +118,12 @@ function updateVmList(){
             array_push($instanceList,"'" . $vmInstanceId . "'");
             if ($result['servers'][$x]['OS-EXT-STS:task_state'] != '')
                 $vm_state = $result['servers'][$x]['OS-EXT-STS:task_state'];
-            if ($vm_state == 'powering-on')
-                $vm_state = 'Powering on';
             else 
                 $vm_state = $power_state[$result['servers'][$x]['OS-EXT-STS:power_state']];
+            if ($vm_state == 'powering-on')
+                $vm_state = 'Powering on';
+            if ($vm_state == 'powering-off')
+                $vm_state = 'Powering off';
             if (sizeof($vmEntry) == 0){
                 add_SQL_line("INSERT INTO vms  (name, state, osHypervisorName,  osInstanceName,  osInstanceId) VALUES ('$vmName', '$vm_state', '$vmHypervisor', '$vmInstanceName', '$vmInstanceId')");
             }
@@ -119,9 +132,9 @@ function updateVmList(){
         }
         ++$x;
     }
-    $notToDelete=join(', ', $instanceList);
-    if (!empty($toDelete))//delete all instances, that still exists in DB, but are removed in OpenStack
-        add_SQL_line("DELETE FROM vms WHERE osInstanceId NOT IN ($notToDelete)");
+    //$notToDelete=join(', ', $instanceList);
+    //if (!empty($notToDelete))//delete all instances, that still exists in DB, but are removed in OpenStack
+    //    add_SQL_line("DELETE FROM vms WHERE osInstanceId NOT IN ($notToDelete)");
     //print_r($result);
 }
 //############################################################################################
@@ -137,11 +150,41 @@ function listConsoles($vm){
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLINFO_HEADER_OUT, true);
     $result = curl_exec($ch);
-//   $result = json_decode(curl_exec($ch), TRUE);
-//    $information = curl_getinfo($ch);
-//    print_r( $information);
     curl_close($ch);
-//    print_r($result);
+    return($result);
+}
+//############################################################################################
+function listFlavors(){
+    include (dirname(__FILE__) . '/../../../functions/config.php');
+    $config=array();
+    $config=memcachedReadConfig();
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL,$config['compute_url'] . '/flavors');
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'X-Auth-Token: ' . $config['token']
+    ));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+    $result = curl_exec($ch);
+    curl_close($ch);
+    return($result);
+}
+//############################################################################################
+function listImages(){
+    include (dirname(__FILE__) . '/../../../functions/config.php');
+    $config=array();
+    $config=memcachedReadConfig();
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL,$config['glance_url'] . '/v2/images');
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'X-Auth-Token: ' . $config['token'],
+    ));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+    $result = curl_exec($ch);
+    curl_close($ch);
+//    print_r(json_decode($result));
+    return $result;
 }
 //############################################################################################
 function reload_vm_info(){
@@ -159,7 +202,19 @@ function getVMInfo($vm){
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     $result = curl_exec($ch);
     curl_close($ch);
-    return $result;
+    $result = json_decode($result,true);
+    $power_state=['Shutoff', 'Running', 'Paused', 'Crashed', 'Shutoff', 'Suspended'];
+    if ($result['server']['OS-EXT-STS:task_state'] != '')
+        $vm_state = $result['server']['OS-EXT-STS:task_state'];
+    else 
+        $vm_state = $power_state[$result['server']['OS-EXT-STS:power_state']];
+    if ($vm_state == 'powering-on')
+        $vm_state = 'Powering on';
+    if ($vm_state == 'powering-off')
+        $vm_state = 'Powering off';
+    write_log(serialize($result['server']));
+    add_SQL_line("UPDATE vms SET state='$vm_state' WHERE osInstanceId='$vm'");
+    return json_encode($result);
 }
 //############################################################################################
 function vmPowerCycle($vm, $action){
@@ -247,7 +302,7 @@ function drawVMScreen($vm){
                         <div class="col-md-8">
                             <input type="hidden" id="vm_id" value="' . $vm . '">
                             <button type="button" class="btn btn-success" id="SpiceConsoleButton">' . _("SPICE console") . '</button>
-                            <button type="button" class="btn btn-success" onclick="dashboard_open_html5_console_click()" data-dismiss="modal">' . _("HTML5 console") . '</button>
+                            <button type="button" class="btn hidden btn-success" onclick="dashboard_open_html5_console_click()" data-dismiss="modal">' . _("HTML5 console") . '</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">' . _("Close") .'</button>
                         </div>
                     </div>
@@ -259,8 +314,12 @@ function drawVMScreen($vm){
         </body>
         <script>
             function dashboard_open_html5_console_click(){
-                send_token(\'' . $websockets_address . '\', \'' . $websockets_port . '\', \'' . $v_reply[0]['name'] . '\', \'' . $html5_token_value . '\', \'' . $v_reply[0]['spice_password'] . '\');
             }
         </script>
     </html>';
+}
+//############################################################################################
+function drawNewVMScreen(){
+    require_once('NewVM.php');
+    draw_html();
 }
