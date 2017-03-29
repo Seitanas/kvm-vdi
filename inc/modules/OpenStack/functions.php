@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-03-22
+2017-03-29
 Vilnius, Lithuania.
 */
 //############################################################################################
@@ -15,7 +15,8 @@ function memcachedReadConfig(){
     $config['token_expire']=memcache_get($memcache, 'token_expire');
     $config['compute_url']=memcache_get($memcache, 'compute_url');
     $config['volumev2_url']=memcache_get($memcache, 'volumev2_url');
-    $config['glance_url']=memcache_get($memcache, 'glance_url');
+    $config['image_url']=memcache_get($memcache, 'image_url');
+    $config['network_url']=memcache_get($memcache, 'network_url');
     return $config;
 }
 //############################################################################################
@@ -50,7 +51,9 @@ function OpenStackConnect(){
         if ($item['type'] == 'volumev2')
             $volumev2_url = $item['endpoints'][0]['adminURL'];
         if ($item['type'] == 'image')
-            $glance_url = $item['endpoints'][0]['adminURL'];
+            $image_url = $item['endpoints'][0]['adminURL'];
+        if ($item['type'] == 'network')
+            $network_url = $item['endpoints'][0]['adminURL'];
     }
     $token = $result['access']['token']['id'];
     $token_expire=$result['access']['token']['expires'];
@@ -58,7 +61,8 @@ function OpenStackConnect(){
     memcache_set($memcache, 'token_expire', $token_expire);
     memcache_set($memcache, 'compute_url', $compute_url);
     memcache_set($memcache, 'volumev2_url', $volumev2_url);
-    memcache_set($memcache, 'glance_url', $glance_url);
+    memcache_set($memcache, 'image_url', $image_url);
+    memcache_set($memcache, 'network_url', $network_url);
  //   print_r($result);
 }
 //############################################################################################
@@ -154,6 +158,22 @@ function listConsoles($vm){
     return($result);
 }
 //############################################################################################
+function listNetworks(){
+    include (dirname(__FILE__) . '/../../../functions/config.php');
+    $config=array();
+    $config=memcachedReadConfig();
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL,$config['network_url'] . '/v2.0/networks');
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'X-Auth-Token: ' . $config['token']
+    ));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+    $result = curl_exec($ch);
+    curl_close($ch);
+    return($result);
+}
+//############################################################################################
 function listFlavors(){
     include (dirname(__FILE__) . '/../../../functions/config.php');
     $config=array();
@@ -175,7 +195,7 @@ function listImages(){
     $config=array();
     $config=memcachedReadConfig();
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL,$config['glance_url'] . '/v2/images');
+    curl_setopt($ch, CURLOPT_URL,$config['image_url'] . '/v2/images');
     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
         'X-Auth-Token: ' . $config['token'],
     ));
