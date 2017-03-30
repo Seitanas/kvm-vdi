@@ -10,7 +10,7 @@ function drawOpenStackVMTable(obj, type, i){
         power_button="<a href=\"#\" class=\"power-button\" id=\"" + obj['osInstanceId'] + "\" data-power=\"up\" data-power-button-rowid=\"" + obj['id'] +"\"><i class=\"text-success fa fa-play fa-fw\"></i>Power up</a>";
     var additional_buttons='';
     var rowclass='';
-    if (type == 'Initial'){
+    if (type == 'initialmachine'){
         rowclass = ' info';
         tab=['3','9 glyphicon glyphicon-menu-down'];
         additional_buttons="\
@@ -21,7 +21,7 @@ function drawOpenStackVMTable(obj, type, i){
             </button>\
         </div>";
     }
-    if (type == 'VDI'){
+    if (type == 'vdimachine'){
         tab=['5','7 glyphicon glyphicon-menu-right'];
         rowclass = ' warning';
     }
@@ -76,7 +76,7 @@ function drawOpenStackVMTable(obj, type, i){
         </div>\
     </td>\
 </tr>"
-    if (type == 'SimpleSource')
+    if (type == 'sourcemachine')
         $('#OpenstackVmTable').append(table_rows);
     else {
         var parent_row = document.getElementById("row-name-" + obj['source_volume']);
@@ -89,7 +89,6 @@ function drawOpenStackVMTable(obj, type, i){
 }
 function drawOpenstackVmTable(){
     $.getJSON("inc/infrastructure/OpenStack/ListVMS.php", {},  function(json){
-
         var initial_machines=[];
         var vdi_machines=[];
         var x=0;
@@ -103,21 +102,21 @@ function drawOpenstackVmTable(){
             if (obj['machine_type'] == 'vdimachine')
                 vdi_machines.push(obj);
             if (obj['machine_type'] == 'sourcemachine' || obj['machine_type'] == 'simplemachine')
-               drawOpenStackVMTable(obj, 'SimpleSource', ++x);
+               drawOpenStackVMTable(obj, 'sourcemachine', ++x);
         });
         //insert initial machine as child to source machine
         var i=initial_machines.length;
         x=0;
         while (initial_machines.length > 0){
             var obj = initial_machines.pop();
-            drawOpenStackVMTable(obj, 'Initial', '');
+            drawOpenStackVMTable(obj, 'initialmachine', '');
             --i;
         }
         //insert vdi machine as child to initial machine
         var i=vdi_machines.length;
         while (vdi_machines.length > 0){
             var obj = vdi_machines.pop();
-            drawOpenStackVMTable(obj, 'VDI', '');
+            drawOpenStackVMTable(obj, 'vdimachine', '');
             --i;
         }
     });
@@ -205,12 +204,18 @@ function getVMConsole(vm_id, console_type){
 }
 function fillSourceImages(vm_type){
     var source;
-    if (vm_type == 'vdimachine')
+    if (vm_type == 'vdimachine'){
+        $("#OSMachineCount").removeClass("hide");
         source = 'initialmachine';
-    if (vm_type == 'initialmachine')
+    }
+    if (vm_type == 'initialmachine'){
         source = 'sourcemachine';
-    if (vm_type == 'sourcemachine')
+        $("#OSMachineCount").addClass("hide");
+    }
+    if (vm_type == 'sourcemachine'){
         source = 'images';
+        $("#OSMachineCount").addClass("hide");
+    }
     if (source){
         $.post({
             url : 'inc/infrastructure/OpenStack/GetSourceImage.php',
@@ -220,24 +225,99 @@ function fillSourceImages(vm_type){
                 success:function (data) {
                     reply = $.parseJSON(data);
                     $('#OSSource').empty();
-                    var x=0;
-                    while (reply[x]){
-                        $("#OSSource").append($("<option></option>").attr("value",reply[x]['id']).text(reply[x]['name']));
-                        ++x;
-                    }
+                    $.each(reply, function(i, obj){
+                        $("#OSSource").append($("<option></option>").attr("value",obj['id']).text(obj['name']));
+                    });
                 }
         });
     }
 }
 function createOSVM(){
+    /* First of all we create snapshot from source machine.
+    JS will loop-query OpenStack volume service, till snapshot is created.
+    After snapshot is up, JS will create new VM with snapshot as its storage.
+    Note, that VM does not spin from snapshot directly, but from volume, which
+    OpenStack will create form taht snapshot at VM build time.
+    drawMessage() is just a loop to dislpay information box, till all snapshots are created.
+    */
     vm_type = $('#OSMachineType').val();
     source = $('#OSSource').val();
     os_type = $('#os_type').val();
     flavor = $('#OSFlavor').val();
+    networks = $('#OSNetworks').val();
     vm_name = $('#machinename').val();
     vm_count = $('#machinecount').val();
-    if (vm_name){
+    var snapshots_incomplete = vm_count;
+    function drawMessage(){
+        if (snapshots_incomplete)
+            setTimeout(function() {drawMessage()}, 1000);
+        else{
+            $("#new_vm_creation_info_box").addClass('hide');
+            $('#modalWm').modal('toggle');
+        }
+    }
+    function getSnapshotInfo(snapshot_id, new_vm_name){
         $.post({
+            url : 'inc/infrastructure/OpenStack/GetSnapshotInfo.php',
+                data: {
+                    snapshot_id: snapshot_id,
+                },
+                success:function (data) {
+                    reply = $.parseJSON(data);
+                    if (reply['snapshot']['status'] == 'available'){
+                        $.post({
+                            url : 'inc/infrastructure/OpenStack/CreateVM.php',
+                                data: {
+                                    vm_name: new_vm_name,
+                                    vm_type: vm_type,
+                                    os_type: os_type,
+                                    flavor: flavor,
+                                    snapshot_id: snapshot_id,
+                                    networks: networks,
+                                    source_vm: source,
+                                },
+                                success:function (data) {
+                                    reply = $.parseJSON(data);
+                                    drawOpenStackVMTable(reply, vm_type, '');
+                                    $('#progress-bar-' + reply['id']).removeClass('hide');
+                                    drawVMStatus(reply['id'], reply['osInstanceId'], 'up');
+                                }
+                        });
+                        --snapshots_incomplete;
+                    }
+                    else
+                        setTimeout(function() {getSnapshotInfo(snapshot_id, new_vm_name)}, 4000);
+                }
+        });
+    }
+    if (vm_name){
+        drawMessage(); //Show message box till all snapshots are created 
+        $("#new_vm_creation_info_box").removeClass('hide');
+        $("#new_vm_creation_info_box").html('Please wait. Building instances. <i class="fa fa-spinner fa-spin fa-1x fa-fw"></i>');
+        if (vm_type == 'initialmachine' || vm_type == 'vdimachine'){
+            var x=0;
+            var new_vm_name = vm_name;
+            while (vm_count){
+                ++x;
+                if (vm_type == 'vdimachine')
+                    new_vm_name = vm_name + "-" + x;
+                $.post({
+                    url : 'inc/infrastructure/OpenStack/CreateSnapshot.php',
+                        data: {
+                            source: source,
+                            vm_name: new_vm_name,
+                            vm_type: vm_type,
+                        },
+                        success:function (data) {
+                            reply = $.parseJSON(data);
+                            getSnapshotInfo(reply['snapshot']['id'], new_vm_name);
+
+                        }
+                });
+                --vm_count;
+            }
+        }
+        /*$.post({
             url : 'inc/infrastructure/OpenStack/CreateVM.php',
                 data: {
                     vm_type: vm_type,
@@ -251,10 +331,31 @@ function createOSVM(){
                     reply = $.parseJSON(data);
                     console.log(reply)
                 }
-        });
+        });*/
     }
 }
-
+function loadNetworkList(){
+    $("#OSNetworkLoad").removeClass('hide');
+    $.get( "inc/infrastructure/OpenStack/ListNetworks.php", function( data ) {
+        $("#OSNetworks").empty();
+        reply = $.parseJSON(data);
+        $.each(reply, function(i, obj){
+            $("#OSNetworks").append($("<option></option>").attr("value",obj['id']).text(obj['name']));
+        });
+        $("#OSNetworkLoad").addClass('hide');
+    });
+}
+function loadFlavorList(){
+    $("#OSFlavorLoad").removeClass('hide');
+    $.get( "inc/infrastructure/OpenStack/ListFlavors.php", function( data ) {
+        $("#OSFlavor").empty();
+        reply = $.parseJSON(data);
+        $.each(reply['flavors'], function(i, obj){
+            $("#OSFlavor").append($("<option></option>").attr("value",obj['id']).text(obj['name']));
+        });
+        $("#OSFlavorLoad").addClass('hide');
+    });
+}
 $(document).ready(function(){
     $('#OpenstackEditVmButton').click(function() {
         $.ajax({
@@ -288,7 +389,6 @@ $(document).ready(function(){
         vmPowerCycle(vm_array);
     });
      $('#create-vm-button-click').click(function() {
-        $("#new_vm_creation_info_box").addClass('hide');
         if(!$('#new_vm')[0].checkValidity()){
             $('#new_vm').find('input[type="submit"]').click();
         }

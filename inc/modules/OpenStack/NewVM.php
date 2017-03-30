@@ -38,6 +38,15 @@ set_lang();
                 </div>
             </div>
             <div class="row">
+                <div class="col-md-6">
+                    <label><?php echo _("Networks:");?><i class="fa fa-spinner fa-spin fa-1x fa-fw hide" id="OSNetworkLoad"></i></label>
+                    <select multiple class="form-control osselection" name="OSNetworks" id="OSNetworks" tabindex="3" required type="number">
+                    </select>
+                </div>
+                <div class="col-md-6">
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-md-6" id="newmachine-os">
                     <label><?php echo _("System info:");?></label>
                     <div class="input-group">
@@ -50,14 +59,8 @@ set_lang();
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <label><?php echo _("Flavors")?></label>
+                    <label><?php echo _("Flavors")?><i class="fa fa-spinner fa-spin fa-1x fa-fw hide" id="OSFlavorLoad"></i></label>
                     <select class="form-control selectClass" name="OSFlavor" id="OSFlavor" required tabindex="1">
-                        <option selected value=""><?php echo _("Please select machine flavor");?></option>
-                        <?php
-                            $flavors = json_decode(listFlavors(), TRUE);
-                            foreach($flavors['flavors'] as $flavor)
-                                echo '<option value="' . $flavor['id'] . '">' . $flavor['name'] . '</option>' . "\n";
-                        ?>
                     </select>
                 </div>
             </div>
@@ -66,7 +69,7 @@ set_lang();
                     <label><?php echo _("Machine name:");?></label>
                     <input type="text" name="machinename" id="machinename" placeholder="somename-" class="form-control" required pattern="[a-zA-Z0-9-_]+" oninvalid="setCustomValidity(<?php echo ("'Illegal characters detected'");?>)" onchange="try{setCustomValidity('')}catch(e){}" >
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 hide" id="OSMachineCount">
                     <label><?php echo _("Number of machines to create:");?></label>
                     <input type="number" name="machinecount" id="machinecount" min="1" value="1" class="form-control" required>
                 </div>
@@ -75,7 +78,7 @@ set_lang();
         <div class="modal-footer">
             <div class="row">
             <div class="col-md-7">
-                <div class="alert hide text-left" id="new_vm_creation_info_box"></div>
+                <div class="alert alert-info text-left hide" id="new_vm_creation_info_box"></div>
                 </div>
             <div class="col-md-5">
                 <button type="button" class="btn btn-default create_vm_buttons" data-dismiss="modal"><?php echo _("Close");?></button>
@@ -87,6 +90,12 @@ set_lang();
     </div>
 </form>
 </body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        loadNetworkList();
+        loadFlavorList();
+    });
+</script>
 </html>
 <?php
 }
