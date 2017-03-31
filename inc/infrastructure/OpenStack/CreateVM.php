@@ -9,15 +9,15 @@ $vm_name = $_POST['vm_name'];
 $vm_type = $_POST['vm_type'];
 $os_type = $_POST['os_type'];
 $flavor = $_POST['flavor'];
-$snapshot_id = $_POST['snapshot_id'];
+$volume_id = $_POST['volume_id'];
 $networks = $_POST['networks'];
 $source_vm=$_POST['source_vm'];
 
-if (!empty($vm_name) && !empty($vm_type) && !empty($os_type) && !empty($flavor) && !empty($snapshot_id) && !empty($networks) && !empty($source_vm)){
+if (!empty($vm_name) && !empty($vm_type) && !empty($os_type) && !empty($flavor) && !empty($volume_id) && !empty($networks) && !empty($source_vm)){
     $network_array = array();
     foreach($networks as $uuid)
         array_push($network_array, array('uuid' => $uuid));
-    $reply = createVM($vm_name, $flavor, $snapshot_id, $network_array);
+    $reply = createVM($vm_name, $flavor, $volume_id, $network_array);
     $result = json_decode($reply, TRUE);
     if ($result['server']['id']){
         $source_vm = getSQLArray("SELECT id FROM vms WHERE osInstanceId='$source_vm'");

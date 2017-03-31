@@ -206,22 +206,18 @@ function listImages(){
 //    print_r(json_decode($result));
     return $result;
 }
+
 //############################################################################################
-function createSnapshot($source, $vm_name, $vm_type){
+function getSnapshotInfo($snapshot_id){
     include (dirname(__FILE__) . '/../../../functions/config.php');
-    $data=array();
-    $data['snapshot'] = array('name' => $vm_name, 'description' => 'For VM: ' . $vm_name . ' From: ' . $source . ' Machine type: ' . $vm_type, 'volume_id' => $source, 'force' => 'true');
-    $data=json_encode($data);
     $config=array();
     $config=memcachedReadConfig();
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL,$config['volumev2_url'] . '/snapshots');
+    curl_setopt($ch, CURLOPT_URL,$config['volumev2_url'] . '/snapshots/' . $snapshot_id);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
         'X-Auth-Token: ' . $config['token'],
         'Content-type: application/json',
     ));
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-    curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLINFO_HEADER_OUT, true);
     $result = curl_exec($ch);
@@ -230,12 +226,12 @@ function createSnapshot($source, $vm_name, $vm_type){
     return $result;
 }
 //############################################################################################
-function getSnapshotInfo($snapshot_id){
+function getVolumeInfo($volume_id){
     include (dirname(__FILE__) . '/../../../functions/config.php');
     $config=array();
     $config=memcachedReadConfig();
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL,$config['volumev2_url'] . '/snapshots/' . $snapshot_id);
+    curl_setopt($ch, CURLOPT_URL,$config['volumev2_url'] . '/volumes/' . $volume_id);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
         'X-Auth-Token: ' . $config['token'],
         'Content-type: application/json',
@@ -270,8 +266,10 @@ function getVMInfo($vm){
         $vm_state = 'Powering on';
     if ($vm_state == 'powering-off')
         $vm_state = 'Powering off';
-    write_log(serialize($result['server']));
-    add_SQL_line("UPDATE vms SET state='$vm_state' WHERE osInstanceId='$vm'");
+//    write_log(serialize($result['server']));
+    $osInstanceName = $result['server']['OS-EXT-SRV-ATTR:instance_name'];
+    $osHypervisorName = $result['server']['OS-EXT-SRV-ATTR:host'];
+    add_SQL_line("UPDATE vms SET state = '$vm_state', osInstanceName = '$osInstanceName', osHypervisorName = '$osHypervisorName' WHERE osInstanceId='$vm'");
     return json_encode($result);
 }
 //############################################################################################
@@ -298,12 +296,58 @@ function vmPowerCycle($vm, $action){
     return $result;
 }
 //############################################################################################
+function createSnapshot($source, $vm_name, $vm_type){
+    include (dirname(__FILE__) . '/../../../functions/config.php');
+    $data=array();
+    $data['snapshot'] = array('name' => $vm_name, 'description' => 'For VM: ' . $vm_name . ' From: ' . $source . ' Machine type: ' . $vm_type, 'volume_id' => $source, 'force' => 'true');
+    $data=json_encode($data);
+    $config=array();
+    $config=memcachedReadConfig();
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL,$config['volumev2_url'] . '/snapshots');
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'X-Auth-Token: ' . $config['token'],
+        'Content-type: application/json',
+    ));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+    $result = curl_exec($ch);
+    curl_close($ch);
+//    print_r(json_decode($result));
+    return $result;
+}
+//############################################################################################
+function createVolume($source, $vm_name, $vm_type){
+    include (dirname(__FILE__) . '/../../../functions/config.php');
+    $data=array();
+    $data['volume'] = array('name' => $vm_name, 'description' => 'For VM: ' . $vm_name . ' From: ' . $source . ' Machine type: ' . $vm_type, 'source_volid' => $source, 'force' => 'true');
+    $data=json_encode($data);
+    $config=array();
+    $config=memcachedReadConfig();
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL,$config['volumev2_url'] . '/volumes');
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'X-Auth-Token: ' . $config['token'],
+        'Content-type: application/json',
+    ));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+    $result = curl_exec($ch);
+    curl_close($ch);
+//    print_r(json_decode($result));
+    return $result;
+}
+//############################################################################################
 function createVM($vm_name, $flavor, $snapshot_id, $networks){
     include (dirname(__FILE__) . '/../../../functions/config.php');
     $config=array();
     $config=memcachedReadConfig();
     $block_device = array();
-    $block_device = array(array('boot_index' => '0', 'uuid' => $snapshot_id, 'source_type' => 'snapshot', 'delete_on_termination' => true, 'destination_type' => 'volume'));
+    $block_device = array(array('boot_index' => '0', 'uuid' => $snapshot_id, 'source_type' => 'volume', 'delete_on_termination' => true, 'destination_type' => 'volume'));
     $data = array();
     $data['server'] = array('name' => $vm_name, 'flavorRef' => $flavor, 'availability_zone' => $OpenStack_availability_zone, 'networks' => $networks, 'block_device_mapping_v2' => $block_device);
     $ch = curl_init();

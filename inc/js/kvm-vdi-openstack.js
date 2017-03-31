@@ -233,12 +233,12 @@ function fillSourceImages(vm_type){
     }
 }
 function createOSVM(){
-    /* First of all we create snapshot from source machine.
-    JS will loop-query OpenStack volume service, till snapshot is created.
-    After snapshot is up, JS will create new VM with snapshot as its storage.
-    Note, that VM does not spin from snapshot directly, but from volume, which
-    OpenStack will create form taht snapshot at VM build time.
-    drawMessage() is just a loop to dislpay information box, till all snapshots are created.
+    /* First of all we create volume from source machine.
+    JS will loop-query OpenStack volume service, till volume is created.
+    After volume is up, JS will create new VM with volume as its storage.
+    Note, that VM does not spin from volume directly, but from volume, which
+    OpenStack will create form taht volume at VM build time.
+    drawMessage() is just a loop to dislpay information box, till all volumes are created.
     */
     vm_type = $('#OSMachineType').val();
     source = $('#OSSource').val();
@@ -247,24 +247,24 @@ function createOSVM(){
     networks = $('#OSNetworks').val();
     vm_name = $('#machinename').val();
     vm_count = $('#machinecount').val();
-    var snapshots_incomplete = vm_count;
+    var volumes_incomplete = vm_count;
     function drawMessage(){
-        if (snapshots_incomplete)
+        if (volumes_incomplete)
             setTimeout(function() {drawMessage()}, 1000);
         else{
             $("#new_vm_creation_info_box").addClass('hide');
             $('#modalWm').modal('toggle');
         }
     }
-    function getSnapshotInfo(snapshot_id, new_vm_name){
+    function getVolumeInfo(volume_id, new_vm_name){
         $.post({
-            url : 'inc/infrastructure/OpenStack/GetSnapshotInfo.php',
+            url : 'inc/infrastructure/OpenStack/GetVolumeInfo.php',
                 data: {
-                    snapshot_id: snapshot_id,
+                    volume_id: volume_id,
                 },
                 success:function (data) {
                     reply = $.parseJSON(data);
-                    if (reply['snapshot']['status'] == 'available'){
+                    if (reply['volume']['status'] == 'available'){
                         $.post({
                             url : 'inc/infrastructure/OpenStack/CreateVM.php',
                                 data: {
@@ -272,7 +272,7 @@ function createOSVM(){
                                     vm_type: vm_type,
                                     os_type: os_type,
                                     flavor: flavor,
-                                    snapshot_id: snapshot_id,
+                                    volume_id: volume_id,
                                     networks: networks,
                                     source_vm: source,
                                 },
@@ -283,26 +283,23 @@ function createOSVM(){
                                     drawVMStatus(reply['id'], reply['osInstanceId'], 'up');
                                 }
                         });
-                        --snapshots_incomplete;
+                        --volumes_incomplete;
                     }
                     else
-                        setTimeout(function() {getSnapshotInfo(snapshot_id, new_vm_name)}, 4000);
+                        setTimeout(function() {getVolumeInfo(volume_id, new_vm_name)}, 4000);
                 }
         });
     }
     if (vm_name){
-        drawMessage(); //Show message box till all snapshots are created 
+        drawMessage(); //Show message box till all volumes are created 
         $("#new_vm_creation_info_box").removeClass('hide');
         $("#new_vm_creation_info_box").html('Please wait. Building instances. <i class="fa fa-spinner fa-spin fa-1x fa-fw"></i>');
         if (vm_type == 'initialmachine' || vm_type == 'vdimachine'){
             var x=0;
             var new_vm_name = vm_name;
-            while (vm_count){
-                ++x;
-                if (vm_type == 'vdimachine')
-                    new_vm_name = vm_name + "-" + x;
+            function post_values(source, new_vm_name, vm_type){ // we need to call post as external function because of async call.This solves problem with incremental number in machine name
                 $.post({
-                    url : 'inc/infrastructure/OpenStack/CreateSnapshot.php',
+                    url : 'inc/infrastructure/OpenStack/CreateVolume.php',
                         data: {
                             source: source,
                             vm_name: new_vm_name,
@@ -310,10 +307,15 @@ function createOSVM(){
                         },
                         success:function (data) {
                             reply = $.parseJSON(data);
-                            getSnapshotInfo(reply['snapshot']['id'], new_vm_name);
-
+                            getVolumeInfo(reply['volume']['id'], new_vm_name);
                         }
                 });
+            }
+            while (vm_count){
+                ++x;
+                if (vm_type == 'vdimachine')
+                    new_vm_name = vm_name + "-" + x;
+                post_values(source, new_vm_name, vm_type);
                 --vm_count;
             }
         }
