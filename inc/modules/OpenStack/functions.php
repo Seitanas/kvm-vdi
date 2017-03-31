@@ -347,12 +347,12 @@ function createVolume($source, $vm_name, $vm_type){
     return $result;
 }
 //############################################################################################
-function createVM($vm_name, $flavor, $snapshot_id, $networks){
+function createVM($vm_name, $flavor, $snapshot_id, $networks, $delete_on_termination){
     include (dirname(__FILE__) . '/../../../functions/config.php');
     $config=array();
     $config=memcachedReadConfig();
     $block_device = array();
-    $block_device = array(array('boot_index' => '0', 'uuid' => $snapshot_id, 'source_type' => 'volume', 'delete_on_termination' => true, 'destination_type' => 'volume'));
+    $block_device = array(array('boot_index' => '0', 'uuid' => $snapshot_id, 'source_type' => 'volume', 'delete_on_termination' => $delete_on_termination, 'destination_type' => 'volume'));
     $data = array();
     $data['server'] = array('name' => $vm_name, 'flavorRef' => $flavor, 'availability_zone' => $OpenStack_availability_zone, 'networks' => $networks, 'block_device_mapping_v2' => $block_device);
     $ch = curl_init();
