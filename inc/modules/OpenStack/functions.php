@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-03-29
+2017-03-31
 Vilnius, Lithuania.
 */
 //############################################################################################
@@ -146,11 +146,16 @@ function listConsoles($vm){
     include (dirname(__FILE__) . '/../../../functions/config.php');
     $config=array();
     $config=memcachedReadConfig();
+    $data['os-getSPICEConsole'] = array('type' => 'spice-html5');
+    $data = json_encode($data);
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL,$config['compute_url'] . '/servers/a17ac994-8311-42ab-84d0-614e1ef8f1cd/consoles');
+    curl_setopt($ch, CURLOPT_URL,$config['compute_url'] . '/servers/' . $vm . '/action');
     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        'X-Auth-Token: ' . $config['token']
+        'X-Auth-Token: ' . $config['token'],
+        'Content-type: application/json',
     ));
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLINFO_HEADER_OUT, true);
     $result = curl_exec($ch);
