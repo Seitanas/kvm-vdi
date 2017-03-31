@@ -4,6 +4,10 @@ function drawOpenStackVMTable(obj, type, i){
     machine_types['initialmachine']='Initial machine';
     machine_types['vdimachine']='VDI machine';
     machine_types['simplemachine']='Simple machine';
+    if (obj['maintenance'] == 'true')
+        obj['maintenance'] = 'checked';
+    else
+        obj['maintenance'] = '';
     var tab=['1','11'];
     var power_button="<a href=\"#\" class=\"power-button\" id=\"" + obj['osInstanceId'] + "\" data-power=\"down\" data-power-button-rowid=\"" + obj['id'] +"\"><i class=\"text-danger fa fa-stop fa-fw\"></i>Power down</i></a>";
     if (obj['state'] != "Running")
@@ -36,8 +40,8 @@ function drawOpenStackVMTable(obj, type, i){
     <td class=\"col-md-2\"><a data-toggle=\"modal\" href=\"vm_info.php?vm=" + obj['osInstanceId'] + "\" data-target=\"#modalWm\">" + obj['name'] + "</a> </td>\
     <td class=\"col-md-1\">" + machine_types[obj['machine_type']] + "</td>\
     <td class=\"col-md-1\">" + obj['source_volume_machine'] + "</td>\
-    <td class=\"col-md-1\"><input type=\"checkbox\" checked onclick='handleSnapshot(this);' id=\"" + obj['osInstanceId'] + "\"></td>\
-    <td class=\"col-md-1\"><input type=\"checkbox\"  onclick='handleMaintenance(this);' id=\"" + obj['osInstanceId'] + "\"></td>\
+    <td class=\"col-md-1\"><input type=\"checkbox\" checked' id=\"" + obj['osInstanceId'] + "\"></td>\
+    <td class=\"col-md-1\"><input class=\"MaintenanceCheckbox\" type=\"checkbox\"  id=\"" + obj['osInstanceId'] + "\" " + obj['maintenance'] + "></td>\
     <td class=\"col-md-2\">\
         <div class=\"btn-group\">\
             <button class=\"btn btn-default dropdown-toggle\" type=\"button\" id=\"VMSActionMenu\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"true\">VM Actions\
@@ -358,6 +362,18 @@ function loadFlavorList(){
         $("#OSFlavorLoad").addClass('hide');
     });
 }
+function changeMaintenanceStatus(vm_id, state){
+    $.post({
+        url : 'inc/infrastructure/OpenStack/UpdateMaintenance.php',
+            data: {
+                vm_id: vm_id,
+                state: state
+            },
+            success:function (data) {
+            }
+    });
+
+}
 $(document).ready(function(){
     $('#OpenstackEditVmButton').click(function() {
         $.ajax({
@@ -377,6 +393,10 @@ $(document).ready(function(){
     });
     $('#SpiceConsoleButton').click(function() {
         getVMConsole($("#vm_id").val(), 'spice');
+    });
+    $('#main_table').on("click", ".MaintenanceCheckbox", function() { //since table items are dynamically generated, we will not get ordinary .click() event
+//        console.log($(this).prop('checked'));
+        changeMaintenanceStatus($(this).attr('id'), $(this).prop('checked'));
     });
     $('#OSMachineType').change(function() {
         fillSourceImages($("#OSMachineType").val());
