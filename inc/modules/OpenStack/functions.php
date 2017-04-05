@@ -114,25 +114,27 @@ function updateVmList(){
     $power_state=['Shutoff', 'Running', 'Paused', 'Crashed', 'Shutoff', 'Suspended'];
     while ($x <  sizeof($result['servers'])){
         $vmName=$result['servers'][$x]['name'];
-        $vmHypervisor=$result['servers'][$x]['OS-EXT-SRV-ATTR:host'];
-        $vmInstanceName=$result['servers'][$x]['OS-EXT-SRV-ATTR:instance_name'];
-        $vmInstanceId=$result['servers'][$x]['id'];
-        if (!empty($vmName) && !empty($vmHypervisor) && !empty($vmInstanceName) && !empty($vmInstanceId)){
-            $vmEntry=get_SQL_ARRAY("SELECT * FROM vms WHERE osInstanceId='$vmInstanceId'");
-            array_push($instanceList,"'" . $vmInstanceId . "'");
-            if ($result['servers'][$x]['OS-EXT-STS:task_state'] != '')
-                $vm_state = $result['servers'][$x]['OS-EXT-STS:task_state'];
-            else 
-                $vm_state = $power_state[$result['servers'][$x]['OS-EXT-STS:power_state']];
-            if ($vm_state == 'powering-on')
-                $vm_state = 'Powering on';
-            if ($vm_state == 'powering-off')
-                $vm_state = 'Powering off';
-            if (sizeof($vmEntry) == 0){
-                add_SQL_line("INSERT INTO vms  (name, state, osHypervisorName,  osInstanceName,  osInstanceId) VALUES ('$vmName', '$vm_state', '$vmHypervisor', '$vmInstanceName', '$vmInstanceId')");
+        if (strpos($vmName, 'ephermal') === false) { // ignore ephermal VDI machines
+            $vmHypervisor=$result['servers'][$x]['OS-EXT-SRV-ATTR:host'];
+            $vmInstanceName=$result['servers'][$x]['OS-EXT-SRV-ATTR:instance_name'];
+            $vmInstanceId=$result['servers'][$x]['id'];
+            if (!empty($vmName) && !empty($vmHypervisor) && !empty($vmInstanceName) && !empty($vmInstanceId)){
+                $vmEntry=get_SQL_ARRAY("SELECT * FROM vms WHERE osInstanceId='$vmInstanceId'");
+                array_push($instanceList,"'" . $vmInstanceId . "'");
+                if ($result['servers'][$x]['OS-EXT-STS:task_state'] != '')
+                    $vm_state = $result['servers'][$x]['OS-EXT-STS:task_state'];
+                else 
+                    $vm_state = $power_state[$result['servers'][$x]['OS-EXT-STS:power_state']];
+                if ($vm_state == 'powering-on')
+                    $vm_state = 'Powering on';
+                if ($vm_state == 'powering-off')
+                    $vm_state = 'Powering off';
+                if (sizeof($vmEntry) == 0){
+                    add_SQL_line("INSERT INTO vms  (name, state, osHypervisorName,  osInstanceName,  osInstanceId) VALUES ('$vmName', '$vm_state', '$vmHypervisor', '$vmInstanceName', '$vmInstanceId')");
+                }
+                else
+                    add_SQL_line("UPDATE vms SET name='$vmName', state='$vm_state', osHypervisorName='$vmHypervisor', osInstanceName='$vmInstanceName', osInstanceId='$vmInstanceId' WHERE osInstanceId='$vmInstanceId'");
             }
-            else
-                add_SQL_line("UPDATE vms SET name='$vmName', state='$vm_state', osHypervisorName='$vmHypervisor', osInstanceName='$vmInstanceName', osInstanceId='$vmInstanceId' WHERE osInstanceId='$vmInstanceId'");
         }
         ++$x;
     }
