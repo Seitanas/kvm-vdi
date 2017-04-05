@@ -16,7 +16,7 @@ class spiceChannel(threading.Thread):
     def run(self):
         global redirectorExit
         logger = logging.getLogger('kvm-vdi-broker')
-        logger.debug("spiceChannel redirector started for hypervisor: %s:%s", self.target_ip, self.target_port)
+        logger.debug("spiceChannel redirector started for SPICE address: %s:%s", self.target_ip, self.target_port)
         self.__spiceClient.setblocking(0)
         dataToServer=''
         dataToClient=''

@@ -10,6 +10,35 @@ from threading import Thread
 from ConfigParser import ConfigParser
 import ConsoleProxy 
 import threading
+import requests
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
+
+http_headers = {
+    'User-Agent': 'KVM-VDI broker',
+}
+
+class maintenanceBroker(threading.Thread):
+    def __init__(self):
+        super(maintenanceBroker, self).__init__()
+        self._stop = threading.Event()
+    def stop(self):
+        self._stop.set()
+    def stopped(self):
+        return self._stop.isSet()
+    def login(self):
+        http_session = requests.session()
+        reply=http_session.post(dashboard_path+"inc/infrastructure/OpenStack/BrokerLogin.php", data={'password': dashboard_password}, verify=False, headers=http_headers)
+        return http_session
+    def run(self):
+        logger = logging.getLogger('kvm-vdi-broker')
+        http_session = self.login()
+        reply = json.loads(http_session.get(dashboard_path+"inc/infrastructure/OpenStack/ListVDIVMSRebuild.php", verify=False, headers=http_headers).text)
+        if 'error' in reply:
+            logger.info("Failed to connect to dashboard");
+            self.stop();
+
 
 class createChannel(threading.Thread):
     def __init__(self, target_ip, target_port, bind_port, vm_id):
@@ -69,6 +98,10 @@ def main():
     server.listen(5)
     config = ConfigParser()
     config.read('/etc/kvm-vdi/kvm-vdi.cfg')
+    global dashboard_path
+    global dashboard_password
+    dashboard_path = config.get('server', 'address')
+    dashboard_password = config.get('server', 'password')
     port_range = config.get('broker', 'port_range')
     port_range = port_range.split(':')
     global ports
@@ -78,6 +111,8 @@ def main():
     terminate = 0
     logger.info("Starting KVM-VDI broker")
     active_vms = {}
+    maintenanceBroker().start()
+    #maintenanceThread.start()
     try:
         while True:
             conn, addr = server.accept()
@@ -98,7 +133,7 @@ def main():
                         else:
                             bind_port = ports.pop()
                             active_vms[command['vm_id']]=bind_port
-                            t=createChannel(command['hypervisor_ip'], command['spice_port'], bind_port, command['vm_id'])
+                            t = createChannel(command['hypervisor_ip'], command['spice_port'], bind_port, command['vm_id'])
                             t.start()
                             conn.send(json.dumps({"spice_port": bind_port}))
 #                    except:
