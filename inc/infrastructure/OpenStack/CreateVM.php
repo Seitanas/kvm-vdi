@@ -21,8 +21,8 @@ if (!empty($vm_name) && !empty($vm_type) && !empty($os_type) && !empty($flavor) 
     $delete_on_termination = true;
     if ($vm_type == 'vdimachine') // we need to leave VDI VM image if VM is deleted (for rebuild purposes)
         $delete_on_termination = false;
-    if ($vm_type == 'ephermalvdi')
-        $vm_name = $vm_name . '-ephermalvdi';
+    if ($vm_type == 'ephemeralvdi')
+        $vm_name = $vm_name . '-ephemeralvdi';
     $reply = createVM($vm_name, $flavor, $volume_id, $network_array, $delete_on_termination);
     $result = json_decode($reply, TRUE);
     if ($result['server']['id']){
