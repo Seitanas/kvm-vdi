@@ -114,7 +114,7 @@ function updateVmList(){
     $power_state=['Shutoff', 'Running', 'Paused', 'Crashed', 'Shutoff', 'Suspended'];
     while ($x <  sizeof($result['servers'])){
         $vmName=$result['servers'][$x]['name'];
-        if (strpos($vmName, 'ephermal') === false) { // ignore ephermal VDI machines
+        if (strpos($vmName, 'ephermalvdi') === false) { // ignore ephermal VDI machines
             $vmHypervisor=$result['servers'][$x]['OS-EXT-SRV-ATTR:host'];
             $vmInstanceName=$result['servers'][$x]['OS-EXT-SRV-ATTR:instance_name'];
             $vmInstanceId=$result['servers'][$x]['id'];
