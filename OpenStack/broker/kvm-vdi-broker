@@ -9,15 +9,14 @@ import json
 from threading import Thread
 from ConfigParser import ConfigParser
 import ConsoleProxy 
+import VMBuilder
+import Variables
 import threading
 import requests
+import time
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-
-http_headers = {
-    'User-Agent': 'KVM-VDI broker',
-}
 
 class maintenanceBroker(threading.Thread):
     def __init__(self):
@@ -29,15 +28,24 @@ class maintenanceBroker(threading.Thread):
         return self._stop.isSet()
     def login(self):
         http_session = requests.session()
-        reply=http_session.post(dashboard_path+"inc/infrastructure/OpenStack/BrokerLogin.php", data={'password': dashboard_password}, verify=False, headers=http_headers)
+        reply=http_session.post(Variables.dashboard_path+"inc/infrastructure/OpenStack/BrokerLogin.php", data={'password': dashboard_password}, verify=False, headers=Variables.http_headers)
         return http_session
     def run(self):
-        logger = logging.getLogger('kvm-vdi-broker')
-        http_session = self.login()
-        reply = json.loads(http_session.get(dashboard_path+"inc/infrastructure/OpenStack/ListVDIVMSRebuild.php", verify=False, headers=http_headers).text)
-        if 'error' in reply:
-            logger.info("Failed to connect to dashboard");
-            self.stop();
+        while True and not terminate:
+            logger = logging.getLogger('kvm-vdi-broker')
+            http_session = self.login()
+            reply = json.loads(http_session.get(Variables.dashboard_path+"inc/infrastructure/OpenStack/ListVDIVMSRebuild.php", verify=False, headers=Variables.http_headers).text)
+            if 'error' in reply:
+                logger.info("Failed to connect to dashboard");
+                self.stop();
+            else:
+                for vm in reply:
+                    if Variables.vms_to_build.get(vm['osInstanceId'], None) is None: # if vm is not currently building
+                        Variables.vms_to_build[vm['osInstanceId']] = True
+                        print ("building vm")
+                        vmbuilder = VMBuilder.VMBuilder(vm['name'] + '-epheremal', vm['osInstanceId'], vm['ephemeral_osInstanceId'], http_session).start()
+                print (Variables.vms_to_build)
+            time.sleep(10)
 
 
 class createChannel(threading.Thread):
@@ -98,9 +106,8 @@ def main():
     server.listen(5)
     config = ConfigParser()
     config.read('/etc/kvm-vdi/kvm-vdi.cfg')
-    global dashboard_path
     global dashboard_password
-    dashboard_path = config.get('server', 'address')
+    Variables.dashboard_path = config.get('server', 'address')
     dashboard_password = config.get('server', 'password')
     port_range = config.get('broker', 'port_range')
     port_range = port_range.split(':')
@@ -108,11 +115,11 @@ def main():
     global active_vms
     ports = list(range(int(port_range[0]), int(port_range[1]) + 1))
     ports.reverse()
+    global terminate
     terminate = 0
     logger.info("Starting KVM-VDI broker")
     active_vms = {}
     maintenanceBroker().start()
-    #maintenanceThread.start()
     try:
         while True:
             conn, addr = server.accept()
