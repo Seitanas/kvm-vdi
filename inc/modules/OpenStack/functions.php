@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-03-31
+2017-04-06
 Vilnius, Lithuania.
 */
 //############################################################################################
@@ -367,6 +367,22 @@ function createVM($vm_name, $flavor, $snapshot_id, $networks, $delete_on_termina
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    $result = curl_exec($ch);
+    curl_close($ch);
+    return $result;
+}
+//############################################################################################
+function deleteVM($vm_id){
+    include (dirname(__FILE__) . '/../../../functions/config.php');
+    $config=array();
+    $config=memcachedReadConfig();
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL,$config['compute_url'] . '/servers/' . $vm_id);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'X-Auth-Token: ' . $config['token'],
+    ));
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     $result = curl_exec($ch);
     curl_close($ch);
     return $result;

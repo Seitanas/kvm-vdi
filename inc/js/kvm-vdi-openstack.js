@@ -52,7 +52,7 @@ function drawOpenStackVMTable(obj, type, i){
                     " + power_button + "\
                 </li>\
                 <li role=\"separator\" class=\"divider\"></li>\
-                <li class=\"lockable-vm-buttons-" + obj['id'] + "\"><a href=\"delete_vm.php?vm=" + obj['osInstanceId'] + "\" onclick=\"return confirmBox('Are you sure?');\">\
+                <li class=\"lockable-vm-buttons-" + obj['id'] + "\"><a class=\"delete-button\" href=\"#\" id=\"" + obj['osInstanceId'] + "\" data-power-button-rowid=\"" + obj['id'] + "\" onclick=\"return confirmBox('Are you sure?');\">\
                     <i class=\"fa fa-trash-o fa-fw text-danger\"></i>Delete machine</a>\
                 </li>\
                 <li class=\"lockable-vm-buttons-" + obj['id'] + "\"><a data-target=\"#modalWm\" data-toggle=\"modal\" href=\"vm_screen.php?vm=" + obj['osInstanceId'] + "\">\
@@ -180,6 +180,24 @@ function vmPowerCycle(vm_array){
                 drawVMStatus(obj['row_id'], obj['vm_id'], obj['power_state']);
             }
           });
+    });
+}
+function vmDelete(vm_array){
+    $.each(vm_array, function(i, obj){
+        $("#progress-bar-" + obj['row_id']).removeClass('hide');
+        $.post({
+            url : 'inc/infrastructure/OpenStack/DeleteVM.php',
+            data: {
+                vm_id: obj['vm_id'],
+            },
+            success:function (data) {
+                reply = $.parseJSON(data);
+                if (reply['delete'] == 'success')
+                    $('#row-name-' + obj['row_id']).remove();
+                else
+                    console.log(data);
+            }
+        });
     });
 }
 function getVMConsole(vm_id, console_type){
@@ -410,6 +428,15 @@ $(document).ready(function(){
         });
         vmPowerCycle(vm_array);
     });
+    $('#main_table').on("click", "a.delete-button", function() { //since table items are dynamically generated, we will not get ordinary .click() event
+        var vm_array=[];
+        vm_array.push({
+            vm_id : $(this).attr('id'),
+            row_id : $(this).attr('data-power-button-rowid'),
+        });
+        vmDelete(vm_array);
+    });
+
      $('#create-vm-button-click').click(function() {
         if(!$('#new_vm')[0].checkValidity()){
             $('#new_vm').find('input[type="submit"]').click();
