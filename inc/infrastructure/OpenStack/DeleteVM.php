@@ -9,9 +9,12 @@ slash_vars();
 $vm_id = $_POST['vm_id'];
 if (!empty($vm_id))
     $reply = deleteVM($vm_id);
-if ($reply)
-    echo $reply;
-else{
-    add_SQL_line("DELETE FROM vms WHERE osInstanceId = '$vm_id' LIMIT 1");
-    echo json_encode(array('delete' => 'success'));
+if ($reply){
+    $reply = json_decode($reply, TRUE);
+    if (!isset($reply['itemNotFound'])){ //if machine is already deleted, just delete it from db
+        echo json_encode($reply);
+        exit;
+    }
 }
+add_SQL_line("DELETE FROM vms WHERE osInstanceId = '$vm_id' LIMIT 1");
+echo json_encode(array('delete' => 'success'));
