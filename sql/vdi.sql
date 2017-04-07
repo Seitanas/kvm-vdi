@@ -68,7 +68,7 @@ CREATE TABLE `config` (
 
 
 INSERT INTO `config` (`id`, `name`, `valueint`, `valuechar`, `valuedate`) VALUES
-(1, 'dbversion', 0, '20170331001', '0000-00-00 00:00:00');
+(1, 'dbversion', 0, '20170407001', '0000-00-00 00:00:00');
 
 --
 -- Table structure for table `hypervisors`
@@ -210,6 +210,7 @@ CREATE TABLE `vms` (
   `osInstanceId` varchar(255) NOT NULL DEFAULT '',
   `osInstancePort` VARCHAR(255) NOT NULL DEFAULT '',
   `osInstanceMasterVolume` VARCHAR(255) NOT NULL DEFAULT '',
+  `osInstanceNetworks` VARCHAR(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
