@@ -40,10 +40,9 @@ class maintenanceBroker(threading.Thread):
                 self.stop();
             else:
                 for vm in reply:
-                    if Variables.vms_to_build.get(vm['osInstanceId'], None) is None: # if vm is not currently building
+                    if Variables.vms_to_build.get(vm['osInstanceId'], None) is None: # if ephemeral vm was not yet built
                         Variables.vms_to_build[vm['osInstanceId']] = True
-                        print ("building vm")
-                        vmbuilder = VMBuilder.VMBuilder(vm['name'] + '-epheremal', vm['osInstanceId'], vm['ephemeral_osInstanceId'], http_session).start()
+                        vmbuilder = VMBuilder.VMBuilder(vm['name'] + '-ephemeral', vm['osInstanceId'], vm['ephemeral_osInstanceId'], http_session).start()
                 print (Variables.vms_to_build)
             time.sleep(10)
 
