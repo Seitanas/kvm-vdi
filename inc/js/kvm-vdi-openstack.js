@@ -52,7 +52,7 @@ function drawOpenStackVMTable(obj, type, i){
                     " + power_button + "\
                 </li>\
                 <li role=\"separator\" class=\"divider\"></li>\
-                <li class=\"lockable-vm-buttons-" + obj['id'] + "\"><a class=\"delete-button\" href=\"#\" id=\"" + obj['osInstanceId'] + "\" data-power-button-rowid=\"" + obj['id'] + "\" onclick=\"return confirmBox('Are you sure?');\">\
+                <li class=\"lockable-vm-buttons-" + obj['id'] + "\"><a class=\"delete-button\" href=\"#\" id=\"" + obj['osInstanceId'] + "\" data-delete-button-rowid=\"" + obj['id'] + "\">\
                     <i class=\"fa fa-trash-o fa-fw text-danger\"></i>Delete machine</a>\
                 </li>\
                 <li class=\"lockable-vm-buttons-" + obj['id'] + "\"><a data-target=\"#modalWm\" data-toggle=\"modal\" href=\"vm_screen.php?vm=" + obj['osInstanceId'] + "\">\
@@ -429,12 +429,14 @@ $(document).ready(function(){
         vmPowerCycle(vm_array);
     });
     $('#main_table').on("click", "a.delete-button", function() { //since table items are dynamically generated, we will not get ordinary .click() event
-        var vm_array=[];
-        vm_array.push({
-            vm_id : $(this).attr('id'),
-            row_id : $(this).attr('data-power-button-rowid'),
-        });
-        vmDelete(vm_array);
+        if (confirm('Are you sure?')){
+            var vm_array=[];
+            vm_array.push({
+                vm_id : $(this).attr('id'),
+                row_id : $(this).attr('data-delete-button-rowid'),
+            });
+            vmDelete(vm_array);
+        }
     });
 
      $('#create-vm-button-click').click(function() {
