@@ -474,3 +474,7 @@ function drawNewVMScreen(){
 //############################################################################################
 function reload_vm_info(){
 }
+function draw_html5_buttons(){
+    require_once ('HTML5Buttons.php');
+    HTML5Buttons();
+}
