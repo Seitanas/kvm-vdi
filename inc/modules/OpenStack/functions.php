@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-04-06
+2017-04-11
 Vilnius, Lithuania.
 */
 //############################################################################################
@@ -114,7 +114,7 @@ function updateVmList(){
     $power_state=['Shutoff', 'Running', 'Paused', 'Crashed', 'Shutoff', 'Suspended'];
     while ($x <  sizeof($result['servers'])){
         $vmName=$result['servers'][$x]['name'];
-        if (strpos($vmName, 'ephemeralvdi') === false) { // ignore ephemeral VDI machines
+        if (strpos($vmName, 'ephemeralvdi') === false) { // ignore ephemeral and deleted VDI machines
             $vmHypervisor=$result['servers'][$x]['OS-EXT-SRV-ATTR:host'];
             $vmInstanceName=$result['servers'][$x]['OS-EXT-SRV-ATTR:instance_name'];
             $vmInstanceId=$result['servers'][$x]['id'];
@@ -276,7 +276,8 @@ function getVMInfo($vm){
 //    write_log(serialize($result['server']));
     $osInstanceName = $result['server']['OS-EXT-SRV-ATTR:instance_name'];
     $osHypervisorName = $result['server']['OS-EXT-SRV-ATTR:host'];
-    add_SQL_line("UPDATE vms SET state = '$vm_state', osInstanceName = '$osInstanceName', osHypervisorName = '$osHypervisorName' WHERE osInstanceId='$vm'");
+    if  ($vm_state != 'deleting')
+        add_SQL_line("UPDATE vms SET state = '$vm_state', osInstanceName = '$osInstanceName', osHypervisorName = '$osHypervisorName' WHERE osInstanceId='$vm'");
     return json_encode($result);
 }
 //############################################################################################

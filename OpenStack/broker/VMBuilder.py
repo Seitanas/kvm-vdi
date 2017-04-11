@@ -25,10 +25,8 @@ class VMBuilder(threading.Thread):
 #        self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/UpdateMaintenance.php", data = {'vm_id': self.osInstanceId, 'state':'true'}, verify=False, headers=Variables.http_headers)
         if self.ephemeral_osInstanceId: #if old machine exists, delete it
             self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/UpdateMaintenance.php", data = {'vm_id': self.ephemeral_osInstanceId, 'state':'true'}, verify=False, headers=Variables.http_headers)
-            reply = json.loads(self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/DeleteVM.php", data = {'vm_id': self.ephemeral_osInstanceId, 'broker':'true'}, verify=False, headers=Variables.http_headers).text)
             logger.debug("Deleting VM id: %s name: %s", self.ephemeral_osInstanceId, self.vm_name);
-            if reply['delete'] == 'success':
-                logger.debug ("VM %s deleted", self.ephemeral_osInstanceId);
+            reply = json.loads(self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/DeleteVM.php", data = {'vm_id': self.ephemeral_osInstanceId, 'broker':'true'}, verify=False, headers=Variables.http_headers).text)
         logger.debug("Creating volume name: %s", self.vm_name);
         reply = json.loads(self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/CreateVolume.php", data = {'source': self.osInstanceId, 'vm_name': self.vm_name, 'vm_type' : 'ephemeralvdi'}, verify=False, headers=Variables.http_headers).text)
         if 'error' in reply:
@@ -45,7 +43,7 @@ class VMBuilder(threading.Thread):
         new_vm_power = 1;
         while True:
             reply = json.loads(self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/GetVMInfo.php", data = {'vm_id': new_vm_id}, verify=False, headers=Variables.http_headers).text)
-            logger.debug("Quering VM %s build status", new_vm_id)
+            logger.debug("Quering VM %s status", new_vm_id)
             if reply['server']['status'] == 'ACTIVE' and new_vm_power:
                 #shutdown newly created vm:
                 logger.debug("Powering off VM %s", new_vm_id)
