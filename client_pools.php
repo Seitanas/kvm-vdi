@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-10-27
+2017-04-11
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -160,6 +160,14 @@ var vm_booted=0;
 var retries=4;
 var checker_object;
 var screen_object;
+var engine = '<?php echo $engine;?>';
+var client_url = '';
+if (engine == 'OpenStack'){
+    client_url = 'inc/infrastructure/OpenStack/GetClientConnection.php';
+}
+else
+    var client_url = 'client.php';
+
 var html5_client=<?php echo $html5_client ;?>;
     function reload_screen(){
         $( "#mainscreen" ).load( "draw_html5_buttons.php", function() {});
@@ -171,99 +179,97 @@ if (html5_client){
 function call_vm(poolid){
     $.ajax({
         type : 'POST',
-        url : 'client.php',
+        url : client_url,
         data: {
-	    'pool': poolid,
-	    'protocol': "SPICE",
-	    'username': '',
-	    'password': '',
-    	},
-    	success:function (data) {
-	    vm=jQuery.parseJSON(data);
-	    if (vm.status=='OK'){
-		vm_booted=1;
-		clearInterval(checker_object);
-		send_token(<?php echo "'" . $websockets_address . "', '" . $websockets_port . "', ";?>vm.name,vm.address,vm.spice_password);
-	    }
-	    if (vm.status=='MAINTENANCE'){
-	        $("#warningbox").html("<strong><?php echo _("Warning!");?></strong> <?php echo _("No VMs available. System in maintenance mode.");?><a class=\"close\" href=\"#\"  onclick=\"$('#warningbox').addClass('hidden')\">&times;</a>");
-	        $("#warningbox").removeClass('hidden');
-	        retries=0;
-		clearInterval(checker_object);
-	    }
-	    if (vm.status=='BOOTUP'){
-	        //console.log("VM is booting");
-	    }
-	    if (vm.status=='NO_FREE_VMS'){
-            $('#loadingVM').modal('hide');
-	        $("#warningbox").html("<strong><?php echo _("Warning!");?></strong> <?php echo _("No free VMs available.");?><a class=\"close\" href=\"#\"  onclick=\"$('#warningbox').addClass('hidden')\">&times;</a>");
-	        $("#warningbox").removeClass('hidden');
-	        retries=0;
-		clearInterval(checker_object);
-	    }
-
-    	}
+            'pool': poolid,
+            'protocol': "SPICE",
+            'username': '',
+            'password': '',
+        },
+        success:function (data) {
+            vm=jQuery.parseJSON(data);
+            if (vm.status=='OK'){
+                vm_booted=1;
+                clearInterval(checker_object);
+                send_token(<?php echo "'" . $websockets_address . "', '" . $websockets_port . "', ";?>vm.name,vm.address,vm.spice_password);
+            }
+            if (vm.status=='MAINTENANCE'){
+                $("#warningbox").html("<strong><?php echo _("Warning!");?></strong> <?php echo _("No VMs available. System in maintenance mode.");?><a class=\"close\" href=\"#\"  onclick=\"$('#warningbox').addClass('hidden')\">&times;</a>");
+                $("#warningbox").removeClass('hidden');
+                retries=0;
+                clearInterval(checker_object);
+            }
+            if (vm.status=='BOOTUP'){
+                //console.log("VM is booting");
+            }
+            if (vm.status=='NO_FREE_VMS'){
+                $('#loadingVM').modal('hide');
+                $("#warningbox").html("<strong><?php echo _("Warning!");?></strong> <?php echo _("No free VMs available.");?><a class=\"close\" href=\"#\"  onclick=\"$('#warningbox').addClass('hidden')\">&times;</a>");
+                $("#warningbox").removeClass('hidden');
+                retries=0;
+            clearInterval(checker_object);
+            }
+        }
     })
-
 }
 function statusChecker(poolid){
     if (retries && !vm_booted){
-//	console.log("checking");
-	call_vm(poolid)
+//  console.log("checking");
+    call_vm(poolid)
     }
     retries--;
 }
     //$('.pools').click(function() {
     $(document).delegate(".pools","click",function(){
     $('#loadingVM').modal('show');
-	if (!html5_client){
-	    document.title = ""
-	    document.title = "kvm-vdi-msg:" + $(this).attr('id')
-	}
-	else{
-	    heatbet_enabled=0;
-	    vm_booted=0;
-	    retries=4;
-	    var pool= $(this).attr('id');
-	    call_vm(pool);
-	    checker_object = setInterval(function(){ statusChecker(pool);}, 4000); //since ajax calls are asyncronous, we need to make some kind of scheduler for them not to be called at once
-	}
+    if (!html5_client){
+        document.title = ""
+        document.title = "kvm-vdi-msg:" + $(this).attr('id')
+    }
+    else{
+        heatbet_enabled=0;
+        vm_booted=0;
+        retries=4;
+        var pool= $(this).attr('id');
+        call_vm(pool);
+        checker_object = setInterval(function(){ statusChecker(pool);}, 4000); //since ajax calls are asyncronous, we need to make some kind of scheduler for them not to be called at once
+    }
     })
 //    $('.shutdown').click(function() {
     $(document).delegate(".shutdown","click",function(){
-	if (!html5_client){
-	    document.title = ""
-	    document.title = "kvm-vdi-msg:PM:shutdown:" + $(this).attr('id');
-	}
-	else {
-	    $.ajax({
-    		type : 'POST',
-    		url : 'client_power.php',
-    		data: {
-		    'vm': $(this).attr('id'),
-		    'action': 'shutdown',
-    		}
-	    });
-	}
+    if (!html5_client){
+        document.title = ""
+        document.title = "kvm-vdi-msg:PM:shutdown:" + $(this).attr('id');
+    }
+    else {
+        $.ajax({
+            type : 'POST',
+            url : 'client_power.php',
+            data: {
+            'vm': $(this).attr('id'),
+            'action': 'shutdown',
+            }
+        });
+    }
     })
 //    $('.terminate').click(function() {
     $(document).delegate(".terminate","click",function(){
-	if (!html5_client){
-	    document.title = ""
-	    document.title = "kvm-vdi-msg:PM:destroy:" + $(this).attr('id')
-	}
-	else {
-	    $.ajax({
-    		type : 'POST',
-    		url : 'client_power.php',
-    		data: {
-		    'vm': $(this).attr('id'),
-		    'action': 'destroy',
-    		}
-	    });
-	}
+    if (!html5_client){
+        document.title = ""
+        document.title = "kvm-vdi-msg:PM:destroy:" + $(this).attr('id')
+    }
+    else {
+        $.ajax({
+            type : 'POST',
+            url : 'client_power.php',
+            data: {
+            'vm': $(this).attr('id'),
+            'action': 'destroy',
+            }
+        });
+    }
     })
 })
 </script>
-  </body>
+</body>
 </html>

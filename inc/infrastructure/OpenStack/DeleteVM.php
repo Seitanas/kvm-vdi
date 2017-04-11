@@ -13,6 +13,7 @@ if ($reply){
     $reply = json_decode($reply, TRUE);
     if (!isset($reply['itemNotFound'])){ //if machine is already deleted, just delete it from db
         echo json_encode($reply);
+        add_SQL_line("DELETE FROM vms WHERE osInstanceId = '$vm_id' LIMIT 1");
         exit;
     }
 }
