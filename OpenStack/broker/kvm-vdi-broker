@@ -37,13 +37,12 @@ class maintenanceBroker(threading.Thread):
             reply = json.loads(http_session.get(Variables.dashboard_path+"inc/infrastructure/OpenStack/ListVDIVMSRebuild.php", verify=False, headers=Variables.http_headers).text)
             if 'error' in reply:
                 logger.info("Failed to connect to dashboard");
-                self.stop();
+                return 1
             else:
                 for vm in reply:
                     if Variables.vms_to_build.get(vm['osInstanceId'], None) is None: # if ephemeral vm was not yet built
                         Variables.vms_to_build[vm['osInstanceId']] = True
                         vmbuilder = VMBuilder.VMBuilder(vm['name'] + '-ephemeral', vm['osInstanceId'], vm['ephemeral_osInstanceId'], http_session).start()
-                print (Variables.vms_to_build)
             time.sleep(10)
 
 
