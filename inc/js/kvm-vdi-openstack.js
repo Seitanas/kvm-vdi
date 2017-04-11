@@ -254,6 +254,18 @@ function fillSourceImages(vm_type){
         });
     }
 }
+
+function heartbeatVM(vm_id){
+   $.post({
+        url : 'inc/infrastructure/OpenStack/HeartbeatVM.php',
+            data: {
+                vm_id: vm_id,
+             },
+            success:function (data) {
+                setTimeout(function() {heartbeatVM(vm_id)}, 30000);
+            }
+   });
+}
 function createOSVM(){
     /* First of all we create volume from source machine.
     JS will loop-query OpenStack volume service, till volume is created.

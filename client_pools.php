@@ -154,6 +154,9 @@ set_lang();
 <script src="inc/js/jquery.min.js"></script>
 <script src="inc/js/bootstrap.min.js"></script>
 <script src="inc/js/kvm-vdi.js"></script>
+<?php if ($engine == 'OpenStack')
+    echo '<script src="inc/js/kvm-vdi-openstack.js"></script>';
+?>
 <script>
 $(document).ready(function(){
 var vm_booted=0;
@@ -191,7 +194,11 @@ function call_vm(poolid){
             if (vm.status=='OK'){
                 vm_booted=1;
                 clearInterval(checker_object);
-                send_token(<?php echo "'" . $websockets_address . "', '" . $websockets_port . "', ";?>vm.name,vm.address,vm.spice_password);
+                if (engine != 'OpenStack')
+                    send_token(<?php echo "'" . $websockets_address . "', '" . $websockets_port . "', ";?>vm.name,vm.address,vm.spice_password);
+                else
+                    window.open(vm.html5_url);
+                    heartbeatVM(vm.vm_id);
             }
             if (vm.status=='MAINTENANCE'){
                 $("#warningbox").html("<strong><?php echo _("Warning!");?></strong> <?php echo _("No VMs available. System in maintenance mode.");?><a class=\"close\" href=\"#\"  onclick=\"$('#warningbox').addClass('hidden')\">&times;</a>");
@@ -207,7 +214,7 @@ function call_vm(poolid){
                 $("#warningbox").html("<strong><?php echo _("Warning!");?></strong> <?php echo _("No free VMs available.");?><a class=\"close\" href=\"#\"  onclick=\"$('#warningbox').addClass('hidden')\">&times;</a>");
                 $("#warningbox").removeClass('hidden');
                 retries=0;
-            clearInterval(checker_object);
+                clearInterval(checker_object);
             }
         }
     })
@@ -245,6 +252,7 @@ function statusChecker(poolid){
         $.ajax({
             type : 'POST',
             url : 'client_power.php',
+            engine: engine,
             data: {
             'vm': $(this).attr('id'),
             'action': 'shutdown',

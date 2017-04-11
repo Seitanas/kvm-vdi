@@ -3,6 +3,10 @@ include dirname(__FILE__) . '/../../../functions/config.php';
 require_once(dirname(__FILE__) . '/../../../functions/functions.php');
 
 $client=$_SERVER['REMOTE_ADDR'];
+if ($_SERVER['HTTP_USER_AGENT']=='KVM-VDI client')
+    $html5_client=0;
+else
+    $html5_client=1;
 slash_vars();
 if (!check_client_session()){
     header ("Location: $serviceurl/client_index.php?error=1");
@@ -48,22 +52,28 @@ if ($protocol=="SPICE"){
         $json_reply = json_encode(array('status'=>"BOOTUP",'protocol' => $protocol, 'address' => ''));
     }
     else{
-        $command = array();
-        $command['command'] = 'make-spice-channel';
-        $command['hypervisor_ip'] = $suggested_vm[0]['ip'];
-        $command['spice_password'] = $suggested_vm[0]['spice_password'];
-        $command['spice_port'] = $suggested_vm[0]['osInstancePort'];
-        $command['vm_id'] = $suggested_vm[0]['osInstanceId'];
-        $command = json_encode($command);
-        $reply = sendToBroker($command);
-        if (!$reply)
-            echo json_encode(array('status' => 'socket-failed'));
-        else{
-            $reply = json_decode($reply, TRUE);
-            $reply['spice_address'] = $kvm_vdi_broker_spice_address;
-            $reply['spice_password'] = $vm_array[0]['spice_password'];
+        if (!$html5_client){
+            $command = array();
+            $command['command'] = 'make-spice-channel';
+            $command['hypervisor_ip'] = $suggested_vm[0]['ip'];
+            $command['spice_password'] = $suggested_vm[0]['spice_password'];
+            $command['spice_port'] = $suggested_vm[0]['osInstancePort'];
+            $command['vm_id'] = $suggested_vm[0]['osInstanceId'];
+            $command = json_encode($command);
+            $reply = sendToBroker($command);
+            if (!$reply)
+                echo json_encode(array('status' => 'socket-failed'));
+            else{
+                $reply = json_decode($reply, TRUE);
+                $reply['spice_address'] = $kvm_vdi_broker_spice_address;
+                $reply['spice_password'] = $vm_array[0]['spice_password'];
+            }
+            $json_reply = json_encode(array('status'=>"OK",'protocol' => $protocol, 'address' => $kvm_vdi_broker_spice_address . ':' . $reply['spice_port'], 'spice_password' => $suggested_vm[0]['spice_password'], 'name' => $suggested_vm[0]['name']));
         }
-        $json_reply = json_encode(array('status'=>"OK",'protocol' => $protocol, 'address' => $kvm_vdi_broker_spice_address . ':' . $reply['spice_port'], 'spice_password' => $suggested_vm[0]['spice_password'], 'name' => $suggested_vm[0]['name']));
+        else {
+            $console = json_decode(listConsoles($suggested_vm[0]['osInstanceId']), TRUE);
+            $json_reply = json_encode(array('status'=>"OK",'protocol' => $protocol, 'html5_url' => $console['console']['url'] . '&password=' . $suggested_vm[0]['spice_password'], 'vm_id' => $suggested_vm[0]['osInstanceId']));
+        }
     }
 }
 echo $json_reply;

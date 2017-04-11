@@ -56,7 +56,7 @@ function HTML5Buttons(){
                 $pm_icons=$pm_icons.'<a href="#" class="terminate"  id="' . $provided_vm[0]['id'] . '"><i class="pull-left fa fa-times-circle-o text-danger" title="' . ("Terminate machine") . '"></i></a>';
             }
             echo'<div class="col-md-2">';
-            $pool_reply[$x]['name'] = str_replace('-ephemeral', '', $pool_reply[$x]['name']);
+            $provided_vm[0]['name'] = str_replace('-ephemeral', '', $provided_vm[0]['name']);
             echo '<div class="row text-info">
                 <div class="panel panel-default">
                 <div class="panel-heading">
