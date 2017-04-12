@@ -47,13 +47,14 @@ class maintenanceBroker(threading.Thread):
 
 
 class createChannel(threading.Thread):
-    def __init__(self, target_ip, target_port, bind_port, vm_id):
+    def __init__(self, target_ip, target_port, bind_port, vm_id, conn):
         super(createChannel, self).__init__()
         self._stop = threading.Event()
         self.target_ip = target_ip
         self.target_port = target_port
         self.bind_port = bind_port
         self.vm_id = vm_id
+        self.conn = conn
     def stop(self):
         self._stop.set()
     def stopped(self):
@@ -65,9 +66,10 @@ class createChannel(threading.Thread):
         Client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         Client.settimeout(5)
         Client.bind(('0.0.0.0', self.bind_port))
-        Client.listen(5)
+        Client.listen(10)
         x = 0;
         th = {};
+        self.conn.send(json.dumps({"spice_port": self.bind_port}))
         while True:
             try:
                 spiceClient, addr = Client.accept()
@@ -138,9 +140,8 @@ def main():
                         else:
                             bind_port = ports.pop()
                             active_vms[command['vm_id']]=bind_port
-                            t = createChannel(command['hypervisor_ip'], command['spice_port'], bind_port, command['vm_id'])
+                            t = createChannel(command['hypervisor_ip'], command['spice_port'], bind_port, command['vm_id'], conn)
                             t.start()
-                            conn.send(json.dumps({"spice_port": bind_port}))
 #                    except:
 #                        logger.debug("Invalid json data received" + data)
                 if not data:
