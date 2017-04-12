@@ -45,6 +45,8 @@ http_session = requests.session()
 username=""
 password=""
 refresh_run=1
+client_path = "/client.php"
+global client_path
 
 class Login(QtGui.QDialog):
     def __init__(self, parent=None):
@@ -67,12 +69,18 @@ class Login(QtGui.QDialog):
     def handleLogin(self):
         global username
         global password
+        global client_path
         username=str(self.User.text())
         password=str(self.Pass.text())
         reply=http_session.post(dashboard_path+"client_pools.php", data={'username': username, 'password': password}, verify=False, headers=http_headers)
         if reply.text!='LOGIN_FAILURE':
             v.connect("notify::title", pool_click)
             v.load_html_string(str(reply.text),dashboard_path)
+            if reply.headers['KVM-VDI-engine'] == 'OpenStack':
+                logger.debug("Using OpenStack engine")
+                client_path = "/inc/infrastructure/OpenStack/GetClientConnection.php"
+            else:
+                logger.debug("Using KVM engine")
             self.accept()
         else:
             QtGui.QMessageBox.warning(self, 'Error', 'Bad user or password')
@@ -194,8 +202,9 @@ def pool_click(v, param):
             global refresh_run
             refresh_run=0;
             poolid=vdi_message
-            reply=http_session.post(dashboard_path+"client.php", data={'pool': poolid, 'protocol': "SPICE", 'username': username, 'password': password, 'use_hypervisor_address': use_hypervisor_address} ,verify=False, headers=http_headers);
+            reply=http_session.post(dashboard_path + client_path, data={'pool': poolid, 'protocol': "SPICE", 'username': username, 'password': password, 'use_hypervisor_address': use_hypervisor_address} ,verify=False, headers=http_headers);
             data=json.loads(reply.text)
+            logger.debug(data)
             if data['status']=='MAINTENANCE':
                 dashboard_reload()
                 refresh_run=1
@@ -205,7 +214,7 @@ def pool_click(v, param):
             retries=0
             while data['status']=="BOOTUP" and retries < 10 :
                 logger.info("BOOTUP, waiting")
-                reply=http_session.post(dashboard_path+"client.php", data={'pool': poolid, 'protocol': "SPICE", 'username': username, 'password': password, 'use_hypervisor_address': use_hypervisor_address} ,verify=False, headers=http_headers);
+                reply=http_session.post(dashboard_path + client_path, data={'pool': poolid, 'protocol': "SPICE", 'username': username, 'password': password, 'use_hypervisor_address': use_hypervisor_address} ,verify=False, headers=http_headers);
                 data=json.loads(reply.text)
                 time.sleep(1)
             if data['status']=='OK':

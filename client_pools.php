@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2017-04-11
+2017-04-12
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -80,6 +80,7 @@ if (!check_client_session()){
     exit;
 }
 set_lang();
+header("KVM-VDI-engine: " . $engine);
 ?>
 <!DOCTYPE html>
 <html lang="en">

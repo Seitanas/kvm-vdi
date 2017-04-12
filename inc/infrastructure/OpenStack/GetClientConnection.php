@@ -61,8 +61,10 @@ if ($protocol=="SPICE"){
             $command['vm_id'] = $suggested_vm[0]['osInstanceId'];
             $command = json_encode($command);
             $reply = sendToBroker($command);
-            if (!$reply)
+            if (!$reply){
                 echo json_encode(array('status' => 'socket-failed'));
+                exit;
+                }
             else{
                 $reply = json_decode($reply, TRUE);
                 $reply['spice_address'] = $kvm_vdi_broker_spice_address;
