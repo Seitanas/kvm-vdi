@@ -60,7 +60,7 @@ function check_session(){
 function check_client_session(){
     if (session_status() == PHP_SESSION_NONE) 
         session_start();
-   if ($_SESSION['client_logged'])
+    if ($_SESSION['client_logged'])
         return $_SESSION['client_logged'];
     else return 0;
 }

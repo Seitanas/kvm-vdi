@@ -238,7 +238,25 @@ function getVolumeInfo($volume_id){
     $config=array();
     $config=memcachedReadConfig();
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL,$config['volumev2_url'] . '/volumes/' . $volume_id);
+    curl_setopt($ch, CURLOPT_URL, $config['volumev2_url'] . '/volumes/' . $volume_id);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'X-Auth-Token: ' . $config['token'],
+        'Content-type: application/json',
+    ));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+    $result = curl_exec($ch);
+    curl_close($ch);
+//    print_r(json_decode($result));
+    return $result;
+}
+//############################################################################################
+function getImageInfo($image_id){
+    include (dirname(__FILE__) . '/../../../functions/config.php');
+    $config=array();
+    $config=memcachedReadConfig();
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $config['image_url'] . '/v2/images/' . $image_id);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
         'X-Auth-Token: ' . $config['token'],
         'Content-type: application/json',
@@ -327,10 +345,13 @@ function createSnapshot($source, $vm_name, $vm_type){
     return $result;
 }
 //############################################################################################
-function createVolume($source, $vm_name, $vm_type){
+function createVolume($source, $vm_name, $vm_type, $size){
     include (dirname(__FILE__) . '/../../../functions/config.php');
     $data=array();
-    $data['volume'] = array('name' => $vm_name, 'description' => 'For VM: ' . $vm_name . ' From: ' . $source . ' Machine type: ' . $vm_type, 'source_volid' => $source, 'force' => 'true');
+    if ($vm_type == 'sourcemachine')
+        $data['volume'] = array('name' => $vm_name, 'description' => 'For VM: ' . $vm_name . ' From: ' . $source . ' Machine type: ' . $vm_type, 'imageRef' => $source, 'force' => 'true', 'size' => $size);
+    else
+        $data['volume'] = array('name' => $vm_name, 'description' => 'For VM: ' . $vm_name . ' From: ' . $source . ' Machine type: ' . $vm_type, 'source_volid' => $source, 'force' => 'true');
     $data=json_encode($data);
     $config=array();
     $config=memcachedReadConfig();

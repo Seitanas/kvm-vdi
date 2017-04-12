@@ -23,6 +23,9 @@ if (isset ($_POST['username'])){
     $password=mysqli_real_escape_string($mysql_conn,$_POST['password']);
     $sql_reply=mysqli_fetch_row(mysqli_query($mysql_conn, "SELECT id,password FROM clients WHERE username LIKE '$username' AND isdomain=0"));
     mysqli_close($mysql_conn);
+    if (session_status() == PHP_SESSION_NONE) 
+        session_start();
+    $_SESSION['client_logged']='';
     if(!empty($sql_reply[1])){
         if (password_verify($password, $sql_reply[1])){
             if (session_status() == PHP_SESSION_NONE) 
@@ -34,11 +37,6 @@ if (isset ($_POST['username'])){
             add_SQL_line("UPDATE clients SET lastlogin=now(), ip='$ip' WHERE id='$sql_reply[0]'");
             header("Location: $serviceurl/client_pools.php");
             exit;
-        }
-        else{
-           if (session_status() == PHP_SESSION_NONE) 
-                session_start();
-           $_SESSION['client_logged']='';
         }
     }
     else if ($LDAP_backend){
