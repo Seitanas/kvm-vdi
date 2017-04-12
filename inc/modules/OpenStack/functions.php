@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-04-11
+2017-04-12
 Vilnius, Lithuania.
 */
 //############################################################################################
@@ -348,10 +348,7 @@ function createSnapshot($source, $vm_name, $vm_type){
 function createVolume($source, $vm_name, $vm_type, $size){
     include (dirname(__FILE__) . '/../../../functions/config.php');
     $data=array();
-    if ($vm_type == 'sourcemachine')
-        $data['volume'] = array('name' => $vm_name, 'description' => 'For VM: ' . $vm_name . ' From: ' . $source . ' Machine type: ' . $vm_type, 'imageRef' => $source, 'force' => 'true', 'size' => $size);
-    else
-        $data['volume'] = array('name' => $vm_name, 'description' => 'For VM: ' . $vm_name . ' From: ' . $source . ' Machine type: ' . $vm_type, 'source_volid' => $source, 'force' => 'true');
+    $data['volume'] = array('name' => $vm_name, 'description' => 'For VM: ' . $vm_name . ' From: ' . $source . ' Machine type: ' . $vm_type, 'source_volid' => $source, 'force' => 'true');
     $data=json_encode($data);
     $config=array();
     $config=memcachedReadConfig();
@@ -371,12 +368,15 @@ function createVolume($source, $vm_name, $vm_type, $size){
     return $result;
 }
 //############################################################################################
-function createVM($vm_name, $flavor, $snapshot_id, $networks, $delete_on_termination){
+function createVM($vm_name, $vm_type, $flavor, $snapshot_id, $networks, $delete_on_termination, $source_type, $volume_size){
     include (dirname(__FILE__) . '/../../../functions/config.php');
     $config=array();
     $config=memcachedReadConfig();
     $block_device = array();
-    $block_device = array(array('boot_index' => '0', 'uuid' => $snapshot_id, 'source_type' => 'volume', 'delete_on_termination' => $delete_on_termination, 'destination_type' => 'volume'));
+    if ($vm_type == 'sourcemachine')
+        $block_device = array(array('boot_index' => '0', 'uuid' => $snapshot_id, 'source_type' => $source_type, 'delete_on_termination' => $delete_on_termination, 'destination_type' => 'volume', 'volume_size' => $volume_size));
+    else
+        $block_device = array(array('boot_index' => '0', 'uuid' => $snapshot_id, 'source_type' => $source_type, 'delete_on_termination' => $delete_on_termination, 'destination_type' => 'volume'));
     $data = array();
     $data['server'] = array('name' => $vm_name, 'flavorRef' => $flavor, 'availability_zone' => $OpenStack_availability_zone, 'networks' => $networks, 'block_device_mapping_v2' => $block_device);
     $ch = curl_init();

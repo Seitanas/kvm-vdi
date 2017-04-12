@@ -13,6 +13,7 @@ $flavor = $_POST['flavor'];
 $volume_id = $_POST['volume_id'];
 $networks = $_POST['networks'];
 $source_vm=$_POST['source_vm'];
+$volume_size = $_POST['volume_size'];
 
 if (!empty($vm_name) && !empty($vm_type) && !empty($os_type) && !empty($flavor) && !empty($volume_id) && !empty($networks) && !empty($source_vm)){
     $network_array = array();
@@ -26,7 +27,10 @@ if (!empty($vm_name) && !empty($vm_type) && !empty($os_type) && !empty($flavor) 
     }
     if ($vm_type == 'ephemeralvdi')
         $vm_name = $vm_name . '-ephemeralvdi';
-    $reply = createVM($vm_name, $flavor, $volume_id, $network_array, $delete_on_termination);
+    if ($vm_type == 'sourcemachine')
+        $reply = createVM($vm_name, $vm_type, $flavor, $volume_id, $network_array, $delete_on_termination, 'image', $volume_size);
+    else
+        $reply = createVM($vm_name, $vm_type, $flavor, $volume_id, $network_array, $delete_on_termination, 'volume', 0);
     $result = json_decode($reply, TRUE);
     if ($result['server']['id']){
         $osInstanceNetworks = json_encode($network_array);

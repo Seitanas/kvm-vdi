@@ -336,21 +336,44 @@ function createOSVM(){
         var x=0;
         var new_vm_name = vm_name;
         function post_values(source, new_vm_name, vm_type, volume_size){ // we need to call post as external function because of async call.This solves problem with incremental number in machine name
-            $.post({
-                url : 'inc/infrastructure/OpenStack/CreateVolume.php',
-                    data: {
-                        source: source,
-                        vm_name: new_vm_name,
-                        vm_type: vm_type,
-                        volume_size: volume_size,
-                    },
-                    success:function (data) {
-                        reply = $.parseJSON(data);
-                        console.log(reply);
-                        if (reply['volume']['id'])
-                            getVolumeInfo(reply['volume']['id'], new_vm_name);
-                    }
-            });
+            if (vm_type != 'sourcemachine'){
+                $.post({
+                    url : 'inc/infrastructure/OpenStack/CreateVolume.php',
+                        data: {
+                            source: source,
+                            vm_name: new_vm_name,
+                            vm_type: vm_type,
+                            volume_size: volume_size,
+                        },
+                        success:function (data) {
+                            reply = $.parseJSON(data);
+                            console.log(reply);
+                            if (reply['volume']['id'])
+                                getVolumeInfo(reply['volume']['id'], new_vm_name);
+                        }
+                });
+            }
+            else {
+                $.post({
+                    url : 'inc/infrastructure/OpenStack/CreateVM.php',
+                        data: {
+                            vm_name: new_vm_name,
+                            vm_type: vm_type,
+                            os_type: os_type,
+                            flavor: flavor,
+                            volume_id: source,
+                            networks: networks,
+                            source_vm: source,
+                            volume_size: volume_size,
+                        },
+                        success:function (data) {
+                            reply = $.parseJSON(data);
+                            drawOpenStackVMTable(reply, vm_type, '');
+                            $('#progress-bar-' + reply['id']).removeClass('hide');
+                            drawVMStatus(reply['id'], reply['osInstanceId'], 'up');
+                        }
+                    });
+                }
         }
         while (vm_count){
             ++x;
