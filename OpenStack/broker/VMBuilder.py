@@ -22,18 +22,39 @@ class VMBuilder(threading.Thread):
         return self._stop.isSet()
     def run(self):
         logger = logging.getLogger('kvm-vdi-broker')
+#        self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/UpdateMaintenance.php", data = {'vm_id': self.osInstanceId, 'state':'true'}, verify=False, headers=Variables.http_headers)
         if self.ephemeral_osInstanceId: #if old machine exists, delete it
-            reply = json.loads(self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/DeleteVM.php", data = {'vm_id': self.ephemeral_osInstanceId, 'broker':'true'}, verify=False, headers=Variables.http_headers))
-            logger.debug("Deleting VM id: %s name: %s", self.vm_id, self.vm_name);
-            if reply['delete'] == 'success':
-                print ("success");
+            self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/UpdateMaintenance.php", data = {'vm_id': self.ephemeral_osInstanceId, 'state':'true'}, verify=False, headers=Variables.http_headers)
+            logger.debug("Deleting VM id: %s name: %s", self.ephemeral_osInstanceId, self.vm_name);
+            reply = json.loads(self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/DeleteVM.php", data = {'vm_id': self.ephemeral_osInstanceId, 'broker':'true'}, verify=False, headers=Variables.http_headers).text)
         logger.debug("Creating volume name: %s", self.vm_name);
         reply = json.loads(self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/CreateVolume.php", data = {'source': self.osInstanceId, 'vm_name': self.vm_name, 'vm_type' : 'ephemeralvdi'}, verify=False, headers=Variables.http_headers).text)
+        if 'error' in reply:
+            logger.debug ("Failed to connect to OpenStack")
+            return 1
         while reply['volume']['status'] != 'available':
             reply = json.loads(self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/GetVolumeInfo.php", data = {'volume_id': reply['volume']['id']}, verify=False, headers=Variables.http_headers).text)
             time.sleep(2)
-            print (reply['volume']['status'])
         logger.debug("Creating VM from id: %s with name: %s", self.osInstanceId, self.vm_name);
-        reply = self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/CreateEphemeralVM.php", data = {'vm_name': self.vm_name, 'vm_type': 'ephemeralvdi', 'volume_id': reply['volume']['id'], 'source_vm': self.osInstanceId, 'target_vm': self.ephemeral_osInstanceId}, verify=False, headers=Variables.http_headers).text
-        print (self.vm_name)
-        print (Variables.vms_to_build)
+        reply = json.loads(self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/CreateEphemeralVM.php", data = {'vm_name': self.vm_name, 'vm_type': 'ephemeralvdi', 'volume_id': reply['volume']['id'], 'source_vm': self.osInstanceId, 'target_vm': self.ephemeral_osInstanceId}, verify=False, headers=Variables.http_headers).text)
+        #query till machine is fully populated:
+        new_vm_id = reply['server']['id']
+        self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/UpdateMaintenance.php", data = {'vm_id': new_vm_id, 'state':'true'}, verify=False, headers=Variables.http_headers)
+        new_vm_power = 1;
+        while True:
+            reply = json.loads(self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/GetVMInfo.php", data = {'vm_id': new_vm_id}, verify=False, headers=Variables.http_headers).text)
+            logger.debug("Quering VM %s status", new_vm_id)
+            if reply['server']['status'] == 'ACTIVE' and new_vm_power:
+                #shutdown newly created vm:
+                logger.debug("Powering off VM %s", new_vm_id)
+                self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/PowerCycle.php", data = {'vm_id': new_vm_id, 'power_state': 'down'}, verify=False, headers=Variables.http_headers)
+                new_vm_power = 0;
+            elif reply['server']['status'] == 'SHUTOFF':
+                break
+            time.sleep(5)
+        #print (Variables.vms_to_build)
+        Variables.vms_to_build.pop(self.osInstanceId, None)
+        self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/UpdateMaintenance.php", data = {'vm_id': new_vm_id, 'state':'false'}, verify=False, headers=Variables.http_headers)
+#        self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/UpdateMaintenance.php", data = {'vm_id': self.osInstanceId, 'state':'false'}, verify=False, headers=Variables.http_headers)
+        logger.debug("Finishing thread")
+        #print (Variables.vms_to_build)

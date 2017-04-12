@@ -43,7 +43,9 @@ set_lang();
                     <select multiple class="form-control osselection" name="OSNetworks" id="OSNetworks" tabindex="3" required type="number">
                     </select>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 hide" id="OSVolumeSize">
+                    <label><?php echo _("Volume size GB:");?></label>
+                    <input type="number" name="OSVolumeGB" id="OSVolumeGB" min="1" value="1" class="form-control" required>
                 </div>
             </div>
             <div class="row">

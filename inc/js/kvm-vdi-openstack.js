@@ -29,6 +29,8 @@ function drawOpenStackVMTable(obj, type, i){
         tab=['5','7 glyphicon glyphicon-menu-right'];
         rowclass = ' warning';
     }
+    if (!obj['source_volume_machine']) // remove null value
+        obj['source_volume_machine'] = '';
     var table_rows="\
 <tr class=\"table-stripe-bottom-line\" id=\"row-name-" + obj['id'] + "\">\
     <td class=\"col-md-1 clickable parent\" id=\"" + obj['id'] + "\" data-toggle=\"collapse\" data-target=\".child-" + obj['id'] + "\" >\
@@ -254,6 +256,18 @@ function fillSourceImages(vm_type){
         });
     }
 }
+
+function heartbeatVM(vm_id){
+   $.post({
+        url : 'inc/infrastructure/OpenStack/HeartbeatVM.php',
+            data: {
+                vm_id: vm_id,
+             },
+            success:function (data) {
+                setTimeout(function() {heartbeatVM(vm_id)}, 30000);
+            }
+   });
+}
 function createOSVM(){
     /* First of all we create volume from source machine.
     JS will loop-query OpenStack volume service, till volume is created.
@@ -262,18 +276,21 @@ function createOSVM(){
     OpenStack will create form taht volume at VM build time.
     drawMessage() is just a loop to dislpay information box, till all volumes are created.
     */
-    vm_type = $('#OSMachineType').val();
-    source = $('#OSSource').val();
-    os_type = $('#os_type').val();
-    flavor = $('#OSFlavor').val();
-    networks = $('#OSNetworks').val();
-    vm_name = $('#machinename').val();
-    vm_count = $('#machinecount').val();
+    var vm_type = $('#OSMachineType').val();
+    var source = $('#OSSource').val();
+    var os_type = $('#os_type').val();
+    var flavor = $('#OSFlavor').val();
+    var networks = $('#OSNetworks').val();
+    var vm_name = $('#machinename').val();
+    var vm_count = $('#machinecount').val();
+    var volume_size = $('#OSVolumeGB').val();
     var volumes_incomplete = vm_count;
+    $(".create_vm_buttons").addClass('disabled');
     function drawMessage(){
         if (volumes_incomplete)
             setTimeout(function() {drawMessage()}, 1000);
         else{
+            $(".create_vm_buttons").removeClass('disabled');
             $("#new_vm_creation_info_box").addClass('hide');
             $('#modalWm').modal('toggle');
         }
@@ -316,46 +333,55 @@ function createOSVM(){
         drawMessage(); //Show message box till all volumes are created 
         $("#new_vm_creation_info_box").removeClass('hide');
         $("#new_vm_creation_info_box").html('Please wait. Building instances. <i class="fa fa-spinner fa-spin fa-1x fa-fw"></i>');
-        if (vm_type == 'initialmachine' || vm_type == 'vdimachine'){
-            var x=0;
-            var new_vm_name = vm_name;
-            function post_values(source, new_vm_name, vm_type){ // we need to call post as external function because of async call.This solves problem with incremental number in machine name
+        var x=0;
+        var new_vm_name = vm_name;
+        function post_values(source, new_vm_name, vm_type, volume_size){ // we need to call post as external function because of async call.This solves problem with incremental number in machine name
+            if (vm_type != 'sourcemachine'){
                 $.post({
                     url : 'inc/infrastructure/OpenStack/CreateVolume.php',
                         data: {
                             source: source,
                             vm_name: new_vm_name,
                             vm_type: vm_type,
+                            volume_size: volume_size,
                         },
                         success:function (data) {
                             reply = $.parseJSON(data);
-                            getVolumeInfo(reply['volume']['id'], new_vm_name);
+                            console.log(reply);
+                            if (reply['volume']['id'])
+                                getVolumeInfo(reply['volume']['id'], new_vm_name);
                         }
                 });
             }
-            while (vm_count){
-                ++x;
-                if (vm_type == 'vdimachine')
-                    new_vm_name = vm_name + "-" + x;
-                post_values(source, new_vm_name, vm_type);
-                --vm_count;
-            }
-        }
-        /*$.post({
-            url : 'inc/infrastructure/OpenStack/CreateVM.php',
-                data: {
-                    vm_type: vm_type,
-                    source: source,
-                    os_type: os_type,
-                    flavor: flavor,
-                    vm_name: vm_name,
-                    vm_count: vm_count,
-                },
-                success:function (data) {
-                    reply = $.parseJSON(data);
-                    console.log(reply)
+            else {
+                $.post({
+                    url : 'inc/infrastructure/OpenStack/CreateVM.php',
+                        data: {
+                            vm_name: new_vm_name,
+                            vm_type: vm_type,
+                            os_type: os_type,
+                            flavor: flavor,
+                            volume_id: source,
+                            networks: networks,
+                            source_vm: source,
+                            volume_size: volume_size,
+                        },
+                        success:function (data) {
+                            reply = $.parseJSON(data);
+                            drawOpenStackVMTable(reply, vm_type, '');
+                            $('#progress-bar-' + reply['id']).removeClass('hide');
+                            drawVMStatus(reply['id'], reply['osInstanceId'], 'up');
+                        }
+                    });
                 }
-        });*/
+        }
+        while (vm_count){
+            ++x;
+            if (vm_type == 'vdimachine')
+                new_vm_name = vm_name + "-" + x;
+            post_values(source, new_vm_name, vm_type, volume_size);
+            --vm_count;
+        }
     }
 }
 function loadNetworkList(){
@@ -418,6 +444,10 @@ $(document).ready(function(){
     });
     $('#OSMachineType').change(function() {
         fillSourceImages($("#OSMachineType").val());
+        if ($('#OSMachineType').val() == 'sourcemachine')
+            $("#OSVolumeSize").removeClass('hide');
+        else
+            $("#OSVolumeSize").addClass('hide');
     });
     $('#main_table').on("click", "a.power-button", function() { //since table items are dynamically generated, we will not get ordinary .click() event
         var vm_array=[];

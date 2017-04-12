@@ -46,6 +46,7 @@ while (x != y):
         spice_port = port_tmp[0]
         spice_port = spice_port.replace("port=", "")
         sys.argv[x+1] = sys.argv[x+1] + ",password=" + spice_password
+        sys.argv[x+1] = sys.argv[x+1] + ",agent-mouse=on,image-compression=auto_glz,streaming-video=filter,disable-copy-paste,disable-agent-file-xfer"
         sys.argv[x+1] = sys.argv[x+1].replace("disable-ticketing,", "")
     x += 1
 command_args = sys.argv

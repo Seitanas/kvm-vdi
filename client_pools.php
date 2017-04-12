@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2016-10-27
+2017-04-12
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -23,6 +23,9 @@ if (isset ($_POST['username'])){
     $password=mysqli_real_escape_string($mysql_conn,$_POST['password']);
     $sql_reply=mysqli_fetch_row(mysqli_query($mysql_conn, "SELECT id,password FROM clients WHERE username LIKE '$username' AND isdomain=0"));
     mysqli_close($mysql_conn);
+    if (session_status() == PHP_SESSION_NONE) 
+        session_start();
+    $_SESSION['client_logged']='';
     if(!empty($sql_reply[1])){
         if (password_verify($password, $sql_reply[1])){
             if (session_status() == PHP_SESSION_NONE) 
@@ -37,49 +40,53 @@ if (isset ($_POST['username'])){
         }
     }
     else if ($LDAP_backend){
-	    $group_array='';
-	if ($LDAP_backend=='activedir'){
-	    $query_user = $username."@".$domain_name;
-	    $group_array=list_ad_groups($username,$password,$query_user,$html5_client);
-	    $group_array=join("', '",$group_array);
-	}
-	else if ($LDAP_backend=='ldap'){
-	    $query_user= $username;
-	    $group_array=list_ldap_groups($username,$password,$query_user,$html5_client);
-	    $group_array = join("', '",$group_array); 
-	}
-	write_log("Groups for $query_user: " . $group_array);
-	if(!empty($group_array)){
-        $group_array="'" . $group_array . "'";
-	    $ip = $_SERVER['REMOTE_ADDR'];
-	    add_SQL_line("INSERT INTO clients (username,ip,isdomain,lastlogin) VALUES ('$query_user','$ip','1',NOW()) ON DUPLICATE KEY UPDATE ip='$ip', lastlogin=NOW()");
-	    $sql_reply=get_SQL_line("SELECT id FROM clients WHERE username LIKE '$query_user'");
-	    if (session_status() == PHP_SESSION_NONE) 
-		session_start();
-	    if ($LDAP_backend=='activedir')
-		$_SESSION['ad_user']='yes';
-	    else if ($LDAP_backend=='ldap')
-		$_SESSION['ad_user']='LDAP';
-	    $_SESSION['client_logged']='yes';	    
-	    $_SESSION['userid']=$sql_reply[0];
-	    $_SESSION['username']=$query_user;
-	    $_SESSION['group_array']=$group_array;
-	}
-	else if(!$html5_client) {
-	    echo 'LOGIN_FAILURE';
-	    exit;
-	}
+        $group_array='';
+        if ($LDAP_backend=='activedir'){
+            $query_user = $username."@".$domain_name;
+            $group_array=list_ad_groups($username,$password,$query_user,$html5_client);
+            $group_array=join("', '",$group_array);
+        }
+        else if ($LDAP_backend=='ldap'){
+            $query_user= $username;
+            $group_array=list_ldap_groups($username,$password,$query_user,$html5_client);
+            $group_array = join("', '",$group_array); 
+        }
+        write_log("Groups for $query_user: " . $group_array);
+        if(!empty($group_array)){
+            $group_array="'" . $group_array . "'";
+            $ip = $_SERVER['REMOTE_ADDR'];
+            add_SQL_line("INSERT INTO clients (username,ip,isdomain,lastlogin) VALUES ('$query_user','$ip','1',NOW()) ON DUPLICATE KEY UPDATE ip='$ip', lastlogin=NOW()");
+            $sql_reply=get_SQL_line("SELECT id FROM clients WHERE username LIKE '$query_user'");
+            if (session_status() == PHP_SESSION_NONE) 
+                session_start();
+            if ($LDAP_backend=='activedir')
+                $_SESSION['ad_user']='yes';
+            else if ($LDAP_backend=='ldap')
+                $_SESSION['ad_user']='LDAP';
+            $_SESSION['client_logged']='yes';	    
+            $_SESSION['userid']=$sql_reply[0];
+            $_SESSION['username']=$query_user;
+            $_SESSION['group_array']=$group_array;
+        }
+        else if(!$html5_client) {
+            echo 'LOGIN_FAILURE';
+            exit;
+        }
     }
     else if(!$html5_client) {
-	echo 'LOGIN_FAILURE';
-	exit;
+        echo 'LOGIN_FAILURE';
+        exit;
     }
 }
 if (!check_client_session()){
-    header ("Location: $serviceurl/client_index.php?error=1");
+    if(!$html5_client) 
+        echo 'LOGIN_FAILURE';
+    else 
+        header ("Location: $serviceurl/client_index.php?error=1");
     exit;
 }
 set_lang();
+header("KVM-VDI-engine: " . $engine);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -154,12 +161,23 @@ set_lang();
 <script src="inc/js/jquery.min.js"></script>
 <script src="inc/js/bootstrap.min.js"></script>
 <script src="inc/js/kvm-vdi.js"></script>
+<?php if ($engine == 'OpenStack')
+    echo '<script src="inc/js/kvm-vdi-openstack.js"></script>';
+?>
 <script>
 $(document).ready(function(){
 var vm_booted=0;
 var retries=4;
 var checker_object;
 var screen_object;
+var engine = '<?php echo $engine;?>';
+var client_url = '';
+if (engine == 'OpenStack'){
+    client_url = 'inc/infrastructure/OpenStack/GetClientConnection.php';
+}
+else
+    var client_url = 'client.php';
+
 var html5_client=<?php echo $html5_client ;?>;
     function reload_screen(){
         $( "#mainscreen" ).load( "draw_html5_buttons.php", function() {});
@@ -171,99 +189,102 @@ if (html5_client){
 function call_vm(poolid){
     $.ajax({
         type : 'POST',
-        url : 'client.php',
+        url : client_url,
         data: {
-	    'pool': poolid,
-	    'protocol': "SPICE",
-	    'username': '',
-	    'password': '',
-    	},
-    	success:function (data) {
-	    vm=jQuery.parseJSON(data);
-	    if (vm.status=='OK'){
-		vm_booted=1;
-		clearInterval(checker_object);
-		send_token(<?php echo "'" . $websockets_address . "', '" . $websockets_port . "', ";?>vm.name,vm.address,vm.spice_password);
-	    }
-	    if (vm.status=='MAINTENANCE'){
-	        $("#warningbox").html("<strong><?php echo _("Warning!");?></strong> <?php echo _("No VMs available. System in maintenance mode.");?><a class=\"close\" href=\"#\"  onclick=\"$('#warningbox').addClass('hidden')\">&times;</a>");
-	        $("#warningbox").removeClass('hidden');
-	        retries=0;
-		clearInterval(checker_object);
-	    }
-	    if (vm.status=='BOOTUP'){
-	        //console.log("VM is booting");
-	    }
-	    if (vm.status=='NO_FREE_VMS'){
-            $('#loadingVM').modal('hide');
-	        $("#warningbox").html("<strong><?php echo _("Warning!");?></strong> <?php echo _("No free VMs available.");?><a class=\"close\" href=\"#\"  onclick=\"$('#warningbox').addClass('hidden')\">&times;</a>");
-	        $("#warningbox").removeClass('hidden');
-	        retries=0;
-		clearInterval(checker_object);
-	    }
-
-    	}
+            'pool': poolid,
+            'protocol': "SPICE",
+            'username': '',
+            'password': '',
+        },
+        success:function (data) {
+            vm=jQuery.parseJSON(data);
+            if (vm.status=='OK'){
+                vm_booted=1;
+                clearInterval(checker_object);
+                if (engine != 'OpenStack')
+                    send_token(<?php echo "'" . $websockets_address . "', '" . $websockets_port . "', ";?>vm.name,vm.address,vm.spice_password);
+                else
+                    window.open(vm.html5_url);
+                    heartbeatVM(vm.vm_id);
+            }
+            if (vm.status=='MAINTENANCE'){
+                $("#warningbox").html("<strong><?php echo _("Warning!");?></strong> <?php echo _("No VMs available. System in maintenance mode.");?><a class=\"close\" href=\"#\"  onclick=\"$('#warningbox').addClass('hidden')\">&times;</a>");
+                $("#warningbox").removeClass('hidden');
+                retries=0;
+                clearInterval(checker_object);
+            }
+            if (vm.status=='BOOTUP'){
+                //console.log("VM is booting");
+            }
+            if (vm.status=='NO_FREE_VMS'){
+                $('#loadingVM').modal('hide');
+                $("#warningbox").html("<strong><?php echo _("Warning!");?></strong> <?php echo _("No free VMs available.");?><a class=\"close\" href=\"#\"  onclick=\"$('#warningbox').addClass('hidden')\">&times;</a>");
+                $("#warningbox").removeClass('hidden');
+                retries=0;
+                clearInterval(checker_object);
+            }
+        }
     })
-
 }
 function statusChecker(poolid){
     if (retries && !vm_booted){
-//	console.log("checking");
-	call_vm(poolid)
+//  console.log("checking");
+    call_vm(poolid)
     }
     retries--;
 }
     //$('.pools').click(function() {
     $(document).delegate(".pools","click",function(){
     $('#loadingVM').modal('show');
-	if (!html5_client){
-	    document.title = ""
-	    document.title = "kvm-vdi-msg:" + $(this).attr('id')
-	}
-	else{
-	    heatbet_enabled=0;
-	    vm_booted=0;
-	    retries=4;
-	    var pool= $(this).attr('id');
-	    call_vm(pool);
-	    checker_object = setInterval(function(){ statusChecker(pool);}, 4000); //since ajax calls are asyncronous, we need to make some kind of scheduler for them not to be called at once
-	}
+    if (!html5_client){
+        document.title = ""
+        document.title = "kvm-vdi-msg:" + $(this).attr('id')
+    }
+    else{
+        heatbet_enabled=0;
+        vm_booted=0;
+        retries=4;
+        var pool= $(this).attr('id');
+        call_vm(pool);
+        checker_object = setInterval(function(){ statusChecker(pool);}, 4000); //since ajax calls are asyncronous, we need to make some kind of scheduler for them not to be called at once
+    }
     })
 //    $('.shutdown').click(function() {
     $(document).delegate(".shutdown","click",function(){
-	if (!html5_client){
-	    document.title = ""
-	    document.title = "kvm-vdi-msg:PM:shutdown:" + $(this).attr('id');
-	}
-	else {
-	    $.ajax({
-    		type : 'POST',
-    		url : 'client_power.php',
-    		data: {
-		    'vm': $(this).attr('id'),
-		    'action': 'shutdown',
-    		}
-	    });
-	}
+    if (!html5_client){
+        document.title = ""
+        document.title = "kvm-vdi-msg:PM:shutdown:" + $(this).attr('id');
+    }
+    else {
+        $.ajax({
+            type : 'POST',
+            url : 'client_power.php',
+            engine: engine,
+            data: {
+            'vm': $(this).attr('id'),
+            'action': 'shutdown',
+            }
+        });
+    }
     })
 //    $('.terminate').click(function() {
     $(document).delegate(".terminate","click",function(){
-	if (!html5_client){
-	    document.title = ""
-	    document.title = "kvm-vdi-msg:PM:destroy:" + $(this).attr('id')
-	}
-	else {
-	    $.ajax({
-    		type : 'POST',
-    		url : 'client_power.php',
-    		data: {
-		    'vm': $(this).attr('id'),
-		    'action': 'destroy',
-    		}
-	    });
-	}
+    if (!html5_client){
+        document.title = ""
+        document.title = "kvm-vdi-msg:PM:destroy:" + $(this).attr('id')
+    }
+    else {
+        $.ajax({
+            type : 'POST',
+            url : 'client_power.php',
+            data: {
+            'vm': $(this).attr('id'),
+            'action': 'destroy',
+            }
+        });
+    }
     })
 })
 </script>
-  </body>
+</body>
 </html>

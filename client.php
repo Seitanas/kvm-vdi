@@ -19,15 +19,6 @@ if (isset($_POST['use_hypervisor_address']))
     $use_hypervisor_address=$_POST['use_hypervisor_address'];
 $userid=$_SESSION['userid'];
 
-if ($protocol=="RDP"){
-    $json_reply = json_encode(array('status'=>"OK",'protocol' => $protocol, 'address' => $machine_rdp_address));
-
-}
-
-if ($protocol=="vmView"){
-    $json_reply = json_encode(array('status'=>"OK",'protocol' => $protocol, 'address' => $vmView_server, 'pool' => $pool));
-}
-
 if ($protocol=="SPICE"){
     $reset=0;
     //First lets check if theres already machine provided for this user and it was last acessed within 5mins (takeover from another thin client).
