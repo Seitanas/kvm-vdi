@@ -45,8 +45,8 @@ http_session = requests.session()
 username=""
 password=""
 refresh_run=1
-client_path = "/client.php"
 global client_path
+client_path = "/client.php"
 
 class Login(QtGui.QDialog):
     def __init__(self, parent=None):
