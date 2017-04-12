@@ -35,48 +35,56 @@ if (isset ($_POST['username'])){
             header("Location: $serviceurl/client_pools.php");
             exit;
         }
+        else{
+           if (session_status() == PHP_SESSION_NONE) 
+                session_start();
+           $_SESSION['client_logged']='';
+        }
     }
     else if ($LDAP_backend){
-	    $group_array='';
-	if ($LDAP_backend=='activedir'){
-	    $query_user = $username."@".$domain_name;
-	    $group_array=list_ad_groups($username,$password,$query_user,$html5_client);
-	    $group_array=join("', '",$group_array);
-	}
-	else if ($LDAP_backend=='ldap'){
-	    $query_user= $username;
-	    $group_array=list_ldap_groups($username,$password,$query_user,$html5_client);
-	    $group_array = join("', '",$group_array); 
-	}
-	write_log("Groups for $query_user: " . $group_array);
-	if(!empty($group_array)){
-        $group_array="'" . $group_array . "'";
-	    $ip = $_SERVER['REMOTE_ADDR'];
-	    add_SQL_line("INSERT INTO clients (username,ip,isdomain,lastlogin) VALUES ('$query_user','$ip','1',NOW()) ON DUPLICATE KEY UPDATE ip='$ip', lastlogin=NOW()");
-	    $sql_reply=get_SQL_line("SELECT id FROM clients WHERE username LIKE '$query_user'");
-	    if (session_status() == PHP_SESSION_NONE) 
-		session_start();
-	    if ($LDAP_backend=='activedir')
-		$_SESSION['ad_user']='yes';
-	    else if ($LDAP_backend=='ldap')
-		$_SESSION['ad_user']='LDAP';
-	    $_SESSION['client_logged']='yes';	    
-	    $_SESSION['userid']=$sql_reply[0];
-	    $_SESSION['username']=$query_user;
-	    $_SESSION['group_array']=$group_array;
-	}
-	else if(!$html5_client) {
-	    echo 'LOGIN_FAILURE';
-	    exit;
-	}
+        $group_array='';
+        if ($LDAP_backend=='activedir'){
+            $query_user = $username."@".$domain_name;
+            $group_array=list_ad_groups($username,$password,$query_user,$html5_client);
+            $group_array=join("', '",$group_array);
+        }
+        else if ($LDAP_backend=='ldap'){
+            $query_user= $username;
+            $group_array=list_ldap_groups($username,$password,$query_user,$html5_client);
+            $group_array = join("', '",$group_array); 
+        }
+        write_log("Groups for $query_user: " . $group_array);
+        if(!empty($group_array)){
+            $group_array="'" . $group_array . "'";
+            $ip = $_SERVER['REMOTE_ADDR'];
+            add_SQL_line("INSERT INTO clients (username,ip,isdomain,lastlogin) VALUES ('$query_user','$ip','1',NOW()) ON DUPLICATE KEY UPDATE ip='$ip', lastlogin=NOW()");
+            $sql_reply=get_SQL_line("SELECT id FROM clients WHERE username LIKE '$query_user'");
+            if (session_status() == PHP_SESSION_NONE) 
+                session_start();
+            if ($LDAP_backend=='activedir')
+                $_SESSION['ad_user']='yes';
+            else if ($LDAP_backend=='ldap')
+                $_SESSION['ad_user']='LDAP';
+            $_SESSION['client_logged']='yes';	    
+            $_SESSION['userid']=$sql_reply[0];
+            $_SESSION['username']=$query_user;
+            $_SESSION['group_array']=$group_array;
+        }
+        else if(!$html5_client) {
+            echo 'LOGIN_FAILURE';
+            exit;
+        }
     }
     else if(!$html5_client) {
-	echo 'LOGIN_FAILURE';
-	exit;
+        echo 'LOGIN_FAILURE';
+        exit;
     }
 }
 if (!check_client_session()){
-    header ("Location: $serviceurl/client_index.php?error=1");
+    if(!$html5_client) 
+        echo 'LOGIN_FAILURE';
+    else 
+        header ("Location: $serviceurl/client_index.php?error=1");
     exit;
 }
 set_lang();
