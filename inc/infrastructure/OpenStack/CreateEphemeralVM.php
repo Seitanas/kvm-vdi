@@ -17,7 +17,7 @@ $source_vm_info = getSQLArray("SELECT * FROM vms WHERE osInstanceId = '$source_v
 $network_array = json_decode($source_vm_info[0]['osInstanceNetworks']);
 if (!empty($vm_name) && !empty($vm_type) && !empty($volume_id) && !empty($source_vm)){
     $delete_on_termination = true;
-    $reply = createVM($vm_name, $vm_type, $flavor, $volume_id, $network_array, $delete_on_termination, 'snapshot', 0);
+    $reply = createVM($vm_name, $vm_type, $flavor, $volume_id, $network_array, $delete_on_termination, 'volume', 0);
     $result = json_decode($reply, TRUE);
     if ($result['server']['id']){
         $osInstanceNetworks = json_encode($network_array);
