@@ -46,6 +46,7 @@ username=""
 password=""
 refresh_run=1
 global client_path
+global engine
 client_path = "/client.php"
 
 class Login(QtGui.QDialog):
@@ -70,6 +71,7 @@ class Login(QtGui.QDialog):
         global username
         global password
         global client_path
+        global engine
         username=str(self.User.text())
         password=str(self.Pass.text())
         reply=http_session.post(dashboard_path+"client_pools.php", data={'username': username, 'password': password}, verify=False, headers=http_headers)
@@ -78,6 +80,7 @@ class Login(QtGui.QDialog):
             v.load_html_string(str(reply.text),dashboard_path)
             if reply.headers['KVM-VDI-engine'] == 'OpenStack':
                 logger.debug("Using OpenStack engine")
+                engine = reply.headers['KVM-VDI-engine']
                 client_path = "/inc/infrastructure/OpenStack/GetClientConnection.php"
             else:
                 logger.debug("Using KVM engine")
@@ -96,19 +99,23 @@ def AutoLogin():
         v.load_html_string(str(reply.text),dashboard_path)
 
 class vm_heartbeat(threading.Thread):
-    def __init__(self, vmname):
+    def __init__(self, vm_id):
         super(vm_heartbeat, self).__init__()
         self._stop = threading.Event()
-        self.vmname = vmname
+        self.vm_id = vm_id
     def stop(self):
         self._stop.set()
     def stopped(self):
         return self._stop.isSet()
     def run(self):
+        global engine
         seconds=0
         while not self.stopped():
             if seconds==30:
-                hb_reply=http_session.post(dashboard_path+"client_hb.php", data={'vmname': self.vmname}, verify=False, headers=http_headers)
+                if engine == 'OpenStack':
+                    hb_reply=http_session.post(dashboard_path+"client_hb.php", data={'vm_id': self.vm_id}, verify=False, headers=http_headers)
+                else:
+                    hb_reply=http_session.post(dashboard_path+"client_hb.php", data={'vmname': self.vm_id}, verify=False, headers=http_headers)
                 logger.debug("VM heartbeat")
                 seconds=0
             if not self.stopped() and seconds < 30: #sleep for one second. Longer sleep times cause thread to wait on exit.
@@ -155,8 +162,12 @@ class remote_viewer(threading.Thread):
         return self._stop.isSet()
     def run(self):
         global refresh_run
-        vmname=self.data['name']
-        t = vm_heartbeat(vmname)
+        global engine
+        if engine == 'OpenStack':
+            vm_id=self.data['vm_id']
+        else:
+            vm_id=self.data['name']
+        t = vm_heartbeat(vm_id)
         t.daemon=True
         t.start()
         tmp=self.data["address"].split(":")

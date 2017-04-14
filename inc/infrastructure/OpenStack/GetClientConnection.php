@@ -70,7 +70,7 @@ if ($protocol=="SPICE"){
                 $reply['spice_address'] = $kvm_vdi_broker_spice_address;
                 $reply['spice_password'] = $vm_array[0]['spice_password'];
             }
-            $json_reply = json_encode(array('status'=>"OK",'protocol' => $protocol, 'address' => $kvm_vdi_broker_spice_address . ':' . $reply['spice_port'], 'spice_password' => $suggested_vm[0]['spice_password'], 'name' => $suggested_vm[0]['name']));
+            $json_reply = json_encode(array('status'=>"OK",'protocol' => $protocol, 'address' => $kvm_vdi_broker_spice_address . ':' . $reply['spice_port'], 'spice_password' => $suggested_vm[0]['spice_password'], 'name' => $suggested_vm[0]['name'], 'vm_id' => $suggested_vm[0]['osInstanceId']));
         }
         else {
             $console = json_decode(listConsoles($suggested_vm[0]['osInstanceId']), TRUE);
