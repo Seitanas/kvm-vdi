@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-04-12
+2017-04-20
 Vilnius, Lithuania.
 */
 //############################################################################################
@@ -129,7 +129,7 @@ function updateVmList(){
                     $vm_state = 'Powering on';
                 if ($vm_state == 'powering-off')
                     $vm_state = 'Powering off';
-                if (sizeof($vmEntry) == 0){
+                if (sizeof($vmEntry) == 0 && $vm_state != 'deleting'){
                     add_SQL_line("INSERT INTO vms  (name, state, osHypervisorName,  osInstanceName,  osInstanceId) VALUES ('$vmName', '$vm_state', '$vmHypervisor', '$vmInstanceName', '$vmInstanceId')");
                 }
                 else
