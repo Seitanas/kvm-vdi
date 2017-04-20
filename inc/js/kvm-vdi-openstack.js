@@ -161,6 +161,7 @@ function drawVMStatus(row_id, vm_id, power_state){
                             $('#' + vm_id + '.power-button').html('<i class=\"text-success fa fa-play fa-fw\"></i>Power up</a>');
                             $('#' + vm_id + '.power-button').attr('data-power', 'up');
                         }
+                    $('#modalWm').modal('toggle');
                     }
                     else{
                         setTimeout(function() {run_query()}, 4000);
