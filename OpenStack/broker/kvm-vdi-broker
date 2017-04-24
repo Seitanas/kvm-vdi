@@ -64,9 +64,9 @@ class createChannel(threading.Thread):
         logger = logging.getLogger('kvm-vdi-broker')
         logger.debug("spiceChannel listener started on port %s", self.bind_port)
         Client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        Client.settimeout(5)
+        Client.settimeout(10)
         Client.bind(('0.0.0.0', self.bind_port))
-        Client.listen(10)
+        Client.listen(5)
         x = 0;
         th = {};
         self.conn.send(json.dumps({"spice_port": self.bind_port}))

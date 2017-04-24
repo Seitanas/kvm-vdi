@@ -40,16 +40,20 @@ class VMBuilder(threading.Thread):
         #query till machine is fully populated:
         new_vm_id = reply['server']['id']
         self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/UpdateMaintenance.php", data = {'vm_id': new_vm_id, 'state':'true'}, verify=False, headers=Variables.http_headers)
-        new_vm_power = 1;
+        new_vm_power = 1
         while True:
-            reply = json.loads(self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/GetVMInfo.php", data = {'vm_id': new_vm_id}, verify=False, headers=Variables.http_headers).text)
             logger.debug("Quering VM %s status", new_vm_id)
-            if reply['server']['status'] == 'ACTIVE' and new_vm_power:
+            try:
+                response = self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/GetVMInfo.php", data = {'vm_id': new_vm_id}, verify=False, headers=Variables.http_headers).text
+                reply = json.loads(response)
+            except:
+                logger.debug("Got error in dashboard response: %s", response)
+            if reply['server'].get('status', None) == 'ACTIVE' and new_vm_power:
                 #shutdown newly created vm:
                 logger.debug("Powering off VM %s", new_vm_id)
                 self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/PowerCycle.php", data = {'vm_id': new_vm_id, 'power_state': 'down'}, verify=False, headers=Variables.http_headers)
-                new_vm_power = 0;
-            elif reply['server']['status'] == 'SHUTOFF':
+                new_vm_power = 0
+            elif reply['server'].get('status', None) == 'SHUTOFF':
                 break
             time.sleep(5)
         #print (Variables.vms_to_build)

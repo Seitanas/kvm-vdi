@@ -34,14 +34,14 @@ class spiceChannel(threading.Thread):
             readyIn, readyOut, IOerr = select.select(inputs, outputs, [], 1.0)
             for rdy in readyIn:
                 if rdy == self.__spiceClient:
-                    data= self.__spiceClient.recv(4096)
+                    data= self.__spiceClient.recv(32)
                     if data != None:
                         if len(data) > 0:
                             dataToServer += data
                         else:
                             endProcess = True
                 if rdy == spiceServer:
-                    data=spiceServer.recv(4096)
+                    data=spiceServer.recv(32)
                     if data != None:
                         if len(data) > 0:
                             dataToClient += data
