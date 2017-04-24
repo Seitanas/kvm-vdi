@@ -16,6 +16,7 @@ function HTML5Buttons(){
         $last_reload=get_SQL_array ("SELECT id FROM config WHERE name='lastreload' AND valuedate > DATE_SUB(NOW(), INTERVAL 30 SECOND) LIMIT 1"); //if there was no reload of VM list in 30 seconds, initiate reload.
         if (!isset($last_reload[0]['id'])){
             add_SQL_line("INSERT INTO config (name,valuedate) VALUES ('lastreload',NOW()) ON DUPLICATE KEY UPDATE valuedate=NOW()");
+            openStackConnect();
             updateVmList();
         }
         if ($_SESSION['ad_user']=='yes'||$_SESSION['ad_user']=='LDAP'){
@@ -43,7 +44,7 @@ function HTML5Buttons(){
             $provided_vm[0]['name']="none";
             if ($already_have[0][0] == 1){//if vm was already provided within $return_to_pool_after period
                 $vm_image="text-success";
-                $provided_vm=get_SQL_array("SELECT vms.name,vms.state,vms.id FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.source_volume LEFT JOIN hypervisors ON vms.osHypervisorName = hypervisors.name 
+                $provided_vm=get_SQL_array("SELECT vms.name, vms.state, vms.id, vms.osInstanceId FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.source_volume LEFT JOIN hypervisors ON vms.osHypervisorName = hypervisors.name 
                 WHERE poolmap_vm.poolid='{$pool_reply[$x]['id']}' AND vms.maintenance != 'true' AND vms.clientid = '$userid' AND vms.lastused > DATE_SUB(NOW(), INTERVAL '$return_to_pool_after' MINUTE)");
             }
             else if ($vm_count_available[0][0]==0)
@@ -52,8 +53,7 @@ function HTML5Buttons(){
                 $provided_vm[0]['state']='';
             $pm_icons="";
             if ($provided_vm[0]['state'] == 'Running' || $provided_vm[0]['state'] == 'pmsuspended' || $provided_vm[0]['state'] == 'paused'){
-                $pm_icons='<a href="#" class="shutdown"  id="' . $provided_vm[0]['id'] . '"><i class="pull-left fa fa-stop-circle-o text-danger" title="' . _("Shutdown machine") . '"></i></a>';
-                $pm_icons=$pm_icons.'<a href="#" class="terminate"  id="' . $provided_vm[0]['id'] . '"><i class="pull-left fa fa-times-circle-o text-danger" title="' . ("Terminate machine") . '"></i></a>';
+                $pm_icons='<a href="#" class="shutdown"  id="' . $provided_vm[0]['osInstanceId'] . '"><i class="pull-left fa fa-stop-circle-o text-danger" title="' . _("Shutdown machine") . '"></i></a>';
             }
             echo'<div class="col-md-2">';
             $provided_vm[0]['name'] = str_replace('-ephemeral', '', $provided_vm[0]['name']);

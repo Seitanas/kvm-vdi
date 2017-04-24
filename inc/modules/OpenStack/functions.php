@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-04-20
+2017-04-24
 Vilnius, Lithuania.
 */
 //############################################################################################
@@ -114,27 +114,25 @@ function updateVmList(){
     $power_state=['Shutoff', 'Running', 'Paused', 'Crashed', 'Shutoff', 'Suspended'];
     while ($x <  sizeof($result['servers'])){
         $vmName=$result['servers'][$x]['name'];
-        if (strpos($vmName, 'ephemeral') === false) { // ignore ephemeral and deleted VDI machines
-            $vmHypervisor=$result['servers'][$x]['OS-EXT-SRV-ATTR:host'];
-            $vmInstanceName=$result['servers'][$x]['OS-EXT-SRV-ATTR:instance_name'];
-            $vmInstanceId=$result['servers'][$x]['id'];
-            if (!empty($vmName) && !empty($vmHypervisor) && !empty($vmInstanceName) && !empty($vmInstanceId)){
-                $vmEntry=get_SQL_ARRAY("SELECT * FROM vms WHERE osInstanceId='$vmInstanceId'");
-                array_push($instanceList,"'" . $vmInstanceId . "'");
-                if ($result['servers'][$x]['OS-EXT-STS:task_state'] != '')
-                    $vm_state = $result['servers'][$x]['OS-EXT-STS:task_state'];
-                else 
-                    $vm_state = $power_state[$result['servers'][$x]['OS-EXT-STS:power_state']];
-                if ($vm_state == 'powering-on')
-                    $vm_state = 'Powering on';
-                if ($vm_state == 'powering-off')
-                    $vm_state = 'Powering off';
-                if (sizeof($vmEntry) == 0 && $vm_state != 'deleting'){
-                    add_SQL_line("INSERT INTO vms  (name, state, osHypervisorName,  osInstanceName,  osInstanceId) VALUES ('$vmName', '$vm_state', '$vmHypervisor', '$vmInstanceName', '$vmInstanceId')");
-                }
-                else
-                    add_SQL_line("UPDATE vms SET name='$vmName', state='$vm_state', osHypervisorName='$vmHypervisor', osInstanceName='$vmInstanceName', osInstanceId='$vmInstanceId' WHERE osInstanceId='$vmInstanceId'");
+        $vmHypervisor=$result['servers'][$x]['OS-EXT-SRV-ATTR:host'];
+        $vmInstanceName=$result['servers'][$x]['OS-EXT-SRV-ATTR:instance_name'];
+        $vmInstanceId=$result['servers'][$x]['id'];
+        if (!empty($vmName) && !empty($vmHypervisor) && !empty($vmInstanceName) && !empty($vmInstanceId)){
+            $vmEntry=get_SQL_ARRAY("SELECT * FROM vms WHERE osInstanceId='$vmInstanceId'");
+            array_push($instanceList,"'" . $vmInstanceId . "'");
+            if ($result['servers'][$x]['OS-EXT-STS:task_state'] != '')
+                $vm_state = $result['servers'][$x]['OS-EXT-STS:task_state'];
+            else
+                $vm_state = $power_state[$result['servers'][$x]['OS-EXT-STS:power_state']];
+            if ($vm_state == 'powering-on')
+                $vm_state = 'Powering on';
+            if ($vm_state == 'powering-off')
+                $vm_state = 'Powering off';
+            if (sizeof($vmEntry) == 0 && $vm_state != 'deleting'){
+                add_SQL_line("INSERT INTO vms  (name, state, osHypervisorName,  osInstanceName,  osInstanceId) VALUES ('$vmName', '$vm_state', '$vmHypervisor', '$vmInstanceName', '$vmInstanceId')");
             }
+            else
+                add_SQL_line("UPDATE vms SET name='$vmName', state='$vm_state', osHypervisorName='$vmHypervisor', osInstanceName='$vmInstanceName', osInstanceId='$vmInstanceId' WHERE osInstanceId='$vmInstanceId'");
         }
         ++$x;
     }
@@ -303,9 +301,9 @@ function vmPowerCycle($vm, $action){
     include (dirname(__FILE__) . '/../../../functions/config.php');
     $config=array();
     $config=memcachedReadConfig();
-    if ($action=='up')
+    if ($action == 'up')
         $data = array('os-start' => null);
-    if ($action=='down')
+    if ($action == 'down' || $action == 'shutdown')
         $data = array('os-stop' => null);
     $ch = curl_init();
     $data=json_encode($data);
@@ -495,6 +493,8 @@ function drawNewVMScreen(){
 }
 //############################################################################################
 function reload_vm_info(){
+    openStackConnect();
+    updateVmList();
 }
 function draw_html5_buttons(){
     require_once ('HTML5Buttons.php');
