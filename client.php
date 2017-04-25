@@ -53,20 +53,25 @@ if ($protocol=="SPICE"){
         $username=$username."@".$domain_name;
     $agent_command=json_encode(array('vmname' => $machine_name, 'username' => $username, 'password' => $password, 'os_type' => $vm[0]['os_type']));
     if (empty($status)||$status=='error: Domain is not running'){
+        add_SQL_line("UPDATE vms SET spice_password='' WHERE id='{$suggested_vm[0]['id']}'"); // reset SPICE password for shut off VMs
         $status='BOOTUP';
         ssh_command('echo "' . addslashes($agent_command) . '"| socat /usr/local/VDI/kvm-vdi.sock - ',true);
         reload_vm_info();
     }
     else if ($reset_vm&&$reset){
         ssh_command("sudo virsh destroy ".$machine_name,true);
+        add_SQL_line("UPDATE vms SET spice_password='' WHERE id='{$suggested_vm[0]['id']}'");// reset SPICE password for shut off VMs
         $status='BOOTUP';
         ssh_command('echo "' . addslashes($agent_command) . '"| socat /usr/local/VDI/kvm-vdi.sock - ',true);
         reload_vm_info();
     }
-    if ($status=="BOOTUP")
+    if ($vm[0]['spice_password'] == '') // if this is a newly bootet machine, wait for new password to be populated
+        $status = 'BOOTUP';
+    if ($status=='BOOTUP')
         $json_reply = json_encode(array('status'=>"BOOTUP",'protocol' => $protocol, 'address' => ''));
-    else if ($status)
+    else if ($status){
         $json_reply = json_encode(array('status'=>"OK",'protocol' => $protocol, 'address' => $status, 'spice_password' => $vm[0]['spice_password'], 'name' => $vm[0]['name']));
+    }
     else
 	$json_reply = json_encode(array('status'=>"FAIL",'protocol' => $protocol, 'address' => ''));
 }
