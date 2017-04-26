@@ -128,7 +128,7 @@ function updateVmList(){
                 $vm_state = 'Powering on';
             if ($vm_state == 'powering-off')
                 $vm_state = 'Powering off';
-            if (sizeof($vmEntry) == 0 && $vm_state != 'deleting'){
+            if (sizeof($vmEntry) == 0 && $vm_state != 'deleting' && strpos($vmName, 'ephemeral') === false){ // do not add ephemeral VMs to vdi (let machine creation part do the job)
                 add_SQL_line("INSERT INTO vms  (name, state, osHypervisorName,  osInstanceName,  osInstanceId) VALUES ('$vmName', '$vm_state', '$vmHypervisor', '$vmInstanceName', '$vmInstanceId')");
             }
             else
