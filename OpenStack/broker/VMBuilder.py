@@ -35,6 +35,8 @@ class VMBuilder(threading.Thread):
         while reply['volume']['status'] != 'available':
             reply = json.loads(self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/GetVolumeInfo.php", data = {'volume_id': reply['volume']['id']}, verify=False, headers=Variables.http_headers).text)
             time.sleep(2)
+            if Variables.terminate:
+                break
         logger.debug("Creating VM from id: %s with name: %s", self.osInstanceId, self.vm_name);
         reply = json.loads(self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/CreateEphemeralVM.php", data = {'vm_name': self.vm_name, 'vm_type': 'ephemeralvdi', 'volume_id': reply['volume']['id'], 'source_vm': self.osInstanceId, 'target_vm': self.ephemeral_osInstanceId}, verify=False, headers=Variables.http_headers).text)
         #query till machine is fully populated:
@@ -54,6 +56,8 @@ class VMBuilder(threading.Thread):
                 self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/PowerCycle.php", data = {'vm_id': new_vm_id, 'power_state': 'down'}, verify=False, headers=Variables.http_headers)
                 new_vm_power = 0
             elif reply['server'].get('status', None) == 'SHUTOFF':
+                break
+            if Variables.terminate:
                 break
             time.sleep(5)
         #print (Variables.vms_to_build)

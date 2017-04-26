@@ -31,7 +31,7 @@ class maintenanceBroker(threading.Thread):
         reply=http_session.post(Variables.dashboard_path+"inc/infrastructure/OpenStack/BrokerLogin.php", data={'password': dashboard_password}, verify=False, headers=Variables.http_headers)
         return http_session
     def run(self):
-        while True and not terminate:
+        while True and not Variables.terminate:
             logger = logging.getLogger('kvm-vdi-broker')
             http_session = self.login()
             reply = json.loads(http_session.get(Variables.dashboard_path+"inc/infrastructure/OpenStack/ListVDIVMSRebuild.php", verify=False, headers=Variables.http_headers).text)
@@ -115,8 +115,7 @@ def main():
     global active_vms
     ports = list(range(int(port_range[0]), int(port_range[1]) + 1))
     ports.reverse()
-    global terminate
-    terminate = 0
+    Variables.terminate = 0
     logger.info("Starting KVM-VDI broker")
     active_vms = {}
     maintenanceBroker().start()
@@ -149,7 +148,7 @@ def main():
                 break
     except KeyboardInterrupt:
         logger.debug("Keyboard interrupt")
-    terminate=1
+    Variables.terminate = 1
     time.sleep(1)
     server.close()
     os.remove( sockfile )
