@@ -10,7 +10,6 @@ This project aims to provide fully functional VDI solution by using open source 
 * **Hypervisor**. A collection of scripts (hypervisors directory) which are used at hypervisor side (must be copied to /usr/local/VDI on hypervisor).
 
 Project uses qemu-kvm virtualization and provides VMs to thin client via SPICE protocol.
-Additionally dashboard can provide thin client with a RDP session of remote machine, or a VM from vmWare Horizon VDI pool (if used). - These options are optional and are designed as a quick failover solution when KVM hypervisors are not available (maintenance etc.).
 
 Basic architecture would look like this:
 * Thin clients are booted from a network (or local storage for that matter). /usr/local/bin/vdi_init application should be run on system startup. I suggest using systemd for that. (systemd config file is provided in thin_clients directory).
