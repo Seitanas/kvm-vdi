@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2017-04-12
+2017-05-03
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -171,6 +171,7 @@ var retries=4;
 var checker_object;
 var screen_object;
 var engine = '<?php echo $engine;?>';
+var use_kvmvdi_html5_client = '<?php echo $use_kvmvdi_html5_client;?>';
 var client_url = '';
 if (engine == 'OpenStack'){
     client_url = 'inc/infrastructure/OpenStack/GetClientConnection.php';
@@ -203,6 +204,9 @@ function call_vm(poolid){
                 clearInterval(checker_object);
                 if (engine != 'OpenStack')
                     send_token(<?php echo "'" . $websockets_address . "', '" . $websockets_port . "', ";?>vm.name,vm.address,vm.spice_password);
+                else if (engine == 'OpenStack' && use_kvmvdi_html5_client){
+                    send_token(vm.address, vm.port, vm.token, vm.value, vm.spice_password);
+                }
                 else
                     window.open(vm.html5_url);
                 heartbeatVM(vm.vm_id);
