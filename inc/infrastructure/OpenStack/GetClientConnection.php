@@ -77,9 +77,7 @@ if ($protocol=="SPICE"){
         }
         else {
             if ($use_kvmvdi_html5_client){// generate json reply for KVM-VDI html5 client
-//                password="+spice_password+"&vmInfoToken="+token"
                 $json_reply = json_encode(array('status' => 'OK', 'address' => $websockets_address, 'port' => $websockets_port, 'spice_password' => $suggested_vm[0]['spice_password'], 'token' => $suggested_vm[0]['osInstanceName'], 'value' => $suggested_vm[0]['ip'] . ':' . $suggested_vm[0]['osInstancePort']));
-//                $json_reply = json_encode(array('status'=>"OK",'protocol' => $protocol, '' => $console['console']['url'] . '&password=' . $suggested_vm[0]['spice_password'], 'vm_id' => $suggested_vm[0]['osInstanceId'], 'kvmvdi-html5-client' => $use_kvmvdi_html5_client));
                 }
             else {
                $console = json_decode(listConsoles($suggested_vm[0]['osInstanceId']), TRUE);
