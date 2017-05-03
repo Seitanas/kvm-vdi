@@ -41,8 +41,7 @@ function drawOpenStackVMTable(obj, type, i){
     </td>\
     <td class=\"col-md-2\"><a data-toggle=\"modal\" href=\"vm_info.php?vm=" + obj['osInstanceId'] + "\" data-target=\"#modalWm\">" + obj['name'] + "</a> </td>\
     <td class=\"col-md-1\">" + machine_types[obj['machine_type']] + "</td>\
-    <td class=\"col-md-1\">" + obj['source_volume_machine'] + "</td>\
-    <td class=\"col-md-1\"><input type=\"checkbox\" checked' id=\"" + obj['osInstanceId'] + "\"></td>\
+    <td class=\"col-md-2\">" + obj['source_volume_machine'] + "</td>\
     <td class=\"col-md-1\"><input class=\"MaintenanceCheckbox\" type=\"checkbox\"  id=\"" + obj['osInstanceId'] + "\" " + obj['maintenance'] + "></td>\
     <td class=\"col-md-2\">\
         <div class=\"btn-group\">\

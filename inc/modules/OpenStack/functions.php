@@ -431,7 +431,6 @@ function draw_dashboard_table(){
                         <th>' . _("Machine name") . '</th>
                         <th>' . _("Machine type") . '</th>
                         <th>' . _("Source image") . '</th>
-                        <th>' . _("Virt-snapshot") . '</th>
                         <th>' . _("Maintenance") . '</th>
                         <th>' . _("Operations") . '</th>
                         <th>' . _("OS type/Status/Used by") . '</th>
