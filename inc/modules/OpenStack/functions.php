@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-05-03
+2017-04-24
 Vilnius, Lithuania.
 */
 //############################################################################################
@@ -304,6 +304,8 @@ function vmPowerCycle($vm, $action){
         $data = array('os-start' => null);
     if ($action == 'down' || $action == 'shutdown')
         $data = array('os-stop' => null);
+    if ($action == 'resume')
+        $data = array('resume' => null);
     $ch = curl_init();
     $data=json_encode($data);
     curl_setopt($ch, CURLOPT_URL,$config['compute_url'] . '/servers/' . $vm . '/action');

@@ -48,7 +48,10 @@ if ($protocol=="SPICE"){
     add_SQL_line("UPDATE vms SET clientid='$userid',lastused=NOW() WHERE id='{$suggested_vm[0]['id']}'");
     $vm_status = json_decode(getVMInfo($suggested_vm[0]['osInstanceId']), TRUE);
     if ($vm_status['server']['status'] == 'SHUTOFF' || $vm_status['server']['OS-EXT-STS:power_state']  != 1){
-        vmPowerCycle($suggested_vm[0]['osInstanceId'], 'up');
+        if ($vm_status['server']['OS-EXT-STS:power_state']  == 7) // if VM is suspended, force restart
+            vmPowerCycle($suggested_vm[0]['osInstanceId'], 'resume');
+        else 
+            vmPowerCycle($suggested_vm[0]['osInstanceId'], 'up');
         $json_reply = json_encode(array('status'=>"BOOTUP",'protocol' => $protocol, 'address' => ''));
     }
     else{
