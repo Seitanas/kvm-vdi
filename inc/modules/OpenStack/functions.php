@@ -489,8 +489,7 @@ function drawVMScreen($vm){
             }
             else {
                 $console = json_decode(listConsoles($vm), TRUE);
-                echo "window.open('" . $console['console']['url'] . "', '_blank')";
-                $html5_token_value = $v_reply[0]['ip'] . ":" .$v_reply[0]['osInstancePort'];
+                echo "window.open('" . $console['console']['url'] . '&password=' . $v_reply[0]['spice_password'] . "', '_blank')";
             }
    echo '
             }
