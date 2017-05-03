@@ -25,6 +25,7 @@ spice_password = (''.join(choice(ascii_uppercase+ascii_lowercase+digits)
 vm startup or for other libvirt routine'''
 startup_procedure = 0
 y = len(sys.argv)
+native_args = sys.argv
 sys.argv[0] = path_to_kvm
 kvm_paths = ['/usr/libexec/qemu-kvm',
              '/usr/bin/qemu-kvm', '/usr/bin/qemu-system-x86_64']
@@ -51,10 +52,15 @@ while (x != y):
     x += 1
 command_args = sys.argv
 if (startup_procedure):
-    response = requests.post(address+"/backend.php",
+    try:
+        response = requests.post(address+"/backend.php",
                              data={'pass': password, 'vm': vmname,
                                    'spice_password': spice_password,
                                    'spice_port': spice_port},
                              verify=False)
+    except:
+        # if contacting dashboard web service fails,
+        # fall back to native qemu-kvm arguments
+        command_args = native_args
 os.execv(path_to_kvm, command_args)
 # call kvm via execv() to replace parent process with it
