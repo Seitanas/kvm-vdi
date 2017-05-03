@@ -1,5 +1,6 @@
 <?php
 function draw_html(){
+include (dirname(__FILE__) . '/../../../functions/config.php');
 $h_reply=get_SQL_array("SELECT * FROM hypervisors WHERE maintenance=0 ORDER BY name,ip");
 set_lang();
 ?>
