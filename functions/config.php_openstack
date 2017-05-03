@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2017-05-03
+2017-03-10
 */
 
 
@@ -19,9 +19,12 @@ $language='en_EN';
 $salt='SecretString';
 #write debug log to web server error.log file.
 $write_debug_log=false;
-#Websockify server address (if using HTML5 client)
+# HTML5 client:
+# For OpenStack we can use native HTML5 client, or KVM-VDI solution:
+$use_kvmvdi_html5_client = false;
+#Websockify server address (if using KVM-VDI HTML5 client)
 $websockets_address='192.168.0.20';
-#Port of websockify server (if using HTML5 client)
+#Port of websockify server (if using KVM-VDI HTML5 client)
 $websockets_port='5959';
 #If $send_email_alerts is enabled, dashboard will send alerts to
 #$alert_email_to critical error will occur. Requires PEAR Mail library.
