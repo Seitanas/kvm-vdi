@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2017-03-13
+2017-05-03
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -98,13 +98,14 @@ set_lang();
 			echo '</select>';?>
 		</div>		 
 	    </div>
-	    <div class="row">
-		<div class="col-md-4">
-		    <label><?php echo _("Use virtual snapshots");?></label>
-		    <input type="checkbox" name="snapshot" id="snapshot">
-		</div>
-	    </div>
-        </div>
+        <?php if ($engine != 'OpenStack'){
+echo'        <div class="row">
+            <div class="col-md-4">
+                <label>' . _("Use virtual snapshots") . '</label>
+                <input type="checkbox" name="snapshot" id="snapshot">
+            </div>
+        </div>';} ?>
+  </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _("Close");?></button>
             <?php
