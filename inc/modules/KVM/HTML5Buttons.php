@@ -1,3 +1,4 @@
+<?php
 //############################################################################################
 function draw_html5_buttons(){
     include (dirname(__FILE__) . '/../../../functions/config.php');
