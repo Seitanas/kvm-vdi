@@ -111,7 +111,7 @@ function updateVmList(){
     $x=0;
     $instanceList=array();
     //print_r( $result);
-    $power_state=['Shutoff', 'Running', 'Paused', 'Crashed', 'Shutoff', 'Suspended'];
+    $power_state=array('0' => 'Shutoff', '1' => 'Running', '2' => 'Paused', '3' => 'Crashed', '4' => 'Shutoff', '5' => 'Suspended', '7' => 'Suspended');
     while ($x <  sizeof($result['servers'])){
         $vmName=$result['servers'][$x]['name'];
         $vmHypervisor=$result['servers'][$x]['OS-EXT-SRV-ATTR:host'];
@@ -128,9 +128,8 @@ function updateVmList(){
                 $vm_state = 'Powering on';
             if ($vm_state == 'powering-off')
                 $vm_state = 'Powering off';
-            if (sizeof($vmEntry) == 0 && $vm_state != 'deleting' && strpos($vmName, 'ephemeral') === false){ // do not add ephemeral VMs to vdi (let machine creation part do the job)
+            if (sizeof($vmEntry) == 0 && $vm_state != 'deleting' && strpos($vmName, 'ephemeral') === false) // do not add ephemeral VMs to vdi (let machine creation part do the job)
                 add_SQL_line("INSERT INTO vms  (name, state, osHypervisorName,  osInstanceName,  osInstanceId) VALUES ('$vmName', '$vm_state', '$vmHypervisor', '$vmInstanceName', '$vmInstanceId')");
-            }
             else
                 add_SQL_line("UPDATE vms SET name='$vmName', state='$vm_state', osHypervisorName='$vmHypervisor', osInstanceName='$vmInstanceName', osInstanceId='$vmInstanceId' WHERE osInstanceId='$vmInstanceId'");
         }
