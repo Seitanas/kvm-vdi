@@ -443,7 +443,8 @@ function draw_dashboard_table(){
 }
 //############################################################################################
 function drawVMScreen($vm){
-    $v_reply=get_SQL_array("SELECT * FROM vms WHERE osInstanceId='$vm'");
+    include (dirname(__FILE__) . '/../../../functions/config.php');
+    $v_reply = getSQLarray("SELECT vms.*, hypervisors.ip FROM vms LEFT JOIN hypervisors ON vms.osHypervisorName=hypervisors.name WHERE vms.osInstanceId='$vm' ");
     echo '<!DOCTYPE html>
          <html>
             <head>
@@ -468,7 +469,7 @@ function drawVMScreen($vm){
                         <div class="col-md-8">
                             <input type="hidden" id="vm_id" value="' . $vm . '">
                             <button type="button" class="btn btn-success" id="SpiceConsoleButton">' . _("SPICE console") . '</button>
-                            <button type="button" class="btn hidden btn-success" onclick="dashboard_open_html5_console_click()" data-dismiss="modal">' . _("HTML5 console") . '</button>
+                            <button type="button" class="btn btn-success" onclick="dashboard_open_html5_console_click()" data-dismiss="modal">' . _("HTML5 console") . '</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">' . _("Close") .'</button>
                         </div>
                     </div>
@@ -479,7 +480,17 @@ function drawVMScreen($vm){
             </div>
         </body>
         <script>
-            function dashboard_open_html5_console_click(){
+            function dashboard_open_html5_console_click(){' . "\n";
+            if ($use_kvmvdi_html5_client){
+                $html5_token_value = $v_reply[0]['ip'] . ":" .$v_reply[0]['osInstancePort'];
+                echo 'send_token(\'' . $websockets_address . '\', \'' . $websockets_port . '\', \'' . $v_reply[0]['name'] . '\', \'' . $html5_token_value . '\', \'' . $v_reply[0]['spice_password'] . '\');';
+            }
+            else {
+                $console = json_decode(listConsoles($vm), TRUE);
+                echo "window.open('" . $console['console']['url'] . "', '_blank')";
+                $html5_token_value = $v_reply[0]['ip'] . ":" .$v_reply[0]['osInstancePort'];
+            }
+   echo '
             }
         </script>
     </html>';
