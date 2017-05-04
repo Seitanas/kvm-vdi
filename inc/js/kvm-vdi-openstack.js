@@ -12,6 +12,8 @@ function drawOpenStackVMTable(obj, type, i){
     var power_button="<a href=\"#\" class=\"power-button\" id=\"" + obj['osInstanceId'] + "\" data-power=\"down\" data-power-button-rowid=\"" + obj['id'] +"\"><i class=\"text-danger fa fa-stop fa-fw\"></i>Power down</i></a>";
     if (obj['state'] != "Running")
         power_button="<a href=\"#\" class=\"power-button\" id=\"" + obj['osInstanceId'] + "\" data-power=\"up\" data-power-button-rowid=\"" + obj['id'] +"\"><i class=\"text-success fa fa-play fa-fw\"></i>Power up</a>";
+    if (obj['state'] == "Suspended")
+        power_button="<a href=\"#\" class=\"power-button\" id=\"" + obj['osInstanceId'] + "\" data-power=\"resume\" data-power-button-rowid=\"" + obj['id'] +"\"><i class=\"text-warning fa fa-play fa-fw\"></i>Resume</a>";
     var additional_buttons='';
     var rowclass='';
     if (type == 'initialmachine'){
@@ -132,7 +134,7 @@ function reloadOpenStackVmTable(){
 }
 function drawVMStatus(row_id, vm_id, power_state){
     var state_should_be=0;
-    if (power_state=='up') //define what powerstate we called
+    if (power_state == 'up' || power_state == 'resume') //define what powerstate we called
         state_should_be=1; //we need machine state to become running (1)
     else
         state_should_be=4; //we need machine state to become shutdown (4)
@@ -150,7 +152,7 @@ function drawVMStatus(row_id, vm_id, power_state){
                         }
                     if (reply['server']['OS-EXT-STS:power_state'] == state_should_be){ //machine is in wanted state
                         $('#progress-bar-' + row_id).addClass('hide');
-                        if (power_state == 'up'){
+                        if (power_state == 'up' || power_state == 'resume'){
                             $('#vm-state-' + row_id).text('Running');
                             $('#' + vm_id + '.power-button').html('<i class=\"text-danger fa fa-stop fa-fw\"></i>Power down</i>');
                             $('#' + vm_id + '.power-button').attr('data-power', 'down');
