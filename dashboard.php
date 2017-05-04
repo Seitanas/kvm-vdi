@@ -8,7 +8,7 @@ Center of Information Technology Development.
 
 
 Vilnius,Lithuania.
-2017-03-29
+2017-05-04
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -61,72 +61,70 @@ set_lang();
     ?>
     <!--clear remote modal forms -->
     <script type="text/javascript">
-	$(document).on("hidden.bs.modal", function (e) {
-	    $(e.target).removeData("bs.modal").find(".modal-content").empty();
-	});
+    $(document).on("hidden.bs.modal", function (e) {
+        $(e.target).removeData("bs.modal").find(".modal-content").empty();
+    });
     </script>
 
     <script>
-	function countdown(filepath,id) {
-        
-	    var $container = $("#progress-"+id);
-	    (function step() {
-		$.get(filepath, function(count){
-		    if (count==0){
-			$container.removeClass('progress-bar-success');
-			$container.css('width','100%').attr('aria-valuenow', count);  
-			$container.html('');
-		    }
-		    else{
-			$container.addClass('progress-bar-success');
-			$container.css('width', count+'%').attr('aria-valuenow', count);  
-			$container.html(count+'%');
-		    }
-		    if (count < 100 && count!='') {
-			$container.parent('div').show();
-    			setTimeout(step, 5000);
-		    }
-		    if (count == 100 || count=='') {
-			$container.parent('div').hide();
-		    }
-		});
-	  })();
-	}
+    function countdown(filepath,id) {
+        var $container = $("#progress-"+id);
+        (function step() {
+        $.get(filepath, function(count){
+            if (count==0){
+                $container.removeClass('progress-bar-success');
+                $container.css('width','100%').attr('aria-valuenow', count);  
+                $container.html('');
+            }
+            else{
+                $container.addClass('progress-bar-success');
+                $container.css('width', count+'%').attr('aria-valuenow', count);  
+                $container.html(count+'%');
+            }
+            if (count < 100 && count!='') {
+                $container.parent('div').show();
+                setTimeout(step, 5000);
+            }
+            if (count == 100 || count=='') {
+                $container.parent('div').hide();
+            }
+        });
+     })();
+    }
     </script>
     <script>
-	function handleSnapshot(checkbox) {
-	    window.location = "snapshot.php?action=single&vm="+checkbox.id;
-	}
-	function handleMaintenance(checkbox) {
-	    window.location = "maintenance.php?action=single&source="+checkbox.id;
-	}
+    function handleSnapshot(checkbox) {
+        window.location = "snapshot.php?action=single&vm="+checkbox.id;
+    }
+    function handleMaintenance(checkbox) {
+        window.location = "maintenance.php?action=single&source="+checkbox.id;
+    }
     </script>
-
     <script>
-	function confirmation() {
-	    if (confirm("<?php echo _("All virtual machines will be powered off and their initial snapshots recreated.\\nProceed?");?>")) {
-		$('#populatealert').show();
-		return true;
-	     }
+    function confirmation() {
+        if (confirm("<?php echo _("All virtual machines will be powered off and their initial snapshots recreated.\\nProceed?");?>")) {
+            $('#populatealert').show();
+            return true;
+        }
         return false;
-	}
-	function confirmation1() {
-	    if (confirm("<?php echo _("All virtual machines will be powered off and their initial snapshots recreated.\\nProceed?");?>")) {
-		$('#copyalert').show();
-		return true;
-	     }
+    }
+    function confirmation1() {
+        if (confirm("<?php echo _("All virtual machines will be powered off and their initial snapshots recreated.\\nProceed?");?>")) {
+            $('#copyalert').show();
+            return true;
+         }
         return false;
-	}
-	function confirmation2() {
-	    if (confirm("<?php echo _("All VDI machines will be deleted.\\nProceed?");?>")) {
-		$('#copyalert').show();
-		return true;
-	     }
+    }
+    function confirmation2() {
+        if (confirm("<?php echo _("All VDI machines will be deleted.\\nProceed?");?>")) {
+            $('#copyalert').show();
+            return true;
+         }
         return false;
-	}
-	function confirmBox(text) {
-    	    return confirm(text);
-	}
+    }
+    function confirmBox(text) {
+        return confirm(text);
+    }
     </script>
   </head>
 <?php 
