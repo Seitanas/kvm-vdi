@@ -207,9 +207,10 @@ function call_vm(poolid){
                 else if (engine == 'OpenStack' && use_kvmvdi_html5_client){
                     send_token(vm.address, vm.port, vm.token, vm.value, vm.spice_password);
                 }
-                else
+                else{
                     window.open(vm.html5_url);
-                heartbeatVM(vm.vm_id);
+                    heartbeatVM(vm.vm_id);
+                }
             }
             if (vm.status=='MAINTENANCE'){
                 $("#warningbox").html("<strong><?php echo _("Warning!");?></strong> <?php echo _("No VMs available. System in maintenance mode.");?><a class=\"close\" href=\"#\"  onclick=\"$('#warningbox').addClass('hidden')\">&times;</a>");
