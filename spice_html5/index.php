@@ -1,7 +1,7 @@
 <?php
 include dirname(__FILE__) . '/../functions/config.php';
 require_once(dirname(__FILE__) . '/../functions/functions.php');
-if (!check_client_session()){
+if (!check_client_session() && !check_session()){
     header ("Location: $serviceurl/client_index.php");
     exit;
 }

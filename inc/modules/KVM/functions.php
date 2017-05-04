@@ -455,6 +455,7 @@ function vmPowerCycle($hypervisor, $vm, $action){
 }
 //############################################################################################
 function drawVMScreen($vm, $hypervisor){
+    include dirname(__FILE__) . '/../../../functions/config.php';
     $h_reply=get_SQL_line("SELECT * FROM hypervisors WHERE id='$hypervisor'");
     $v_reply=get_SQL_array("SELECT * FROM vms WHERE id='$vm'");
     ssh_connect($h_reply[2].":".$h_reply[3]);

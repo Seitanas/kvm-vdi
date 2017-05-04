@@ -41,7 +41,7 @@ function show_hide_table_section(parentid,status){
 function send_token(websockets_address, websockets_port,token,value,spice_password){
     $.ajax({
         type : 'POST',
-        url : 'websocket.php',
+        url : 'inc/infrastructure/Websocket.php',
         data: {
             'token': token,
             'value': value,
