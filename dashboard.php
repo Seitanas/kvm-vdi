@@ -62,7 +62,14 @@ set_lang();
             echo '<script src="inc/js/kvm-vdi-openstack.js"></script>'
     ?>
     <!--clear remote modal forms -->
-    <script type="text/javascript">
+    <script>
+    var engine=<?php echo "'" . $engine . "'";?>;
+    function refresh_screen(){
+        if (engine == 'OpenStack')
+            reloadOpenStackVmTable();
+        else 
+            draw_table();
+    }
     $(document).on("hidden.bs.modal", function (e) {
         $(e.target).removeData("bs.modal").find(".modal-content").empty();
     });
@@ -208,7 +215,7 @@ set_lang();
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#" onclick="draw_table();"  data-toggle="hover">
+                <li><a href="#" onclick="refresh_screen();"  data-toggle="hover">
                     <button type="button" class="btn btn-info" aria-label="Refresh" title="<?php echo _("Refresh VM info");?>">
                     <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button></a>
                </li>
@@ -315,11 +322,9 @@ set_lang();
 <script>
 $("#left-menu").metisMenu({ toggle: false });
 $(document).ready(function(){
-    var engine=<?php echo "'" . $engine . "'";?>;
-    if (engine == 'OpenStack')
-        reloadOpenStackVmTable();
-    else 
-        draw_table();
+
+    refresh_screen();
+
 });
 </script>
 

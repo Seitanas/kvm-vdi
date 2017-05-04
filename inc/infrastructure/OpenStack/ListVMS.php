@@ -5,6 +5,9 @@ if (!check_session()){
     echo json_encode(array('error' => 'nologin'));
     exit;
 }
+openStackConnect();
+updateHypervisorList();
+updateVmList();
 slash_vars();
 $vmArray = get_SQL_array("SELECT vms.id, vms.name, vms.machine_type, vms.source_volume, vms.snapshot, vms.maintenance, vms.filecopy, vms.state, 
 vms.spice_password, vms.clientid, vms.lastused, vms.os_type, vms.locked, vms.osHypervisorName, vms.osInstanceName, vms.osInstanceId, vms2.name 

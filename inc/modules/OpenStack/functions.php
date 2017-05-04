@@ -110,7 +110,7 @@ function updateVmList(){
     curl_close($ch);
     $x=0;
     $instanceList=array();
-    //print_r( $result);
+//    print_r( $result);
     $power_state=array('0' => 'Shutoff', '1' => 'Running', '2' => 'Paused', '3' => 'Crashed', '4' => 'Shutoff', '5' => 'Suspended', '7' => 'Suspended');
     while ($x <  sizeof($result['servers'])){
         $vmName=$result['servers'][$x]['name'];
@@ -422,9 +422,6 @@ function sendToBroker($command){
 }
 //############################################################################################
 function draw_dashboard_table(){
-    openStackConnect();
-    updateHypervisorList();
-    updateVmList();
     echo '<div class="table-responsive"  style="overflow: inherit;">
             <table class="table table-striped table-hover" >
                 <thead>
