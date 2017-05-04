@@ -196,7 +196,7 @@ function vmDelete(vm_array){
             },
             success:function (data) {
                 reply = $.parseJSON(data);
-                if (reply['delete'] == 'success')
+                if (reply['delete'] == 'success' || reply['itemNotFound'])
                     $('#row-name-' + obj['row_id']).remove();
                 else
                     console.log(data);
