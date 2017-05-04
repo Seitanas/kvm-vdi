@@ -1,6 +1,6 @@
 <?php
 //############################################################################################
-function draw_html5_buttons(){
+function HTML5Buttons(){
     include (dirname(__FILE__) . '/../../../functions/config.php');
     require_once(dirname(__FILE__) . '/../../../functions/functions.php');
     slash_vars();
