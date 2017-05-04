@@ -39,6 +39,7 @@ set_lang();
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <link href="inc/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
     <link href="inc/css/dashboard.css" rel="stylesheet">
+    <link href="inc/PNotify/pnotify.custom.min.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -54,6 +55,7 @@ set_lang();
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="inc/js/ie10-viewport-bug-workaround.js"></script>
     <script src="inc/metisMenu/metisMenu.min.js"></script>
+    <script src="inc/PNotify/pnotify.custom.min.js"></script>
     <script src="inc/js/kvm-vdi.js"></script>
     <?php
         if ($engine == 'OpenStack')
@@ -132,7 +134,6 @@ set_lang();
     $sql_reply=get_SQL_array("SELECT * FROM hypervisors");
 ?>
 <body>
-
 <div class="modal fade" id="modalWm" tabindex="-1" role="dialog" aria-labelledby="modalWm" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -194,27 +195,27 @@ set_lang();
     <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
-
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container-fluid">
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">VDI dashboard</a>
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">VDI dashboard</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="#" onclick="draw_table();"  data-toggle="hover"><button type="button" class="btn btn-info" aria-label="Refresh" title="<?php echo _("Refresh VM info");?>">
-		<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button></a>
-	    </li>
-          </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#" onclick="draw_table();"  data-toggle="hover">
+                    <button type="button" class="btn btn-info" aria-label="Refresh" title="<?php echo _("Refresh VM info");?>">
+                    <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button></a>
+               </li>
+            </ul>
         </div>
-      </div>
-    </nav>
+    </div>
+</div>
 
 <div class="container-fluid">
     <?php 

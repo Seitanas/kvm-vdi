@@ -186,3 +186,16 @@ $(document).ready(function(){
         }
    });
 });
+function showAlert(title, text, icon, type){
+    new PNotify({
+        title: title,
+        text: text,
+        type: type,
+        styling: 'bootstrap3',
+        icon: icon,
+        buttons: {
+            closer_hover: false,
+            sticker: false
+        }
+    });
+}
