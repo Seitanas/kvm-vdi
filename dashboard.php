@@ -28,7 +28,7 @@ set_lang();
     <meta name="description" content="">
     <meta name="author" content="Tadas Ustinavičius">
     <title>VDI dashboard</title>
-    <link href="inc/css/custom.css" rel="stylesheet">
+    <link href="inc/css/kvm-vdi.css" rel="stylesheet">
     <!-- Bootstrap core CSS -->
     <link href="inc/css/bootstrap.min.css" rel="stylesheet">
     <!-- metisMenu CSS -->

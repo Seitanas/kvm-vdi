@@ -99,7 +99,7 @@ $vmname=$_GET['vmInfoToken'];
         <script src="run.js"></script>
         <!-- end core -->
         <meta content="yes" name="apple-mobile-web-app-capable" />
-	<link href="../inc/css/custom.css" rel="stylesheet">
+	<link href="../inc/css/kvm-vdi.css" rel="stylesheet">
 	<!-- Bootstrap core CSS -->
 	<link href="../inc/css/bootstrap.min.css" rel="stylesheet">
 	<!-- metisMenu CSS -->

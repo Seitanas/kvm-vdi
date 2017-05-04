@@ -99,7 +99,7 @@ header("KVM-VDI-engine: " . $engine);
     <link href="inc/css/bootstrap.min.css" rel="stylesheet">
     <link href="inc/css/bootstrap-theme.min.css" rel="stylesheet">
     <link href="inc/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="inc/css/custom.css" rel="stylesheet">
+    <link href="inc/css/kvm-vdi.css" rel="stylesheet">
     <link href="inc/css/sb-admin-2.css" rel="stylesheet">
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
