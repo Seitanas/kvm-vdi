@@ -303,7 +303,7 @@ function getVMInfo($vm){
     $osHypervisorName = $result['server']['OS-EXT-SRV-ATTR:host'];
     if  ($vm_state != 'deleting')
         add_SQL_line("UPDATE vms SET state = '$vm_state', osInstanceName = '$osInstanceName', osHypervisorName = '$osHypervisorName' WHERE osInstanceId='$vm'");
-    return json_encode($result);
+    return $result;
 }
 //############################################################################################
 function vmPowerCycle($vm, $action){

@@ -11,7 +11,7 @@ $vm_type = $_POST['vm_type'];
 $volume_id = $_POST['volume_id'];
 $source_vm = $_POST['source_vm'];
 $target_vm = $_POST['target_vm'];
-$source_vm_info = json_decode(getVMInfo($source_vm), TRUE);
+$source_vm_info = getVMInfo($source_vm);
 $flavor = $source_vm_info['server']['flavor']['id'];
 $source_vm_info = getSQLArray("SELECT * FROM vms WHERE osInstanceId = '$source_vm'");
 $network_array = json_decode($source_vm_info[0]['osInstanceNetworks']);
