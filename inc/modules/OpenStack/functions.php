@@ -415,6 +415,24 @@ function deleteVM($vm_id){
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     $result = curl_exec($ch);
+    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    if ($httpcode != 204){
+        switch ($httpcode){
+            case 401: 
+                $error = "unauthorized";
+                break;
+            case 403:
+                $error = "forbidden";
+                break;
+            case 404:
+                $error = "itemNotFound";
+                break;
+            case 409:
+                $error = "conflict";
+                break;
+        }
+        $result = array('error' => array('message' => 'OpenStack returned error: ' . $error));
+    }
     curl_close($ch);
     return $result;
 }

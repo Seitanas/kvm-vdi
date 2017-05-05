@@ -200,7 +200,12 @@ function vmDelete(vm_array){
             },
             success:function (data) {
                 reply = $.parseJSON(data);
-                if (reply['delete'] == 'success' || reply['itemNotFound'])
+                if ("error" in reply){
+                    showAlert("Error", reply.error.message, "fa fa-exclamation-triangle fa-fw", "error");
+                    $("#progress-bar-" + obj['row_id']).addClass('hide');
+                    return 1;
+                }
+                if (reply['delete'] == 'success')
                     $('#row-name-' + obj['row_id']).remove();
                 else
                     console.log(data);
