@@ -301,6 +301,8 @@ function getVMInfo($vm){
 //    write_log(serialize($result['server']));
     $osInstanceName = $result['server']['OS-EXT-SRV-ATTR:instance_name'];
     $osHypervisorName = $result['server']['OS-EXT-SRV-ATTR:host'];
+    if (isset($result['server']['fault']))
+        return array('error' => array('message' => $result['server']['fault']['message']));
     if  ($vm_state != 'deleting')
         add_SQL_line("UPDATE vms SET state = '$vm_state', osInstanceName = '$osInstanceName', osHypervisorName = '$osHypervisorName' WHERE osInstanceId='$vm'");
     return $result;
