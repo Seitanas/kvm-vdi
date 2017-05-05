@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-04-24
+2017-05-05
 Vilnius, Lithuania.
 */
 //############################################################################################
@@ -29,7 +29,6 @@ function OpenStackConnect(){
     $expire_date_time = new DateTime($token_expire);
     $interval = $curr_date_time->diff($expire_date_time, false);
     $minutes_left=$interval->format('%R%d') * 1440 + $interval->format('%R%h') * 60 + $interval->format('%R%i');
-//    echo $minutes_left;
     if ($minutes_left>30){ //if there is still more than 30mins left of token time, do not generate a new one
         return 0;
     }
@@ -43,7 +42,17 @@ function OpenStackConnect(){
         'Content-Type: application/json',
         'Content-Length: ' . strlen($data_string))
     );
-    $result = json_decode(curl_exec($ch), TRUE);
+    $curl_reply = curl_exec($ch);
+    if (curl_errno($ch) > 0){
+        return array('error' => array('message' => 'Connection returned error: ' . ReturnCurlError(curl_errno($ch))));
+        exit;
+    }
+    $result = json_decode($curl_reply, TRUE);
+    if ($result['error']){
+        return $result;
+        exit;
+    }
+//    print_r($result);
     curl_close($ch);
     foreach ($result['access']['serviceCatalog'] as $item){
         if ($item['type'] == 'compute')
@@ -63,6 +72,7 @@ function OpenStackConnect(){
     memcache_set($memcache, 'volumev2_url', $volumev2_url);
     memcache_set($memcache, 'image_url', $image_url);
     memcache_set($memcache, 'network_url', $network_url);
+    return 0;
  //   print_r($result);
 }
 //############################################################################################
@@ -503,7 +513,57 @@ function reload_vm_info(){
     openStackConnect();
     updateVmList();
 }
+//############################################################################################
 function draw_html5_buttons(){
     require_once ('HTML5Buttons.php');
     HTML5Buttons();
+}
+//############################################################################################
+function ReturnCurlError($errno){
+    $error_codes=array(
+        1 => 'CURLE_UNSUPPORTED_PROTOCOL',
+        2 => 'CURLE_FAILED_INIT',
+        3 => 'CURLE_URL_MALFORMAT',
+        4 => 'CURLE_URL_MALFORMAT_USER',
+        5 => 'CURLE_COULDNT_RESOLVE_PROXY',
+        6 => 'CURLE_COULDNT_RESOLVE_HOST',
+        7 => 'CURLE_COULDNT_CONNECT',
+        9 => 'CURLE_REMOTE_ACCESS_DENIED',
+        21 => 'CURLE_QUOTE_ERROR',
+        22 => 'CURLE_HTTP_RETURNED_ERROR',
+        23 => 'CURLE_WRITE_ERROR',
+        26 => 'CURLE_READ_ERROR',
+        27 => 'CURLE_OUT_OF_MEMORY',
+        28 => 'CURLE_OPERATION_TIMEDOUT',
+        33 => 'CURLE_RANGE_ERROR',
+        34 => 'CURLE_HTTP_POST_ERROR',
+        35 => 'CURLE_SSL_CONNECT_ERROR',
+        37 => 'CURLE_FILE_COULDNT_READ_FILE',
+        41 => 'CURLE_FUNCTION_NOT_FOUND',
+        42 => 'CURLE_ABORTED_BY_CALLBACK',
+        43 => 'CURLE_BAD_FUNCTION_ARGUMENT',
+        45 => 'CURLE_INTERFACE_FAILED',
+        47 => 'CURLE_TOO_MANY_REDIRECTS',
+        48 => 'CURLE_UNKNOWN_TELNET_OPTION',
+        51 => 'CURLE_PEER_FAILED_VERIFICATION',
+        52 => 'CURLE_GOT_NOTHING',
+        53 => 'CURLE_SSL_ENGINE_NOTFOUND',
+        54 => 'CURLE_SSL_ENGINE_SETFAILED',
+        55 => 'CURLE_SEND_ERROR',
+        56 => 'CURLE_RECV_ERROR',
+        58 => 'CURLE_SSL_CERTPROBLEM',
+        59 => 'CURLE_SSL_CIPHER',
+        60 => 'CURLE_SSL_CACERT',
+        61 => 'CURLE_BAD_CONTENT_ENCODING',
+        64 => 'CURLE_USE_SSL_FAILED',
+        65 => 'CURLE_SEND_FAIL_REWIND',
+        66 => 'CURLE_SSL_ENGINE_INITFAILED',
+        67 => 'CURLE_LOGIN_DENIED',
+        75 => 'CURLE_CONV_FAILED',
+        76 => 'CURLE_CONV_REQD',
+        77 => 'CURLE_SSL_CACERT_BADFILE',
+        78 => 'CURLE_REMOTE_FILE_NOT_FOUND',
+        81 => 'CURLE_AGAIN',
+        88 => 'CURLE_CHUNK_FAILED');
+    return $error_codes[$errno];
 }

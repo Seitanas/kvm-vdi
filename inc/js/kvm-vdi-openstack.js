@@ -99,6 +99,10 @@ function drawOpenstackVmTable(){
         var initial_machines=[];
         var vdi_machines=[];
         var x=0;
+        if ("error" in json){
+            showAlert("Error", json.error.message, "fa fa-exclamation-triangle fa-fw", "error");
+            return 1;
+        }
         $.each(json, function(i, obj){
             if (!obj['source_volume_machine'])//remove NULL
                 obj['source_volume_machine']='';

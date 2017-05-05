@@ -5,7 +5,11 @@ if (!check_session()){
     echo json_encode(array('error' => 'nologin'));
     exit;
 }
-openStackConnect();
+$err = openStackConnect();
+if ($err){
+    echo json_encode($err);
+    exit;
+}
 updateHypervisorList();
 updateVmList();
 slash_vars();
