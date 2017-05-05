@@ -8,4 +8,4 @@ if (!check_session()){
 slash_vars();
 $vm_id = $_POST['vm_id'];
 if (!empty ($vm_id))
-   echo GetVMInfo($vm_id);
+   echo json_encode(GetVMInfo($vm_id));
