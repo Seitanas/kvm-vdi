@@ -6,7 +6,6 @@ $(document).ready(function(){
     $('#main_table').on("click", "a.DeleteVMButton", function() { //since table items are dynamically generated, we will not get ordinary .click() event
         if (confirm('Are you sure?')){
             $('#PleaseWaitDialog').modal('show');
-            console.log($(this).attr('data-hypervisor'));
             var vm = $(this).attr('data-vm');
             var hypervisor = $(this).attr('data-hypervisor');
             var action = $(this).attr('data-action');
@@ -20,11 +19,7 @@ $(document).ready(function(){
                     parent: parent
                 },
                 success: function(data) {
-                    var reply=jQuery.parseJSON(data);
-                    if ("error" in reply)
-                        showAlert("Error", reply.error, "fa fa-exclamation-triangle fa-fw", "error");
-                    if ("success" in reply)
-                        showAlert("Success", "Deleted successfully", "fa fa-check-circle-o fa-fw", "success");
+                    formatAlertMessage(data)
                     refresh_screen();
                     $('#PleaseWaitDialog').modal('hide');
                 },
@@ -114,11 +109,7 @@ $(document).ready(function(){
                         $this.addClass('glyphicon-ok-circle btn-success');
                         $('#hypervisor-table-' + hypervisor).removeClass('hypervisor-screen-disabled');
                       }
-                    var reply=jQuery.parseJSON(data);
-                    if ("error" in reply)
-                       showAlert("Error", reply.error, "fa fa-exclamation-triangle fa-fw", "error");
-                    if ("success" in reply)
-                       showAlert("Success", "Deleted successfully", "fa fa-check-circle-o fa-fw", "success");
+                    formatAlertMessage(data);
                     refresh_screen();
                     $('#PleaseWaitDialog').modal('hide');
                 },

@@ -10,7 +10,7 @@ Vilnius, Lithuania.
 include dirname(__FILE__) . '/../../../functions/config.php';
 require_once(dirname(__FILE__) . '/../../../functions/functions.php');
 if (!check_session()){
-    echo json_encode(array('error' => 'nologin'));
+    echo json_encode(array('error' => _('Please login first')));
     exit;
 }
 slash_vars();
@@ -26,7 +26,7 @@ if (empty($hypervisor)){
     exit;
 }
 if (empty($vm) && empty($parent)){
-    echo json_encode(array('error' => 'missing values'));
+    echo json_encode(array('error' => 'Missing values.'));
     exit;
 }
 if ($action != 'mass_delete'){
@@ -81,6 +81,6 @@ if ($action == 'mass_delete'){
         ++$x;
     }
 }
-echo json_encode(array('success' => 'delete'));
+echo json_encode(array('success' => _('Deleted successfully')));
 exit;
 

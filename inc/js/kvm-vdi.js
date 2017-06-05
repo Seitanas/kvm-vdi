@@ -148,6 +148,14 @@ function showAlert(title, text, icon, type){
     });
 }
 //==================================================================
+function formatAlertMessage(message){
+    var msg = jQuery.parseJSON(message);
+    if ("error" in msg)
+    showAlert("Error", msg.error, "fa fa-exclamation-triangle fa-fw", "error");
+    if ("success" in msg)
+    showAlert("Success", msg.success, "fa fa-check-circle-o fa-fw", "success");
+}
+//==================================================================
 function generatePassword(){
     var password = "";
     var char_map = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -204,11 +212,7 @@ $(document).ready( function() {
                     password : $('#password').val(),
                 },
                 success:function (data) {
-                    var reply=jQuery.parseJSON(data);
-                    if ("error" in reply)
-                        showAlert("Error", reply.error, "fa fa-exclamation-triangle fa-fw", "error");
-                    if ("success" in reply)
-                        showAlert("Success", reply.success, "fa fa-check-circle-o fa-fw", "success");
+                    formatAlertMessage(data);
                     $("#username").val("");
                     $("#password").val("");
                 }
@@ -230,8 +234,7 @@ $(document).ready( function() {
                 credential_type : $('#credential_type').val(),
             },
             success:function (data) {
-                var reply=jQuery.parseJSON(data);
-                showAlert("Success", reply.success, "fa fa-check-circle-o fa-fw", "success");
+                formatAlertMessage(data);
             }
         })
     })
@@ -259,8 +262,7 @@ $(document).ready( function() {
                     credential_type : $('#credential_type').val(),
                 },
                 success:function (data) {
-                    var reply=jQuery.parseJSON(data);
-                    showAlert("Success", reply.success, "fa fa-check-circle-o fa-fw", "success");
+                    formatAlertMessage(data);
                     $("#SubmitCredentialsButton").addClass('hide');
                 }
             });
