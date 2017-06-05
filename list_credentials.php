@@ -16,16 +16,16 @@ if (!check_session()){
     header ("Location: $serviceurl/?error=1");
     exit;
 }
-if(isset ($_GET['credentialtype']))
-    $credentialtype=$_GET['credentialtype'];
+if(isset ($_GET['credential_type']))
+    $credential_type=$_GET['credential_type'];
 set_lang();
-if ($credentialtype=='client')
+if ($credential_type=='client')
     $cred_reply=get_SQL_array("SELECT * FROM clients WHERE isdomain=0 ORDER BY username");
-if ($credentialtype=='adgroup')
+if ($credential_type=='adgroup')
     $cred_reply=get_SQL_array("SELECT id, name AS username FROM ad_groups ORDER BY name");
-if ($credentialtype=='user')
+if ($credential_type=='user')
     $cred_reply=get_SQL_array("SELECT * FROM users ORDER BY username");
-if ($credentialtype=='pool')
+if ($credential_type=='pool')
     $cred_reply=get_SQL_array("SELECT id, name AS username FROM pool ORDER BY name");
 ?>
 <!DOCTYPE html>
@@ -40,13 +40,13 @@ if ($credentialtype=='pool')
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
              <h4 class="modal-title"><?php
-	    if ($credentialtype=='client')
+	    if ($credential_type=='client')
     		echo _("Manage clients");
-	    if ($credentialtype=='adgroup')
+	    if ($credential_type=='adgroup')
     		echo _("Manage AD groups");
-	    if ($credentialtype=='user')
+	    if ($credential_type=='user')
     		echo _("Manage administrators");
-	    if ($credentialtype=='pool')
+	    if ($credential_type=='pool')
     		echo _("Manage pools");
 	?></h4>
         </div>
@@ -71,9 +71,9 @@ if ($credentialtype=='pool')
                     </div>
                     <div class="col-md-7 users-line">
 			<input class="hide" type="checkbox" name="users[]" value="' . $cred_reply[$x]['id']  . '" id="user-' . $cred_reply[$x]['id']  . '">';
-			if ($cred_reply[$x]['username']!='admin'||$credentialtype=='client')
+			if ($cred_reply[$x]['username']!='admin'||$credential_type=='client')
     			    echo '<button type="button" class="btn btn-warning delete"  data-id="' . $cred_reply[$x]['id']  . '"><i class="fa fa-trash-o fa-lg fa-fw"></i>' . _("Delete") . '</button>';
-			if($credentialtype!='adgroup'&&$credentialtype!='pool')
+			if($credential_type!='adgroup'&&$credential_type!='pool')
 			    echo '<button type="button" class="btn btn-info reset-pw"  data-id="' . $cred_reply[$x]['id']  . '"><i class="fa fa-lock fa-lg fa-fw"></i>' . _("Reset password") . '</button>';
             	    echo '</div>
 		</div>';
@@ -114,7 +114,7 @@ $(document).ready(function(){
 		id : id,
                 type : 'update-pw',
 		password : password,
-		credentialtype : <?php echo "'" . $credentialtype . "'";?>,
+		credential_type : <?php echo "'" . $credential_type . "'";?>,
 	    },
 	    success:function (data) {
 		$("#progress").text("<?php echo _("Password changed to: ");?>" + password);
@@ -143,7 +143,7 @@ $(document).ready(function(){
             data: {
                 type : 'delete',
 		credid : to_delete,
-		credentialtype : <?php echo "'" . $credentialtype . "'";?>,
+		credential_type : <?php echo "'" . $credential_type . "'";?>,
 	    },
 	    success:function (data) {
 		$("#submit").addClass('hide');

@@ -152,6 +152,7 @@ $(document).ready( function() {
     $('#RefreshButton').click(function() {
         refresh_screen();
     });
+
     $('#AddADGroupButton').click(function() {
         if(!$('#ADGroup')[0].checkValidity()){
             $('#ADGroup').find('input[type="submit"]').click();
@@ -171,6 +172,40 @@ $(document).ready( function() {
                         showAlert("Success", reply.success, "fa fa-check-circle-o fa-fw", "success");
                     refresh_screen();
                     $("#GroupName").val("");
+                }
+            });
+        }
+    });
+
+    $('#PWGen').click(function() {
+        var password = "";
+        var char_map = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        for( var i=0; i < 10; i++ )
+            password += char_map.charAt(Math.floor(Math.random() * char_map.length));
+        $("#password").val(password);
+    });
+
+    $('#UpdateCredentialsButton').click(function() {
+        if(!$('#CredentialsForm')[0].checkValidity()){
+            $('#CredentialsForm').find('input[type="submit"]').click();
+        }
+        else{
+            $.post({
+                url : 'inc/infrastructure/ManageCredentials.php',
+                data: {
+                    type : 'new',
+                    credential_type : $('#credential_type').val(),
+                    username : $('#username').val(),
+                    password : $('#password').val(),
+                },
+                success:function (data) {
+                    var reply=jQuery.parseJSON(data);
+                    if ("error" in reply)
+                        showAlert("Error", reply.error, "fa fa-exclamation-triangle fa-fw", "error");
+                    if ("success" in reply)
+                        showAlert("Success", reply.success, "fa fa-check-circle-o fa-fw", "success");
+                    $("#username").val("");
+                    $("#password").val("");
                 }
             });
         }
