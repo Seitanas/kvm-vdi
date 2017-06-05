@@ -88,5 +88,41 @@ $(document).ready(function(){
             });
         }
     });
+
+    $('#main_table').on("click", "a.HypervisorMaintenanceButton", function() { //since table items are dynamically generated, we will not get ordinary .click() event
+        var hypervisor = $(this).data('hypervisor');
+        var maintenance = $(this).data('maintenance');
+        var $this = $(this); //need to move reference for ajax callback as $(this) will not work in ajax 'success:'
+        $.post({
+            url: 'inc/infrastructure/KVM/HypervisorMaintenance.php',
+                data: {
+                    maintenance: maintenance,
+                    hypervisor: hypervisor,
+                },
+                success: function(data) {
+                    if (maintenance == 1){
+                        $this.data('maintenance', '0');
+                        $this.removeClass('glyphicon-ok-circle');
+                        $this.removeClass('btn-success');
+                        $this.addClass('glyphicon-ban-circle');
+                        $this.addClass('btn-default');
+                        $('#hypervisor-table-' + hypervisor).addClass('hypervisor-screen-disabled');
+                    }
+                    else{
+                        $this.data('maintenance', '1');
+                        $this.removeClass('glyphicon-ban-circle btn-default');
+                        $this.addClass('glyphicon-ok-circle btn-success');
+                        $('#hypervisor-table-' + hypervisor).removeClass('hypervisor-screen-disabled');
+                      }
+                    var reply=jQuery.parseJSON(data);
+                    if ("error" in reply)
+                       showAlert("Error", reply.error, "fa fa-exclamation-triangle fa-fw", "error");
+                    if ("success" in reply)
+                       showAlert("Success", "Deleted successfully", "fa fa-check-circle-o fa-fw", "success");
+                    refresh_screen();
+                    $('#PleaseWaitDialog').modal('hide');
+                },
+        });
+    });
 });
 //==================================================================

@@ -161,14 +161,14 @@ function draw_dashboard_table(){
             $hypervisor_name=$sql_reply[$x]['ip'];
         echo '<h1 class="sub-header">' .  _("Hypervisor: ") . $hypervisor_name;
         if (!$sql_reply[$x]['maintenance'])
-            echo '<a href="hypervisor.php?maintenance=1&id=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn glyphicon glyphicon-ok-circle btn-success"> ' . _("Enabled") . '</a>';
+            echo '<a href="#" data-maintenance="1" data-hypervisor="' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn glyphicon glyphicon-ok-circle btn-success HypervisorMaintenanceButton"> ' . _("Enabled") . '</a>';
         else {
-            echo '<a href="hypervisor.php?maintenance=0&id=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn glyphicon glyphicon-ban-circle btn-default"> ' . _("Disabled") . '</a>';
+            echo '<a href="#" data-mainetenance=0 data-hypervisor="' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn glyphicon glyphicon-ban-circle btn-default HypervisorMaintenanceButton"> ' . _("Disabled") . '</a>';
             $table_status="hypervisor-screen-disabled";
         }
         echo '</h1>
                 <div class="table-responsive"  style="overflow: inherit;">
-                <table class="table table-striped table-hover ' . $table_status . '">
+                <table class="table table-striped table-hover" id="hypervisor-table-' . $sql_reply[$x]['id'] . '">
                     <thead>
                         <tr>
                             <th>#</th>
