@@ -94,6 +94,7 @@ function drawOpenStackVMTable(obj, type, i){
         parent_row.parentNode.insertBefore(row, parent_row.nextSibling);
     }
 }
+//==================================================================
 function drawOpenstackVmTable(){
     $.getJSON("inc/infrastructure/OpenStack/ListVMS.php", {},  function(json){
         var initial_machines=[];
@@ -132,10 +133,12 @@ function drawOpenstackVmTable(){
         }
     });
 }
+//==================================================================
 function reloadOpenStackVmTable(){
     $('#OpenstackVmTable').html('');
     drawOpenstackVmTable();
 }
+//==================================================================
 function drawVMStatus(row_id, vm_id, power_state){
     var state_should_be=0;
     if (power_state == 'up' || power_state == 'resume') //define what powerstate we called
@@ -181,6 +184,7 @@ function drawVMStatus(row_id, vm_id, power_state){
             });
     }
 }
+//==================================================================
 function vmPowerCycle(vm_array){
     $.each(vm_array, function(i, obj){
         $("#progress-bar-" + obj['row_id']).removeClass('hide');
@@ -196,6 +200,7 @@ function vmPowerCycle(vm_array){
           });
     });
 }
+//==================================================================
 function vmDelete(vm_array){
     $.each(vm_array, function(i, obj){
         $("#progress-bar-" + obj['row_id']).removeClass('hide');
@@ -219,6 +224,7 @@ function vmDelete(vm_array){
         });
     });
 }
+//==================================================================
 function getVMConsole(vm_id, console_type){
     $("#ConsoleMessage").addClass("alert alert-info");
     $("#ConsoleMessage").html('<p class="text-left"><i class="fa fa-spinner fa-spin fa-1x fa-fw"></i>Please wait</p>');
@@ -243,6 +249,7 @@ function getVMConsole(vm_id, console_type){
             }
     });
 }
+//==================================================================
 function fillSourceImages(vm_type){
     var source;
     if (vm_type == 'vdimachine'){
@@ -273,7 +280,7 @@ function fillSourceImages(vm_type){
         });
     }
 }
-
+//==================================================================
 function heartbeatVM(vm_id){
    $.post({
         url : 'inc/infrastructure/OpenStack/HeartbeatVM.php',
@@ -285,6 +292,7 @@ function heartbeatVM(vm_id){
             }
    });
 }
+//==================================================================
 function createOSVM(){
     /* First of all we create volume from source machine.
     JS will loop-query OpenStack volume service, till volume is created.
@@ -401,6 +409,7 @@ function createOSVM(){
         }
     }
 }
+//==================================================================
 function loadNetworkList(){
     $("#OSNetworkLoad").removeClass('hide');
     $.get( "inc/infrastructure/OpenStack/ListNetworks.php", function( data ) {
@@ -412,6 +421,7 @@ function loadNetworkList(){
         $("#OSNetworkLoad").addClass('hide');
     });
 }
+//==================================================================
 function loadFlavorList(){
     $("#OSFlavorLoad").removeClass('hide');
     $.get( "inc/infrastructure/OpenStack/ListFlavors.php", function( data ) {
@@ -423,6 +433,7 @@ function loadFlavorList(){
         $("#OSFlavorLoad").addClass('hide');
     });
 }
+//==================================================================
 function changeMaintenanceStatus(vm_id, state){
     $.post({
         url : 'inc/infrastructure/OpenStack/UpdateMaintenance.php',
@@ -435,6 +446,7 @@ function changeMaintenanceStatus(vm_id, state){
     });
 
 }
+//==================================================================
 $(document).ready(function(){
     $('#OpenstackEditVmButton').click(function() {
         $.ajax({

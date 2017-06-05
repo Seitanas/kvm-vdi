@@ -1,10 +1,8 @@
 function reloadKVMVmTable(){
     $( "#main_table" ).load( "inc/infrastructure/KVM/DrawTable.php" );
 }
-
-//------------------------------------------------------------------------------
+//==================================================================
 $(document).ready(function(){
-
     $('#main_table').on("click", "a.DeleteVMButton", function() { //since table items are dynamically generated, we will not get ordinary .click() event
         if (confirm('Are you sure?')){
             $('#PleaseWaitDialog').modal('show');
@@ -33,7 +31,7 @@ $(document).ready(function(){
             });
         }
     });
-//------------------------------------------------------------------------------
+//==================================================================
     $('#create-vm-button-click').click(function() {
         $("#new_vm_creation_info_box").addClass('hide');
         if(!$('#new_vm')[0].checkValidity()){
@@ -90,6 +88,5 @@ $(document).ready(function(){
             });
         }
     });
-//------------------------------------------------------------------------------
-});
+//==================================================================});
 

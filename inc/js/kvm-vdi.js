@@ -8,6 +8,7 @@ function update_VM_lock(vmid,lock){
         },
     });
 }
+//==================================================================
 function lock_VM(vmid){
     if ($("#copy-disk-from-source-button-"+vmid ).hasClass( 'disabled' )){
         $("#lock-vm-button-"+vmid).html("VM locked:<i class=\"fa fa-fw fa-square-o\" aria-hidden=\"true\"></i>");
@@ -24,6 +25,7 @@ function lock_VM(vmid){
         $("#populate-machines-button-"+vmid).addClass('disabled');
     }
 }
+//==================================================================
 function show_hide_table_section(parentid,status){
     $.ajax({
     type : 'POST',
@@ -35,6 +37,7 @@ function show_hide_table_section(parentid,status){
     });
 
 }
+//==================================================================
 function send_token(websockets_address, websockets_port,token,value,spice_password){
     $.ajax({
         type : 'POST',
@@ -51,6 +54,7 @@ function send_token(websockets_address, websockets_port,token,value,spice_passwo
         }
     })
 }
+//==================================================================
 function load_client_pool_list(poolid,type){
     $.getJSON("clients_in_pool.php?side=from&poolid="+poolid+"&type="+type, {},  function(json){
             $('#multiselect').empty();
@@ -65,6 +69,7 @@ function load_client_pool_list(poolid,type){
             });
     });
 }
+//==================================================================
 function load_vm_pool_list(poolid, non_VDI_vms){
     var list_non_vdi_vms=0;
     if (non_VDI_vms)
@@ -82,6 +87,7 @@ function load_vm_pool_list(poolid, non_VDI_vms){
             });
     });
 }
+//==================================================================
 function load_vm_list(){
     $.getJSON("inc/infrastructure/ListVms.php?type=ALL", {},  function(json){
             $('#multiselect').empty();
@@ -90,6 +96,7 @@ function load_vm_list(){
             });
     });
 }
+//==================================================================
 function show_non_vdi_vms(status){
     var $poolid=$('#poollist').val();
     if (status=='checked'){
@@ -105,6 +112,7 @@ function show_non_vdi_vms(status){
         load_vm_pool_list($poolid, true);
     }
 }
+//==================================================================
 function fill_source_machines(hypervisor){
     $.ajax({
         type : 'POST',
@@ -125,6 +133,7 @@ function fill_source_machines(hypervisor){
         }
     })
 }
+//==================================================================
 function showAlert(title, text, icon, type){
     new PNotify({
         title: title,
