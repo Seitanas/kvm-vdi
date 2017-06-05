@@ -84,7 +84,7 @@ $(document).ready(function(){
                             $("#new_vm_creation_info_box").addClass('alert-success');
                             $("#new_vm_creation_info_box").html("<i class=\"fa fa-thumbs-o-up fa-fw\"></i>Success");
                             $(".create_vm_buttons").removeClass('disabled');
-                            draw_table();
+                            refresh_screen();
                     }
                 }
             });

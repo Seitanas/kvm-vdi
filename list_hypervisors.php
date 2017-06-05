@@ -3,12 +3,8 @@
 KVM-VDI
 Tadas Ustinavičius
 
-Vilnius University.
-Center of Information Technology Development.
-
-
 Vilnius,Lithuania.
-2016-10-28
+2017-06-05
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -78,8 +74,8 @@ $hypervisors_reply=get_SQL_array("SELECT * FROM hypervisors ORDER BY name,ip DES
 $(document).ready(function(){
     $('.hypervisor').editable({
 	success: function(response, newValue) {
-	    draw_table();
-	}
+        refresh_screen();
+    }
     })
 
     $('.delete').click(function() {
@@ -106,7 +102,7 @@ $(document).ready(function(){
 	    },
 	    success:function (data) {
 		$("#submit").addClass('hide');
-		draw_table();
+            refresh_screen();
 	    }
 	})
 	}
