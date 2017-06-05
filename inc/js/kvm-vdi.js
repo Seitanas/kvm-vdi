@@ -151,9 +151,9 @@ function showAlert(title, text, icon, type){
 function formatAlertMessage(message){
     var msg = jQuery.parseJSON(message);
     if ("error" in msg)
-    showAlert("Error", msg.error, "fa fa-exclamation-triangle fa-fw", "error");
+        showAlert("Error", msg.error, "fa fa-exclamation-triangle fa-fw", "error");
     if ("success" in msg)
-    showAlert("Success", msg.success, "fa fa-check-circle-o fa-fw", "success");
+        showAlert("Success", msg.success, "fa fa-check-circle-o fa-fw", "success");
 }
 //==================================================================
 function generatePassword(){
