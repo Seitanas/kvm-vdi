@@ -2,13 +2,13 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-02-03
+2017-06-05
 Vilnius, Lithuania.
 */
-include ('functions/config.php');
-require_once('functions/functions.php');
+include dirname(__FILE__) . '/../../../functions/config.php';
+require_once(dirname(__FILE__) . '/../../../functions/functions.php');
 if (!check_session()){
-    header ("Location: $serviceurl/?error=1");
+    echo json_encode(array('error' => 'nologin'));
     exit;
 }
 slash_vars();

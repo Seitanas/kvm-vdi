@@ -9,6 +9,7 @@ set_lang();
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <script src="inc/js/kvm-vdi.js"></script>
+    <script src="inc/js/kvm-vdi-kvm.js"></script>
 </head>
 <body>
 <style>

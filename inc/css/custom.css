@@ -1,0 +1,57 @@
+.hypervisor-screen-disabled {
+    z-index: 1000;
+    background-color: lightgrey;
+    opacity: 0.6;
+    pointer-events: none;
+}
+.table-stripe-ani{
+    background-color: #F4FBFF !important;
+}
+.table-stripe-ani:hover {
+    background-color: #E7F7FF !important;
+}
+.table-stripe-static{
+    background-color: #E7F7FF !important;
+}
+
+.table-stripe-clear{
+    background-color: white !important;
+    border: none !important;
+
+}
+.table-stripe-bottom-line{
+    border-bottom:1pt solid lightgrey;
+}
+.vdi-font{
+    color: #3B8DA8;
+}
+.nopadding {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+.hypervisor-list {
+    border-radius: 5px;
+    margin: 5px;
+    border:1pt solid lightgrey;
+}
+.hypervisor-line{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.hypervisor-deleted{
+    text-decoration: line-through;
+}
+.users-list {
+    border-radius: 5px;
+    margin: 5px;
+    border:1pt solid lightgrey;
+}
+.users-line{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.users-deleted{
+    text-decoration: line-through;
+}
