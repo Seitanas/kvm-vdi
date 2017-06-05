@@ -115,5 +115,9 @@ $(document).ready(function(){
                 },
         });
     });
+
+    $('#main_table').on("click", "a.LockVMButton", function() { //since table items are dynamically generated, we will not get ordinary .click() event
+        lock_VM($(this).data('id'));
+    });
 });
 //==================================================================

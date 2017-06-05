@@ -274,9 +274,9 @@ function draw_dashboard_table(){
                                             <li><a href="#" class="DeleteVMButton" data-action="mass_delete" data-hypervisor="' . $sql_reply[$x]['id'] .  '" data-parent="' . $vms_query[$y]['id'] .  '">' . _("Delete all child VMs") . '</a></li>
                                             <li role="separator" class="divider"></li>';
                                             if ($vms_query[$y]['locked']=='false')
-                            echo '<li><a href="#" id="lock-vm-button-' . $vms_query[$y]['id'] . '" class="lock-vm-button-click" data-id=' . $vms_query[$y]['id'] . '>' . _("VM locked:") . '<i class="fa fa-fw fa-square-o" aria-hidden="true"></i></a></li>';
+                            echo '<li><a href="#" id="lock-vm-button-' . $vms_query[$y]['id'] . '" class="LockVMButton" data-id=' . $vms_query[$y]['id'] . '>' . _("VM locked:") . '<i class="fa fa-fw fa-square-o" aria-hidden="true"></i></a></li>';
                                             else
-                            echo '<li><a href="#" id="lock-vm-button-' . $vms_query[$y]['id'] . '" class="lock-vm-button-click" data-id=' . $vms_query[$y]['id'] . '>' . _("VM locked:") . '<i class="fa fa-fw fa-check-square-o" aria-hidden="true"></i></a></li>';
+                            echo '<li><a href="#" id="lock-vm-button-' . $vms_query[$y]['id'] . '" class="LockVMButton" data-id=' . $vms_query[$y]['id'] . '>' . _("VM locked:") . '<i class="fa fa-fw fa-check-square-o" aria-hidden="true"></i></a></li>';
 
                                 echo '</ul>
                                     </div>';
