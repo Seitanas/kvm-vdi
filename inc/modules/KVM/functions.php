@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-03-22
+2017-06-05
 Vilnius, Lithuania.
 */
 
@@ -271,7 +271,7 @@ function draw_dashboard_table(){
                                             <li><a href="snapshot.php?action=mass_on&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">' . _("Turn on snapshots") . '</a></li>
                                             <li><a href="snapshot.php?action=mass_off&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">' . _("Turn off snapshots") . '</a></li>
                                             <li role="separator" class="divider"></li>
-                                            <li><a href="delete_vm.php?action=mass_delete&hypervisor=' . $sql_reply[$x]['id'] .  '&parent=' . $vms_query[$y]['id'] .  '" onclick="return confirmation2();">' . _("Delete all child VMs") . '</a></li>
+                                            <li><a href="#" class="DeleteVMButton" data-action="mass_delete" data-hypervisor="' . $sql_reply[$x]['id'] .  '" data-parent="' . $vms_query[$y]['id'] .  '">' . _("Delete all child VMs") . '</a></li>
                                             <li role="separator" class="divider"></li>';
                                             if ($vms_query[$y]['locked']=='false')
                             echo '<li><a href="#" id="lock-vm-button-' . $vms_query[$y]['id'] . '" class="lock-vm-button-click" data-id=' . $vms_query[$y]['id'] . '>' . _("VM locked:") . '<i class="fa fa-fw fa-square-o" aria-hidden="true"></i></a></li>';
@@ -301,7 +301,7 @@ function draw_dashboard_table(){
                                                 <i class="fa fa-times-circle-o fa-fw text-danger" aria-hidden="true"></i>Forced shut down</a></li>';
                                       }
                                       echo '<li role="separator" class="divider"></li>
-                                            <li class="lockable-vm-buttons-' . $vms_query[$y]['id'] . ' ' . $lockstatus . '"><a href="delete_vm.php?vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" onclick="return confirmBox(' . "'" . _("Are you sure?") . "'" . ');">
+                                            <li class="lockable-vm-buttons-' . $vms_query[$y]['id'] . ' ' . $lockstatus . '"><a href="#" class="DeleteVMButton" data-vm="' . $vms_query[$y]['id'] . '" data-hypervisor="' . $sql_reply[$x]['id'] . '">
                                                 <i class="fa fa-trash-o fa-fw text-danger"></i>' . _("Delete machine") . '</a></li>
                                         </ul>
                                     </div>';
@@ -386,7 +386,7 @@ function draw_dashboard_table(){
                                                     <i class="fa fa-times-circle-o fa-fw text-danger" aria-hidden="true"></i>Forced shut down</a></li>';
                                         }
                                         echo '<li role="separator" class="divider"></li>
-                                            <li><a href="delete_vm.php?vm=' . $VDI_query[$q]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" onclick="return confirmBox(' . "'" . _("Are you sure?") . "'" . ');">
+                                            <li><a href="#" data-vm="' . $VDI_query[$q]['id'] . '" data-hypervisor="' . $sql_reply[$x]['id'] . '" class="DeleteVMButton">
                                             <i class="fa fa-trash-o fa-fw text-danger"></i>' . _("Delete machine") . '</a></li>
                                        </ul>
                                   </div>';

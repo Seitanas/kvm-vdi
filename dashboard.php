@@ -143,6 +143,22 @@ set_lang();
     <!-- /.modal-dialog -->
 </div>
 
+<div class="modal fade" id="PleaseWaitDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+          <h1><?php echo _("Please wait");?></h1>
+      </div>
+      <div class="modal-body">
+        <div class="progress">
+          <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="modalWmLg" tabindex="-1" role="dialog" aria-labelledby="modalWm" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
