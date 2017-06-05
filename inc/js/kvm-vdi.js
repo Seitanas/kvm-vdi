@@ -215,4 +215,55 @@ $(document).ready( function() {
             });
         }
     });
+
+    $('.ResetPasswordButton').click(function() {
+        var id = $(this).data('id');
+        var password = generatePassword();
+        $("#ShowPasswordBox").removeClass('hide');
+        $("#ShowPasswordBox").html("Password: " + password);
+        $.post({
+            url : 'inc/infrastructure/ManageCredentials.php',
+            data: {
+                id : id,
+                type : 'update-pw',
+                password : password,
+                credential_type : $('#credential_type').val(),
+            },
+            success:function (data) {
+                var reply=jQuery.parseJSON(data);
+                showAlert("Success", reply.success, "fa fa-check-circle-o fa-fw", "success");
+            }
+        })
+    })
+
+    $('.DeleteCredentialButton').click(function() {
+        $("#SubmitCredentialsButton").removeClass('hide');
+        var id = $(this).data('id');
+        $('#user-'+id).prop('checked', true);
+        $(".name-"+id).addClass('users-deleted');
+    })
+
+    $('#SubmitCredentialsButton').click(function() {
+        var to_delete = [];
+        if (confirm('Are you sure?')){
+            $(":checked").each(function() {
+            if ($(this).val()!='on')
+                to_delete.push($(this).val());
+            $("#row-name-"+$(this).val()).remove();
+            });
+            $.post({
+                url : 'inc/infrastructure/ManageCredentials.php',
+                data: {
+                    type : 'delete',
+                    credid : to_delete,
+                    credential_type : $('#credential_type').val(),
+                },
+                success:function (data) {
+                    var reply=jQuery.parseJSON(data);
+                    showAlert("Success", reply.success, "fa fa-check-circle-o fa-fw", "success");
+                    $("#SubmitCredentialsButton").addClass('hide');
+                }
+            });
+        }
+    })
 });
