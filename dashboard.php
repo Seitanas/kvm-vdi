@@ -3,12 +3,8 @@
 KVM-VDI
 Tadas Ustinavičius
 
-Vilnius University.
-Center of Information Technology Development.
-
-
 Vilnius,Lithuania.
-2017-05-04
+2017-06-05
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -59,23 +55,14 @@ set_lang();
     <script src="inc/js/kvm-vdi.js"></script>
     <?php
         if ($engine == 'OpenStack')
-            echo '<script src="inc/js/kvm-vdi-openstack.js"></script>'
+            echo '<script src="inc/js/kvm-vdi-openstack.js"></script>';
+        else
+            echo '<script src="inc/js/kvm-vdi-kvm.js"></script>';
     ?>
-    <!--clear remote modal forms -->
     <script>
-    var engine=<?php echo "'" . $engine . "'";?>;
-    function refresh_screen(){
-        if (engine == 'OpenStack')
-            reloadOpenStackVmTable();
-        else 
-            draw_table();
-    }
     $(document).on("hidden.bs.modal", function (e) {
         $(e.target).removeData("bs.modal").find(".modal-content").empty();
     });
-    </script>
-
-    <script>
     function countdown(filepath,id) {
         var $container = $("#progress-"+id);
         (function step() {
@@ -100,16 +87,12 @@ set_lang();
         });
      })();
     }
-    </script>
-    <script>
     function handleSnapshot(checkbox) {
         window.location = "snapshot.php?action=single&vm="+checkbox.id;
     }
     function handleMaintenance(checkbox) {
         window.location = "maintenance.php?action=single&source="+checkbox.id;
     }
-    </script>
-    <script>
     function confirmation() {
         if (confirm("<?php echo _("All virtual machines will be powered off and their initial snapshots recreated.\\nProceed?");?>")) {
             $('#populatealert').show();
@@ -215,7 +198,7 @@ set_lang();
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#" onclick="refresh_screen();"  data-toggle="hover">
+                <li><a href="#" id="RefreshButton" data-toggle="hover">
                     <button type="button" class="btn btn-info" aria-label="Refresh" title="<?php echo _("Refresh VM info");?>">
                     <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button></a>
                </li>
@@ -321,10 +304,15 @@ set_lang();
 </body>
 <script>
 $("#left-menu").metisMenu({ toggle: false });
+var engine=<?php echo "'" . $engine . "'";?>;
+function refresh_screen(){
+    if (engine == 'OpenStack')
+        reloadOpenStackVmTable();
+    else
+        reloadKVMVmTable();
+}
 $(document).ready(function(){
-
     refresh_screen();
-
 });
 </script>
 

@@ -1,40 +1,37 @@
-function draw_table(){
-    $( "#main_table" ).load( "draw_table.php" );
-}
 function update_VM_lock(vmid,lock){
     $.ajax({
-	type : 'POST',
+    type : 'POST',
         url : 'lock_vm.php',
         data: {
-	    vm: vmid,
-	    lock: lock,
-    	},
+        vm: vmid,
+        lock: lock,
+        },
     });
 }
 function lock_VM(vmid){
     if ($("#copy-disk-from-source-button-"+vmid ).hasClass( 'disabled' )){
-	$("#lock-vm-button-"+vmid).html("VM locked:<i class=\"fa fa-fw fa-square-o\" aria-hidden=\"true\"></i>");
-	$("#copy-disk-from-source-button-"+vmid).removeClass('disabled');
-	$(".lockable-vm-buttons-"+vmid).removeClass('disabled');
-	$("#populate-machines-button-"+vmid).removeClass('disabled');
-	update_VM_lock(vmid,'false');
+        $("#lock-vm-button-"+vmid).html("VM locked:<i class=\"fa fa-fw fa-square-o\" aria-hidden=\"true\"></i>");
+        $("#copy-disk-from-source-button-"+vmid).removeClass('disabled');
+        $(".lockable-vm-buttons-"+vmid).removeClass('disabled');
+        $("#populate-machines-button-"+vmid).removeClass('disabled');
+        update_VM_lock(vmid,'false');
     }
     else{
-	update_VM_lock(vmid,'true');
-	$("#lock-vm-button-"+vmid).html("VM locked:<i class=\"fa fa-fw fa-check-square-o\" aria-hidden=\"true\"></i>");
-	$("#copy-disk-from-source-button-"+vmid).addClass('disabled');
-	$(".lockable-vm-buttons-"+vmid).addClass('disabled');
-	$("#populate-machines-button-"+vmid).addClass('disabled');
+        update_VM_lock(vmid,'true');
+        $("#lock-vm-button-"+vmid).html("VM locked:<i class=\"fa fa-fw fa-check-square-o\" aria-hidden=\"true\"></i>");
+        $("#copy-disk-from-source-button-"+vmid).addClass('disabled');
+        $(".lockable-vm-buttons-"+vmid).addClass('disabled');
+        $("#populate-machines-button-"+vmid).addClass('disabled');
     }
 }
 function show_hide_table_section(parentid,status){
     $.ajax({
-	type : 'POST',
+    type : 'POST',
         url : 'inc/infrastructure/TableState.php',
         data: {
-	    parentid: parentid,
-	    status: status,
-    	},
+        parentid: parentid,
+        status: status,
+        },
     });
 
 }
@@ -71,7 +68,7 @@ function load_client_pool_list(poolid,type){
 function load_vm_pool_list(poolid, non_VDI_vms){
     var list_non_vdi_vms=0;
     if (non_VDI_vms)
-	list_non_vdi_vms=1;
+        list_non_vdi_vms=1;
     $.getJSON("vms_in_pool.php?side=from&list_non_vdi_vms="+list_non_vdi_vms, {},  function(json){
             $('#multiselect').empty();
             $.each(json, function(i, obj){
@@ -96,16 +93,16 @@ function load_vm_list(){
 function show_non_vdi_vms(status){
     var $poolid=$('#poollist').val();
     if (status=='checked'){
-	$("#show-non-vdi-vms-checkbox").removeClass('fa-check-square-o');
-	$("#show-non-vdi-vms-checkbox").addClass('fa-square-o');
-	$("#show-non-vdi-vms-checkbox").data("status","");
-	load_vm_pool_list($poolid, false);
+        $("#show-non-vdi-vms-checkbox").removeClass('fa-check-square-o');
+        $("#show-non-vdi-vms-checkbox").addClass('fa-square-o');
+        ("#show-non-vdi-vms-checkbox").data("status","");
+        load_vm_pool_list($poolid, false);
     }
     else {
-	$("#show-non-vdi-vms-checkbox").removeClass('fa-square-o');
-	$("#show-non-vdi-vms-checkbox").addClass('fa-check-square-o');
-	$("#show-non-vdi-vms-checkbox").data("status","checked");
-	load_vm_pool_list($poolid, true);
+        $("#show-non-vdi-vms-checkbox").removeClass('fa-square-o');
+        $("#show-non-vdi-vms-checkbox").addClass('fa-check-square-o');
+        $("#show-non-vdi-vms-checkbox").data("status","checked");
+        load_vm_pool_list($poolid, true);
     }
 }
 function fill_source_machines(hypervisor){
@@ -141,3 +138,8 @@ function showAlert(title, text, icon, type){
         }
     });
 }
+$(document).ready( function() { 
+    $('#RefreshButton').click(function() {
+        refresh_screen();
+    });
+});
