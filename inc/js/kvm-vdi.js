@@ -148,6 +148,14 @@ function showAlert(title, text, icon, type){
     });
 }
 //==================================================================
+function generatePassword(){
+    var password = "";
+    var char_map = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for( var i=0; i < 10; i++ )
+        password += char_map.charAt(Math.floor(Math.random() * char_map.length));
+    return password;
+}
+//==================================================================
 $(document).ready( function() { 
     $('#RefreshButton').click(function() {
         refresh_screen();
@@ -178,10 +186,7 @@ $(document).ready( function() {
     });
 
     $('#PWGen').click(function() {
-        var password = "";
-        var char_map = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        for( var i=0; i < 10; i++ )
-            password += char_map.charAt(Math.floor(Math.random() * char_map.length));
+        var password = generatePassword();
         $("#password").val(password);
     });
 
