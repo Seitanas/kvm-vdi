@@ -154,4 +154,3 @@ if ($machine_type=='import'){
 }
 echo "SUCCESS";
 exit;
-?>

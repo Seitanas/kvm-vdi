@@ -15,4 +15,3 @@ if (empty($hypervisor)){
 add_SQL_line("UPDATE hypervisors SET maintenance='$maintenance' WHERE id='$hypervisor'");
 echo json_encode(array('success' => _('Maintenance mode changed successfully')));
 exit;
-?>
