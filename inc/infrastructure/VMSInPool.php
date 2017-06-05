@@ -1,8 +1,8 @@
 <?php
-include ('functions/config.php');
-require_once('functions/functions.php');
+include ('../../functions/config.php');
+require_once('../../functions/functions.php');
 if (!check_session()){
-    header ("Location: $serviceurl/?error=1");
+    echo json_encode(array('error' => _('Please login first')));
     exit;
 }
 slash_vars();

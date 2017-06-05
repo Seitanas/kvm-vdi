@@ -46,13 +46,13 @@ function load_vm_pool_list(poolid, non_VDI_vms){
     var list_non_vdi_vms=0;
     if (non_VDI_vms)
         list_non_vdi_vms=1;
-    $.getJSON("vms_in_pool.php?side=from&list_non_vdi_vms="+list_non_vdi_vms, {},  function(json){
+    $.getJSON("inc/infrastructure/VMSInPool.php?side=from&list_non_vdi_vms="+list_non_vdi_vms, {},  function(json){
             $('#multiselect').empty();
             $.each(json, function(i, obj){
                      $('#multiselect').append($('<option>').text(obj.name).attr('value', obj.id));
             });
     });
-    $.getJSON("vms_in_pool.php?side=to&poolid="+poolid, {},  function(json){
+    $.getJSON("inc/infrastructure/VMSInPool.php?side=to&poolid="+poolid, {},  function(json){
             $('#multiselect_to').empty();
             $.each(json, function(i, obj){
                     $('#multiselect_to').append($('<option>').text(obj.name).attr('value', obj.id));
