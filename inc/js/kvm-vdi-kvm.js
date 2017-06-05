@@ -1,3 +1,33 @@
+function updateVMLock(vmid,lock){
+    $.post({
+        url : 'inc/infrastructure/KVM/LockVM.php',
+        data: {
+            vm: vmid,
+            lock: lock,
+        },
+        success: function(data){
+            formatAlertMessage(data);
+        },
+    });
+}
+//==================================================================
+function lockVM(vmid){
+    if ($("#copy-disk-from-source-button-"+vmid ).hasClass( 'disabled' )){
+        updateVMLock(vmid,'false');
+        $("#lock-vm-button-"+vmid).html("VM locked:<i class=\"fa fa-fw fa-square-o\" aria-hidden=\"true\"></i>");
+        $("#copy-disk-from-source-button-"+vmid).removeClass('disabled');
+        $(".lockable-vm-buttons-"+vmid).removeClass('disabled');
+        $("#populate-machines-button-"+vmid).removeClass('disabled');
+    }
+    else{
+        updateVMLock(vmid,'true');
+        $("#lock-vm-button-"+vmid).html("VM locked:<i class=\"fa fa-fw fa-check-square-o\" aria-hidden=\"true\"></i>");
+        $("#copy-disk-from-source-button-"+vmid).addClass('disabled');
+        $(".lockable-vm-buttons-"+vmid).addClass('disabled');
+        $("#populate-machines-button-"+vmid).addClass('disabled');
+    }
+}
+//==================================================================
 function reloadKVMVmTable(){
     $( "#main_table" ).load( "inc/infrastructure/KVM/DrawTable.php" );
 }
@@ -117,7 +147,7 @@ $(document).ready(function(){
     });
 
     $('#main_table').on("click", "a.LockVMButton", function() { //since table items are dynamically generated, we will not get ordinary .click() event
-        lock_VM($(this).data('id'));
+        lockVM($(this).data('id'));
     });
 });
 //==================================================================

@@ -1,31 +1,3 @@
-function update_VM_lock(vmid,lock){
-    $.ajax({
-    type : 'POST',
-        url : 'lock_vm.php',
-        data: {
-        vm: vmid,
-        lock: lock,
-        },
-    });
-}
-//==================================================================
-function lock_VM(vmid){
-    if ($("#copy-disk-from-source-button-"+vmid ).hasClass( 'disabled' )){
-        $("#lock-vm-button-"+vmid).html("VM locked:<i class=\"fa fa-fw fa-square-o\" aria-hidden=\"true\"></i>");
-        $("#copy-disk-from-source-button-"+vmid).removeClass('disabled');
-        $(".lockable-vm-buttons-"+vmid).removeClass('disabled');
-        $("#populate-machines-button-"+vmid).removeClass('disabled');
-        update_VM_lock(vmid,'false');
-    }
-    else{
-        update_VM_lock(vmid,'true');
-        $("#lock-vm-button-"+vmid).html("VM locked:<i class=\"fa fa-fw fa-check-square-o\" aria-hidden=\"true\"></i>");
-        $("#copy-disk-from-source-button-"+vmid).addClass('disabled');
-        $(".lockable-vm-buttons-"+vmid).addClass('disabled');
-        $("#populate-machines-button-"+vmid).addClass('disabled');
-    }
-}
-//==================================================================
 function show_hide_table_section(parentid,status){
     $.ajax({
     type : 'POST',
