@@ -138,8 +138,32 @@ function showAlert(title, text, icon, type){
         }
     });
 }
+//==================================================================
 $(document).ready( function() { 
     $('#RefreshButton').click(function() {
         refresh_screen();
+    });
+    $('#AddADGroupButton').click(function() {
+        if(!$('#ADGroup')[0].checkValidity()){
+            $('#ADGroup').find('input[type="submit"]').click();
+        }
+        else{
+            $.post({
+                url : 'inc/infrastructure/UpdateADGroups.php',
+                data: {
+                    type : 'new',
+                    group_name : $('#GroupName').val(),
+                },
+                success:function (data) {
+                    var reply=jQuery.parseJSON(data);
+                    if ("error" in reply)
+                        showAlert("Error", reply.error, "fa fa-exclamation-triangle fa-fw", "error");
+                    if ("success" in reply)
+                        showAlert("Success", reply.success, "fa fa-check-circle-o fa-fw", "success");
+                    refresh_screen();
+                    $("#GroupName").val("");
+                }
+            });
+        }
     });
 });
