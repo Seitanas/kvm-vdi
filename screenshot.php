@@ -21,12 +21,12 @@ ssh_connect($h_reply[2].":".$h_reply[3]);
 #http://lists.nongnu.org/archive/html/qemu-discuss/2016-09/msg00000.html
 ssh_command("sudo virsh screenshot " . $v_reply[1] . " " . $filepath."bugfix",true);
 ssh_command("sudo virsh screenshot " . $v_reply[1] . " " . $filepath, true);
-$im=ssh_command("cat ". $filepath,true);
+$im=ssh_command("sudo cat ". $filepath,true);
 $image = new Imagick();
 $image->readImageBlob($im);
 $image->setImageFormat("png");
 $image->scaleImage(865, 865, true);
 header("Content-type: image/png");
 echo $image->getImageBlob();
-ssh_command("rm " . $filepath."bugfix", true);
-ssh_command("rm " . $filepath, true);
+ssh_command("sudo rm " . $filepath."bugfix", true);
+ssh_command("sudo rm " . $filepath, true);
