@@ -149,5 +149,41 @@ $(document).ready(function(){
     $('#main_table').on("click", "a.LockVMButton", function() { //since table items are dynamically generated, we will not get ordinary .click() event
         lockVM($(this).data('id'));
     });
+
+    $('#main_table').on("click", ".MaintenanceCheckbox", function() { //since table items are dynamically generated, we will not get ordinary .click() event
+        var vm = $(this).data('id');
+        $.post({
+            url: 'inc/infrastructure/KVM/VMMaintenance.php',
+                data: {
+                    source: vm,
+                    action: 'single',
+                },
+                success: function(data) {
+                    formatAlertMessage(data);
+                },
+        });
+    });
+
+    $('#main_table').on("click", ".MassMaintenanceButtonClick", function(e) { //since table items are dynamically generated, we will not get ordinary .click() event
+        e.preventDefault(); // prevent href to go # (jump to the top of the page)
+        $('#PleaseWaitDialog').modal('show');
+        var sourcevm = $(this).data('source');
+        var action = $(this).data('action');
+        $.post({
+            url: 'inc/infrastructure/KVM/VMMaintenance.php',
+                data: {
+                    source: sourcevm,
+                    action: action,
+                },
+                success: function(data) {
+                    if (action == 'mass_on')
+                        $('.MaintenanceCheckboxChild-' + sourcevm).prop('checked', 'true');
+                    else 
+                        $('.MaintenanceCheckboxChild-' + sourcevm).prop('checked', '');
+                    $('#PleaseWaitDialog').modal('hide');
+                    formatAlertMessage(data);
+                },
+        });
+    });
 });
 //==================================================================

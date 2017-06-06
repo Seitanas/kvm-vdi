@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-06-05
+2017-06-06
 Vilnius, Lithuania.
 */
 
@@ -237,7 +237,7 @@ function draw_dashboard_table(){
                     <td class="col-md-1">', (!empty($vms_query[$y]['machine_type'])) ? $machine_type[$vms_query[$y]['machine_type']]  : "", '</td>
                     <td class="col-md-1">' . $vms_query[$y]['sourcename'] . '</td>
                     <td class="col-md-1"><input type="checkbox" '. $vms_query[$y]['snapshot'] . " onclick='handleSnapshot(this);' " . 'id="' . $vms_query[$y]['id'] .  '"></td>
-                    <td class="col-md-1"><input type="checkbox" '. $vms_query[$y]['maintenance']. " onclick='handleMaintenance(this);' " . 'id="' . $vms_query[$y]['id'] .  '">';
+                    <td class="col-md-1"><input type="checkbox" class="MaintenanceCheckbox"'. $vms_query[$y]['maintenance'] . ' data-id="' . $vms_query[$y]['id'] .  '">';
                 if (is_numeric($vms_query[$y]['filecopy'])){
                     echo '<div class="progress">
                             <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="progress-' . $vms_query[$y]['id'] . '" style="width:100%">
@@ -259,8 +259,8 @@ function draw_dashboard_table(){
                                         <ul class="dropdown-menu">
                                             <li class="' . $lockstatus . '" id="copy-disk-from-source-button-' . $vms_query[$y]['id'] . '"><a href="copy_disk.php?hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] . '" onclick="return confirmation1();">' . _("Copy disk from source") . '</a></li>
                                             <li role="separator" class="divider"></li>
-                                            <li><a href="maintenance.php?action=mass_on&source=' . $vms_query[$y]['id'] .  '">' . _("Turn maintenance on") . '</a></li>
-                                            <li><a href="maintenance.php?action=mass_off&source=' . $vms_query[$y]['id'] .  '">' . _("Turn maintenance off") . '</a></li>
+                                            <li><a href="#" class="MassMaintenanceButtonClick" data-action="mass_on" data-source="' . $vms_query[$y]['id'] .  '">' . _("Turn maintenance on") . '</a></li>
+                                            <li><a href="#" class="MassMaintenanceButtonClick" data-action="mass_off" data-source="' . $vms_query[$y]['id'] .  '">' . _("Turn maintenance off") . '</a></li>
                                             <li role="separator" class="divider"></li>
                                             <li class="' . $lockstatus . '" id="populate-machines-button-' . $vms_query[$y]['id'] . '"><a href="populate.php?hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '" onclick="return confirmation();" >' . _("Populate machines") . '</a></li>
                                             <li role="separator" class="divider"></li>
@@ -364,7 +364,7 @@ function draw_dashboard_table(){
                             <td class="col-md-1">' . $machine_type[$VDI_query[$q]['machine_type']] . '</td>
                             <td class="col-md-1">' . $VDI_query[$q]['sourcename'] . '</td>
                             <td class="col-md-1"><input type="checkbox" '. $VDI_query[$q]['snapshot'] . " onclick='handleSnapshot(this);' " . 'id="' . $VDI_query[$q]['id'] .  '"></td>
-                            <td class="col-md-1"><input type="checkbox" '. $VDI_query[$q]['maintenance']. " onclick='handleMaintenance(this);' " . 'id="' . $VDI_query[$q]['id'] .  '"></td>
+                            <td class="col-md-1"><input type="checkbox" class="MaintenanceCheckbox MaintenanceCheckboxChild-' . $vms_query[$y]['id'] . '"'. $VDI_query[$q]['maintenance']. ' data-id="' . $VDI_query[$q]['id'] .  '"></td>
                             <td class="col-md-1">';
                             echo '<div class="btn-group">
                                     <button class="btn btn-default dropdown-toggle" type="button" id="VDIActionMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
