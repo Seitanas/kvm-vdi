@@ -142,6 +142,7 @@ function draw_html5_buttons(){
 //############################################################################################
 function draw_dashboard_table(){
     include (dirname(__FILE__) . '/../../../functions/config.php');
+    $userConfig=get_userconf();
     $sql_reply=get_SQL_array("SELECT * FROM hypervisors ORDER BY name,ip ASC");
     if (sizeof($sql_reply)<1 && $engine=='KVM'){
         echo '<div class="row">
@@ -229,7 +230,7 @@ function draw_dashboard_table(){
             }
         }
                 echo '<tr class="table-stripe-bottom-line">
-                      <td colspan="2" class="col-md-1 clickable parent" id="' . $vms_query[$y]['id'] . '" data-toggle="collapse" data-target=".child-' . $vms_query[$y]['id'] . '" >' . ($y+1);
+                      <td colspan="2" class="col-md-1 clickable ParentRow" id="' . $vms_query[$y]['id'] . '" data-toggle="collapse" data-target=".child-' . $vms_query[$y]['id'] . '" >' . ($y+1);
                 if (!empty($VDI_query))
                     echo '<i class="fa ' . $vdi_collapse_button . ' fa-fw" id="childof-' . $vms_query[$y]['id'] . '"></i>';
                 echo '</td> 

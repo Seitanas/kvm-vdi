@@ -1,3 +1,13 @@
+function showHideTableSection(parentid,status){
+    $.post({
+        url : 'inc/infrastructure/KVM/TableState.php',
+        data: {
+            parentid: parentid,
+            status: status,
+        },
+    });
+}
+//==================================================================
 function updateVMLock(vmid,lock){
     $.post({
         url : 'inc/infrastructure/KVM/LockVM.php',
@@ -184,6 +194,19 @@ $(document).ready(function(){
                     formatAlertMessage(data);
                 },
         });
+    });
+
+    $('#main_table').on("click", ".ParentRow", function(e) { //since table items are dynamically generated, we will not get ordinary .click() event
+        if ($('#childof-'+this.id).hasClass('fa-minus')){
+            $('#childof-'+this.id).removeClass('fa-minus');
+            $('#childof-'+this.id).addClass('fa-plus');
+            showHideTableSection(this.id,'hide');
+        }
+        else {
+            $('#childof-'+this.id).removeClass('fa-plus');
+            $('#childof-'+this.id).addClass('fa-minus');
+            showHideTableSection(this.id,'show');
+        }
     });
 });
 //==================================================================

@@ -1,15 +1,3 @@
-function show_hide_table_section(parentid,status){
-    $.ajax({
-    type : 'POST',
-        url : 'inc/infrastructure/TableState.php',
-        data: {
-        parentid: parentid,
-        status: status,
-        },
-    });
-
-}
-//==================================================================
 function send_token(websockets_address, websockets_port,token,value,spice_password){
     $.ajax({
         type : 'POST',
