@@ -160,7 +160,7 @@ function draw_dashboard_table(){
             $hypervisor_name=$sql_reply[$x]['name'];
         else
             $hypervisor_name=$sql_reply[$x]['ip'];
-        echo '<h1 class="sub-header">' .  _("Hypervisor: ") . $hypervisor_name;
+        echo '<h1 class="sub-header">' .  _("Hypervisor: ") . $hypervisor_name . ' ';
         if (!$sql_reply[$x]['maintenance'])
             echo '<a href="#" data-maintenance="1" data-hypervisor="' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn glyphicon glyphicon-ok-circle btn-success HypervisorMaintenanceButton"> ' . _("Enabled") . '</a>';
         else {
