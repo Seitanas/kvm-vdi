@@ -222,7 +222,7 @@ $(document).ready( function() {
         var to_delete = [];
         if (confirm('Are you sure?')){
             $(":checked").each(function() {
-            if ($(this).val()!='on')
+            if ($(this).val() != 'on')
                 to_delete.push($(this).val());
             $("#row-name-"+$(this).val()).remove();
             });
@@ -239,5 +239,35 @@ $(document).ready( function() {
                 }
             });
         }
-    })
+    });
+
+    $('#ChangePasswordButton').click(function() {
+        $('.form-group').removeClass('has-error');
+        $('#PasswordsDoNotMatch').addClass('hide');
+        if(!$('#PasswordValidator')[0].checkValidity()){
+            $('#PasswordValidator').find('input[type="submit"]').click();
+        }
+        else{
+            var password1 = $('#PasswordField').val();
+            var password2 = $('#PasswordConfirmField').val();
+            if (password1 != password2){
+                $('.form-group').addClass('has-error');
+                $('#PasswordsDoNotMatch').removeClass('hide');
+                console.log("lol");
+            }
+            else{
+                $.post({
+                    url : 'inc/infrastructure/UpdatePassword.php',
+                    data: {
+                       password1 : password1,
+                       password2 : password2,
+                    },
+                    success:function (data) {
+                        formatAlertMessage(data);
+                        $('#modalWm').modal('toggle');
+                    }
+               })
+            }
+        }
+    });
 });
