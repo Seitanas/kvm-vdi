@@ -283,4 +283,16 @@ $(document).ready( function() {
             }
         });
     });
+
+    $('#AddPoolButton').click(function() {
+        $.post({
+            url : 'inc/infrastructure/AddPool.php',
+            data: {
+                poolname : $('#poolname').val(),
+            },
+            success:function (data) {
+                formatAlertMessage(data);
+            }
+        });
+    });
 });
