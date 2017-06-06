@@ -169,7 +169,7 @@ function draw_dashboard_table(){
         }
         echo '</h1>
                 <div class="table-responsive"  style="overflow: inherit;">
-                <table class="table table-striped table-hover" id="hypervisor-table-' . $sql_reply[$x]['id'] . '">
+                <table class="table table-striped table-hover ' . $table_status . '" id="hypervisor-table-' . $sql_reply[$x]['id'] . '">
                     <thead>
                         <tr>
                             <th>#</th>
