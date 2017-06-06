@@ -15,7 +15,7 @@ function send_token(websockets_address, websockets_port,token,value,spice_passwo
     })
 }
 //==================================================================
-function load_client_pool_list(poolid,type){
+function loadClientPoolList(poolid,type){
     $.getJSON("clients_in_pool.php?side=from&poolid="+poolid+"&type="+type, {},  function(json){
             $('#multiselect').empty();
             $.each(json, function(i, obj){
@@ -257,5 +257,30 @@ $(document).ready( function() {
                })
             }
         }
+    });
+
+    $('#ClientPoolList').on('change', function(){
+        var poolid = $('#ClientPoolList').val();
+        var type = $('#ClientPoolList').data("type");
+        loadClientPoolList(poolid,type);
+    });
+
+    $('#ClientPoolsButton').click(function() {
+        var multivalues = "";
+        var type = $('#ClientPoolList').data("type");
+        $("#multiselect_to option").each(function(){
+            multivalues += $(this).val() + ",";
+        });
+        $.post({
+            url: "inc/infrastructure/ManageClientMaps.php",
+            data:{
+                poolid: $('#ClientPoolList').val(),
+                type: type,
+                clientlist: multivalues,
+            },
+            success:function (data) {
+                formatAlertMessage(data);
+            }
+        });
     });
 });
