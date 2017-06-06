@@ -30,7 +30,7 @@ function loadClientPoolList(poolid,type){
     });
 }
 //==================================================================
-function load_vm_pool_list(poolid, non_VDI_vms){
+function loadVMPoolList(poolid, non_VDI_vms){
     var list_non_vdi_vms=0;
     if (non_VDI_vms)
         list_non_vdi_vms=1;
@@ -60,16 +60,16 @@ function load_vm_list(){
 function show_non_vdi_vms(status){
     var $poolid=$('#poollist').val();
     if (status=='checked'){
-        $("#show-non-vdi-vms-checkbox").removeClass('fa-check-square-o');
-        $("#show-non-vdi-vms-checkbox").addClass('fa-square-o');
-        ("#show-non-vdi-vms-checkbox").data("status","");
-        load_vm_pool_list($poolid, false);
+        $("#ShowNonVDIVMSCheckBox").removeClass('fa-check-square-o');
+        $("#ShowNonVDIVMSCheckBox").addClass('fa-square-o');
+        ("#ShowNonVDIVMSCheckBox").data("status","");
+        loadVMPoolList($poolid, false);
     }
     else {
-        $("#show-non-vdi-vms-checkbox").removeClass('fa-square-o');
-        $("#show-non-vdi-vms-checkbox").addClass('fa-check-square-o');
-        $("#show-non-vdi-vms-checkbox").data("status","checked");
-        load_vm_pool_list($poolid, true);
+        $("#ShowNonVDIVMSCheckBox").removeClass('fa-square-o');
+        $("#ShowNonVDIVMSCheckBox").addClass('fa-check-square-o');
+        $("#ShowNonVDIVMSCheckBox").data("status","checked");
+        loadVMPoolList($poolid, true);
     }
 }
 //==================================================================
@@ -289,6 +289,35 @@ $(document).ready( function() {
             url : 'inc/infrastructure/AddPool.php',
             data: {
                 poolname : $('#poolname').val(),
+            },
+            success:function (data) {
+                formatAlertMessage(data);
+            }
+        });
+    });
+
+    $('#VMPoolList').on('change', function(){
+        $poolid=$('#VMPoolList').val();
+        var $non_VDI=false;
+        if ($("#ShowNonVDIVMSCheckBox").data('status')=='checked')
+            $non_VDI=true;
+        loadVMPoolList($poolid, $non_VDI);
+    });
+
+    $('a#ShowNonVDIVMSButton').click(function() {
+        show_non_vdi_vms($("#ShowNonVDIVMSCheckBox").data('status'));
+    });
+
+    $("#ManageVMPoolButton").click(function(){
+        var multivalues="";
+            $("#multiselect_to option").each(function(){
+                multivalues += $(this).val() + ",";
+            });
+        $.post({
+            url: "inc/infrastructure/ManageVMMaps.php",
+            data: {
+                poolid: $('#VMPoolList').val(),
+                vmlist: multivalues
             },
             success:function (data) {
                 formatAlertMessage(data);
