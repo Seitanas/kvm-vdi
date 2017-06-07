@@ -23,7 +23,7 @@ if (empty($vm_id) && $engine == 'OpenStack')
 $userid=$_SESSION['userid'];
 if($engine == 'OpenStack')
     $v_reply=get_SQL_array("SELECT * FROM vms WHERE osInstanceId='$vm_id'");
-else 
+else
     $v_reply=get_SQL_array("SELECT * FROM vms WHERE name='$vmname'");
 if ($v_reply[0]['clientid']!=$userid)//allow only clients, which were given current VM to modify heartbeats
     exit;

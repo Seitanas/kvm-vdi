@@ -174,6 +174,20 @@ $(document).ready(function(){
         });
     });
 
+    $('#main_table').on("click", ".SnapshotCheckbox", function() { //since table items are dynamically generated, we will not get ordinary .click() event
+        var vm = $(this).data('id');
+        $.post({
+            url: 'inc/infrastructure/KVM/VMSnapshot.php',
+                data: {
+                    vm: vm,
+                    action: 'single',
+                },
+                success: function(data) {
+                    formatAlertMessage(data);
+                },
+        });
+    });
+
     $('#main_table').on("click", ".MassMaintenanceButtonClick", function(e) { //since table items are dynamically generated, we will not get ordinary .click() event
         e.preventDefault(); // prevent href to go # (jump to the top of the page)
         $('#PleaseWaitDialog').modal('show');
@@ -188,8 +202,30 @@ $(document).ready(function(){
                 success: function(data) {
                     if (action == 'mass_on')
                         $('.MaintenanceCheckboxChild-' + sourcevm).prop('checked', 'true');
-                    else 
+                    else
                         $('.MaintenanceCheckboxChild-' + sourcevm).prop('checked', '');
+                    $('#PleaseWaitDialog').modal('hide');
+                    formatAlertMessage(data);
+                },
+        });
+    });
+
+    $('#main_table').on("click", ".MassSnapshotButton", function(e) { //since table items are dynamically generated, we will not get ordinary .click() event
+        e.preventDefault(); // prevent href to go # (jump to the top of the page)
+        $('#PleaseWaitDialog').modal('show');
+        var sourcevm = $(this).data('source');
+        var action = $(this).data('action');
+        $.post({
+            url: 'inc/infrastructure/KVM/VMSnapshot.php',
+                data: {
+                    vm: sourcevm,
+                    action: action,
+                },
+                success: function(data) {
+                    if (action == 'mass_on')
+                        $('.SnapshotCheckboxChild-' + sourcevm).prop('checked', 'true');
+                    else
+                        $('.SnapshotCheckboxChild-' + sourcevm).prop('checked', '');
                     $('#PleaseWaitDialog').modal('hide');
                     formatAlertMessage(data);
                 },
