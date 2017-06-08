@@ -4,7 +4,7 @@ KVM-VDI
 Tadas Ustinavičius
 
 Vilnius,Lithuania.
-2017-06-07
+2017-06-08
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -86,13 +86,6 @@ set_lang();
             }
         });
      })();
-    }
-    function confirmation() {
-        if (confirm("<?php echo _("All virtual machines will be powered off and their initial snapshots recreated.\\nProceed?");?>")) {
-            $('#populatealert').show();
-            return true;
-        }
-        return false;
     }
     function confirmation1() {
         if (confirm("<?php echo _("All virtual machines will be powered off and their initial snapshots recreated.\\nProceed?");?>")) {

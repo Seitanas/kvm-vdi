@@ -27,14 +27,14 @@ function lockVM(vmid){
         $("#lock-vm-button-"+vmid).html("VM locked:<i class=\"fa fa-fw fa-square-o\" aria-hidden=\"true\"></i>");
         $("#copy-disk-from-source-button-"+vmid).removeClass('disabled');
         $(".lockable-vm-buttons-"+vmid).removeClass('disabled');
-        $("#populate-machines-button-"+vmid).removeClass('disabled');
+        $("#PopulateMachinesButton-"+vmid).removeClass('disabled');
     }
     else{
         updateVMLock(vmid,'true');
         $("#lock-vm-button-"+vmid).html("VM locked:<i class=\"fa fa-fw fa-check-square-o\" aria-hidden=\"true\"></i>");
         $("#copy-disk-from-source-button-"+vmid).addClass('disabled');
         $(".lockable-vm-buttons-"+vmid).addClass('disabled');
-        $("#populate-machines-button-"+vmid).addClass('disabled');
+        $("#PopulateMachinesButton-"+vmid).addClass('disabled');
     }
 }
 //==================================================================
@@ -301,6 +301,26 @@ $(document).ready(function(){
                     $("#HypervisorProgress").addClass('hide');
                     formatAlertMessage(data);
                 }
+            });
+        }
+    });
+
+    $('#main_table').on("click", ".PopulateMachinesButton", function(e) { //since table items are dynamically generated, we will not get ordinary .click() event
+        e.preventDefault(); // prevent href to go # (jump to the top of the page)
+        if (confirm('All virtual machines will be powered off and their initial snapshots recreated.\nProceed?')){
+            $('#PleaseWaitDialog').modal('show');
+            var vm = $(this).data('vm');
+            var hypervisor = $(this).data('hypervisor');
+            $.post({
+                url: 'inc/infrastructure/KVM/PopulateVMS.php',
+                    data: {
+                        vm: vm,
+                        hypervisor: hypervisor,
+                    },
+                    success: function(data) {
+                        $('#PleaseWaitDialog').modal('hide');
+                        formatAlertMessage(data);
+                    },
             });
         }
     });

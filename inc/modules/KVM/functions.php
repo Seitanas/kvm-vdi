@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-06-06
+2017-06-08
 Vilnius, Lithuania.
 */
 
@@ -263,7 +263,7 @@ function draw_dashboard_table(){
                                             <li><a href="#" class="MassMaintenanceButtonClick" data-action="mass_on" data-source="' . $vms_query[$y]['id'] .  '">' . _("Turn maintenance on") . '</a></li>
                                             <li><a href="#" class="MassMaintenanceButtonClick" data-action="mass_off" data-source="' . $vms_query[$y]['id'] .  '">' . _("Turn maintenance off") . '</a></li>
                                             <li role="separator" class="divider"></li>
-                                            <li class="' . $lockstatus . '" id="populate-machines-button-' . $vms_query[$y]['id'] . '"><a href="populate.php?hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '" onclick="return confirmation();" >' . _("Populate machines") . '</a></li>
+                                            <li class="' . $lockstatus . '" id="PopulateMachinesButton-' . $vms_query[$y]['id'] . '"><a class="PopulateMachinesButton" href="#" data-hypervisor="' . $sql_reply[$x]['id'] .  '" data-vm="' . $vms_query[$y]['id'] .  '">' . _("Populate machines") . '</a></li>
                                             <li role="separator" class="divider"></li>
                                             <li><a href="power.php?action=mass_on&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">' . _("Mass power on") . '</a></li>
                                             <li><a href="power.php?action=mass_off&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">' . _("Mass shut down (soft)") . '</a></li>
