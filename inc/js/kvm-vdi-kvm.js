@@ -375,7 +375,7 @@ $(document).ready(function(){
     $('#main_table').on("click", ".PowerButton", function(e) { //since table items are dynamically generated, we will not get ordinary .click() event
         e.preventDefault(); // prevent href to go # (jump to the top of the page)
         if (confirm('Are you sure?')){
-           // $('#PleaseWaitDialog').modal('show');
+            $('#PleaseWaitDialog').modal('show');
             var vm = $(this).data('vm');
             var hypervisor = $(this).data('hypervisor');
             var state = $(this).data('state');
