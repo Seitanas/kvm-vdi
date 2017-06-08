@@ -140,6 +140,30 @@ function draw_html5_buttons(){
     HTML5Buttons();
 }
 //############################################################################################
+function drawStateInfo($state){
+    switch ($state){
+        case "shut":
+            $vms_status_display='<i class="text-danger">' . _("Shutoff") . '</i>';
+            $pwr_status="off";
+            $pwr_button="btn-default";
+            break;
+        case "running":
+            $vms_status_display='<i class="text-success">' . _("Running") . '</i>';
+            break;
+        case "paused":
+            $vms_status_display='<i class="text-warning">' . _("Paused") . '</i>';
+            $pwr_button="btn-default";
+            break;
+        case "pmsuspended":
+            $vms_status_display='<i class="text-warning">' . _("Suspended") . '</i>';
+            $pwr_button="btn-default";
+            break;
+        default:
+            $vms_status_display='<i class="text-muted">' . _("Unknown") . '</i>';
+        }
+    return $vms_status_display;
+}
+//############################################################################################
 function draw_dashboard_table(){
     include (dirname(__FILE__) . '/../../../functions/config.php');
     $userConfig=get_userconf();
@@ -193,26 +217,7 @@ function draw_dashboard_table(){
                 $pwr_status="on";
                 $lockstatus='';
                 $pwr_button="btn-success";
-                switch ($vms_query[$y]['state']) {
-                    case "shut":
-                $vms_status_display='<i class="text-danger">' . _("Shutoff") . '</i>';
-                $pwr_status="off";
-                $pwr_button="btn-default";
-                        break;
-                    case "running":
-                $vms_status_display='<i class="text-success">' . _("Running") . '</i>';
-                        break;
-                    case "paused":
-                $vms_status_display='<i class="text-warning">' . _("Paused") . '</i>';
-                $pwr_button="btn-default";
-                        break;
-                    case "pmsuspended":
-                $vms_status_display='<i class="text-warning">' . _("Suspended") . '</i>';
-                $pwr_button="btn-default";
-                        break;
-                    default:
-                        $vms_status_display='<i class="text-muted">' . _("Unknown") . '</i>';
-                }
+                $vms_status_display = drawStateInfo($vms_query[$y]['state']);
                 $vms_query[$y]['snapshot']=str_replace("true","checked",$vms_query[$y]['snapshot']);
                 $vms_query[$y]['snapshot']=str_replace("false","",$vms_query[$y]['snapshot']);
                 $vms_query[$y]['maintenance']=str_replace("true","checked",$vms_query[$y]['maintenance']);
@@ -265,9 +270,9 @@ function draw_dashboard_table(){
                                             <li role="separator" class="divider"></li>
                                             <li class="' . $lockstatus . '" id="PopulateMachinesButton-' . $vms_query[$y]['id'] . '"><a class="PopulateMachinesButton" href="#" data-hypervisor="' . $sql_reply[$x]['id'] .  '" data-vm="' . $vms_query[$y]['id'] .  '">' . _("Populate machines") . '</a></li>
                                             <li role="separator" class="divider"></li>
-                                            <li><a href="power.php?action=mass_on&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">' . _("Mass power on") . '</a></li>
-                                            <li><a href="power.php?action=mass_off&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">' . _("Mass shut down (soft)") . '</a></li>
-                                            <li><a href="power.php?action=mass_destroy&hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] .  '">' . _("Mass shut down (forced)") . '</a></li>
+                                            <li><a class="PowerButton" href="#" data-action="mass_on" data-hypervisor="' . $sql_reply[$x]['id'] .  '" data-vm="' . $vms_query[$y]['id'] .  '">' . _("Mass power on") . '</a></li>
+                                            <li><a class="PowerButton" href="#" data-action="mass_off" data-hypervisor="' . $sql_reply[$x]['id'] .  '" data-vm="' . $vms_query[$y]['id'] .  '">' . _("Mass shut down (soft)") . '</a></li>
+                                            <li><a class="PowerButton" href="#" data-action="mass_destroy" data-hypervisor="' . $sql_reply[$x]['id'] .  '" data-vm="' . $vms_query[$y]['id'] .  '">' . _("Mass shut down (forced)") . '</a></li>
                                             <li role="separator" class="divider"></li>
                                             <li><a href="#" class="MassSnapshotButton" data-action="mass_on" data-source="' . $vms_query[$y]['id'] .  '">' . _("Turn on snapshots") . '</a></li>
                                             <li><a href="#" class="MassSnapshotButton" data-action="mass_off" data-source="' . $vms_query[$y]['id'] .  '">' . _("Turn off snapshots") . '</a></li>
@@ -290,15 +295,15 @@ function draw_dashboard_table(){
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="VMSActionMenu">';
                                     if ($vms_query[$y]['state']=='shut'){
-                                        echo  '<li class="lockable-vm-buttons-' . $vms_query[$y]['id'] . ' ' . $lockstatus . '"><a href="power.php?action=single&state=up&vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '"><i class="text-success fa fa-play fa-fw text-success"></i>Power up</a></li>';
+                                        echo  '<li class="lockable-vm-buttons-' . $vms_query[$y]['id'] . ' ' . $lockstatus . '"><a class="PowerButton" href="#" data-action="single" data-state="up" data-vm="' . $vms_query[$y]['id'] . '" data-hypervisor="' . $sql_reply[$x]['id'] . '"><i class="text-success fa fa-play fa-fw text-success"></i>Power up</a></li>';
                                     }
                                     if ($pwr_status=="on"){
                                       echo '<li><a data-toggle="modal" data-target="#vmConsole" href="vm_screen.php?vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '">
                                                 <i class="fa fa-window-maximize fa-fw text-info"></i>' . _("Open console") . '</a></li>
                                             <li role="separator" class="divider"></li>
-                                            <li><a href="power.php?action=single&state=down&vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover" onclick="return confirmBox(' . "'" . _("Are you sure?") . "'" . ');">
+                                            <li><a class="PowerButton" href="#" data-action="single" data-state="down" data-vm="' . $vms_query[$y]['id'] . '" data-hypervisor="' . $sql_reply[$x]['id'] . '" data-toggle="hover">
                                                 <i class="fa fa-power-off fa-fw text-danger" ></i>Soft shut down</a></li>
-                                            <li><a href="power.php?action=single&state=destroy&vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  onclick="return confirmBox(' . "'" . _("Are you sure?") . "'" . ');">
+                                            <li><a class="PowerButton" data-action="single" data-state="destroy" data-vm="' . $vms_query[$y]['id'] . '" data-hypervisor="' . $sql_reply[$x]['id'] . '" data-toggle="hover">
                                                 <i class="fa fa-times-circle-o fa-fw text-danger" aria-hidden="true"></i>Forced shut down</a></li>';
                                       }
                                       echo '<li role="separator" class="divider"></li>
@@ -312,10 +317,19 @@ function draw_dashboard_table(){
                 else
                     $used_by=_("Nobody");
                 if (empty($vms_query[$y]['os_type']))
-                    echo '<td class="col-md-3 text-danger">' . _("Unknown") . ' &#47; ' . $vms_status_display . '</td>';
+                    echo '<td class="col-md-3 text-danger">' . _("Unknown") . ' &#47; ' . '<i id="VMStatusText">' . $vms_status_display . '</i>';
                 else
-                    echo '<td class="col-md-3">' . ucfirst($vms_query[$y]['os_type']) . ' &#47; ' . $vms_status_display . '<h5><small>' . $used_by . '</small></h5></td>';
-                              echo '</tr>'; 
+                    echo '<td class="col-md-3">' . ucfirst($vms_query[$y]['os_type']) . ' &#47; ' . '<i id="VMStatusText-' . $vms_query[$y]['id'] . '">' . $vms_status_display . '</i><h5><small>' . $used_by . '</small></h5>';
+                              echo '<div class="row hide" id="PowerProgressBar-' . $vms_query[$y]['id'] . '">
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-6">
+                                            <div class="progress">
+                                                <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3"></div>
+                                    </div>
+                                </td></tr>';
                         if ($vms_query[$y]['machine_type']=='initialmachine'){
                             $q=0;
                             if (!empty($VDI_query))
@@ -374,16 +388,15 @@ function draw_dashboard_table(){
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="VDIActionMenu">';
                                         if ($VDI_query[$q]['state']=='shut'){
-                                            echo  '<li><a href="power.php?action=single&state=up&vm=' . $VDI_query[$q]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '"><i class="text-success fa fa-play fa-fw text-success"></i>Power up</a></li>';
-
+                                            echo  '<li><a class="PowerButton" href="#" data-action="single" data-state="up" data-vm="' . $VDI_query[$q]['id'] . '" data-hypervisor=' . $sql_reply[$x]['id'] . '"><i class="text-success fa fa-play fa-fw text-success"></i>Power up</a></li>';
                                         }
                                         if ($pwr_status=="on"){
                                             echo '<li><a data-toggle="modal" data-target="#vmConsole" href="vm_screen.php?vm=' . $VDI_query[$q]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '">
                                                     <i class="fa fa-window-maximize fa-fw text-info"></i>' . _("Open console") . '</a></li>
                                                  <li role="separator" class="divider"></li>
-                                                 <li><a href="power.php?action=single&state=down&vm=' . $VDI_query[$q]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover" onclick="return confirmBox(' . "'" . _("Are you sure?") . "'" . ');">
+                                                 <li><a class="PowerButton" href="#" data-action="single" data-state="down" data-vm="' . $VDI_query[$q]['id'] . '" data-hypervisor="' . $sql_reply[$x]['id'] . '" data-toggle="hover">
                                                     <i class="fa fa-power-off fa-fw text-danger" ></i>Soft shut down</a></li>
-                                                 <li><a href="power.php?action=single&state=destroy&vm=' . $VDI_query[$q]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '" data-toggle="hover"  onclick="return confirmBox(' . "'" . _("Are you sure?") . "'" . ');">
+                                                 <li><a class="PowerButton" href="#" data-action="single" data-state="destroy" data-vm="' . $VDI_query[$q]['id'] . '" data-hypervisor="' . $sql_reply[$x]['id'] . '" data-toggle="hover">
                                                     <i class="fa fa-times-circle-o fa-fw text-danger" aria-hidden="true"></i>Forced shut down</a></li>';
                                         }
                                         echo '<li role="separator" class="divider"></li>
@@ -397,10 +410,19 @@ function draw_dashboard_table(){
                 else
                     $used_by=_("Nobody");
                                 if (empty($VDI_query[$q]['os_type']))
-                                    echo '<td class="col-md-3 text-danger">' . _("Unknown") . ' &#47; ' . $vdi_status_display . '</td>';
+                                    echo '<td class="col-md-3 text-danger">' . _("Unknown") . ' &#47; ' . '<i id="VMStatusText">' . $vdi_status_display . '</i>';
                                 else
-                                    echo '<td class="col-md-3">' . ucfirst($VDI_query[$q]['os_type']) . ' &#47; ' . $vdi_status_display . ' <h5><small>' . $used_by . '</small></h5></td>';
-                                echo '</tr>';
+                                    echo '<td class="col-md-3">' . ucfirst($VDI_query[$q]['os_type']) . ' &#47; ' . '<i id="VMStatusText-' . $VDI_query[$q]['id']  . '">' . $vdi_status_display . '</i><h5><small>' . $used_by . '</small></h5>';
+                              echo '<div class="row hide" id="PowerProgressBar-' . $VDI_query[$q]['id'] . '">
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-6">
+                                            <div class="progress">
+                                                <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3"></div>
+                                    </div>
+                                </td></tr>';
                                 ++$q;
                             }
                         }
@@ -413,7 +435,7 @@ function draw_dashboard_table(){
      }
 }
 //############################################################################################
-function vmPowerCycle($hypervisor, $vm, $action){
+function vmPowerCycle($hypervisor, $vm, $action, $state){
     $h_reply=get_SQL_line("SELECT * FROM hypervisors WHERE id='$hypervisor'");
     ssh_connect($h_reply[2].":".$h_reply[3]);
     if ($action=="mass_on" || $action == "mass_off" || $action == "mass_destroy"){
@@ -433,7 +455,6 @@ function vmPowerCycle($hypervisor, $vm, $action){
     }
     if ($action=="single"){
         $v_reply=get_SQL_array("SELECT id,name,os_type,machine_type FROM vms WHERE id='$vm'");
-        $state=$_GET['state'];
         if ($state=="up"){
             if ($v_reply[0]['machine_type']=='initialmachine'){//if we are powering initial machine up, we should power down all child VMs and put them to maintenance mode
                 $child_vms=get_SQL_array("SELECT name,os_type FROM vms WHERE source_volume='{$v_reply[0]['id']}' AND state<>'shut'");
@@ -447,10 +468,10 @@ function vmPowerCycle($hypervisor, $vm, $action){
         $agent_command=json_encode(array('vmname' => $v_reply[0]['name'], 'username' => '', 'password' => '', 'os_type' => $v_reply[0]['os_type']));
         ssh_command('echo "' . addslashes($agent_command) . '"| socat /usr/local/VDI/kvm-vdi.sock - ',true);
         }
-    if ($state=="down")
-        ssh_command("sudo virsh shutdown " . $v_reply[0]['name'], true);
-    if ($state=="destroy")
-        ssh_command("sudo virsh destroy " . $v_reply[0]['name'], true);
+        if ($state=="down")
+            ssh_command("sudo virsh shutdown " . $v_reply[0]['name'], true);
+        if ($state=="destroy")
+            ssh_command("sudo virsh destroy " . $v_reply[0]['name'], true);
 
     }
 }

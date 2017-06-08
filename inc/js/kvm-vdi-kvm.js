@@ -42,6 +42,53 @@ function reloadKVMVmTable(){
     $( "#main_table" ).load( "inc/infrastructure/KVM/DrawTable.php" );
 }
 //==================================================================
+function checkVMStatus(vm, state, is_parent){
+    function runQuery(){
+        $.post({
+            url: 'inc/infrastructure/KVM/GetVMState.php',
+                data: {
+                    vm: vm,
+                    is_parent: is_parent,
+                },
+                success: function(data) {
+                    var required_state = '';
+                    if(state == 'mass_on' || state == 'up')
+                        required_state = 'running';
+                    else
+                        required_state = 'shut';
+                    reply = jQuery.parseJSON(data);
+                    if (is_parent){ // if there are multiple machines (using mass_x button from initial machine)
+                        item_count = reply.length;
+                        $.each(reply, function(i, obj){
+                            if (obj['state'] == required_state){// if machine is in required state, update information in table
+                                $("#VMStatusText-" + obj.id).html(obj.state_html);
+                                $("#PowerProgressBar-" + obj.id).addClass('hide');
+                                --item_count;
+                            }
+                            else{
+                                $("#PowerProgressBar-" + obj.id).removeClass('hide');
+                            }
+                        });
+                        if (item_count > 0){ // if there are still machines in unwanted state, re-run query
+                            setTimeout(function() {runQuery()}, 4000);
+                        }
+                    }
+                    else{// if it is a single VM power cycle
+                        if (reply.state == required_state){
+                            $("#VMStatusText-" + reply.id).html(reply.state_html);
+                            $("#PowerProgressBar-" + reply.id).addClass('hide');
+                        }
+                        else{
+                            $("#PowerProgressBar-" + reply.id).removeClass('hide');
+                            setTimeout(function() {runQuery()}, 4000);
+                        }
+                    }
+                },
+            });
+        }
+    runQuery();
+}
+//==================================================================
 $(document).ready(function(){
     $('#main_table').on("click", "a.DeleteVMButton", function() { //since table items are dynamically generated, we will not get ordinary .click() event
         if (confirm('Are you sure?')){
@@ -324,5 +371,35 @@ $(document).ready(function(){
             });
         }
     });
+
+    $('#main_table').on("click", ".PowerButton", function(e) { //since table items are dynamically generated, we will not get ordinary .click() event
+        e.preventDefault(); // prevent href to go # (jump to the top of the page)
+        if (confirm('Are you sure?')){
+           // $('#PleaseWaitDialog').modal('show');
+            var vm = $(this).data('vm');
+            var hypervisor = $(this).data('hypervisor');
+            var state = $(this).data('state');
+            var action = $(this).data('action');
+            if (action == 'single')
+                checkVMStatus(vm, state, 0);
+            else
+                checkVMStatus(vm, action, 1);
+            $.post({
+                url: 'inc/infrastructure/KVM/Power.php',
+                    data: {
+                        vm: vm,
+                        hypervisor: hypervisor,
+                        state: state,
+                        action: action,
+                    },
+                    success: function(data) {
+                        $('#PleaseWaitDialog').modal('hide');
+                        formatAlertMessage(data);
+                    },
+            });
+        }
+    });
+
+
 });
 //==================================================================

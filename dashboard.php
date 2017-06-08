@@ -101,9 +101,6 @@ set_lang();
          }
         return false;
     }
-    function confirmBox(text) {
-        return confirm(text);
-    }
     </script>
   </head>
 <?php 
