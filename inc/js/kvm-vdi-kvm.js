@@ -188,7 +188,7 @@ $(document).ready(function(){
         });
     });
 
-    $('#main_table').on("click", ".MassMaintenanceButtonClick", function(e) { //since table items are dynamically generated, we will not get ordinary .click() event
+    $('#main_table').on("click", ".MassMaintenanceButton", function(e) { //since table items are dynamically generated, we will not get ordinary .click() event
         e.preventDefault(); // prevent href to go # (jump to the top of the page)
         $('#PleaseWaitDialog').modal('show');
         var sourcevm = $(this).data('source');
