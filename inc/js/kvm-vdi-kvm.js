@@ -121,8 +121,6 @@ $(document).ready(function(){
         }
         else{
             $("#new_vm_creation_info_box").removeClass('hide');
-            $("#new_vm_creation_info_box").removeClass('alert-danger');
-            $("#new_vm_creation_info_box").addClass('alert-info');
             $("#new_vm_creation_info_box").html("<i class=\"fa fa-spinner fa-spin fa-fw\"></i>Creating VM please wait.");
             $(".create_vm_buttons").addClass('disabled');
             var machinename = $('#machinename').val();
@@ -151,25 +149,15 @@ $(document).ready(function(){
                         source_hypervisor: $('#source-hypervisor').val(),
                     },
                     success:function (data) {
-                        if (data=='VMNAME_EXISTS'){
-                            $("#new_vm_creation_info_box").html("<i class=\"fa fa-fw\"></i>VM already exists.");
-                            $("#new_vm_creation_info_box").removeClass('hide');
-                            $("#new_vm_creation_info_box").removeClass('alert-success');
-                            $("#new_vm_creation_info_box").addClass('alert-danger');
-                            $(".create_vm_buttons").removeClass('disabled');
-                        }
-                        else if (data=='SUCCESS' || $('#machine_type').val()=='initialmachine'){
-                            $("#new_vm_creation_info_box").removeClass('alert-danger');
-                            $("#new_vm_creation_info_box").removeClass('hide');
-                            $("#new_vm_creation_info_box").addClass('alert-success');
-                            $("#new_vm_creation_info_box").html("<i class=\"fa fa-thumbs-o-up fa-fw\"></i>Success");
-                            $(".create_vm_buttons").removeClass('disabled');
-                            refresh_screen();
+                        if ($('#machine_type').val() != 'initialmachine') // initial machine uses redirect to disk_copy.php so no json messages here
+                            formatAlertMessage(data);
+                        $(".create_vm_buttons").removeClass('disabled');
+                        $("#new_vm_creation_info_box").addClass('hide');
+                        refresh_screen();
                     }
-                }
-            });
-        }
-    });
+                });
+            }
+        });
 
     $('#main_table').on("click", "a.HypervisorMaintenanceButton", function() { //since table items are dynamically generated, we will not get ordinary .click() event
         var hypervisor = $(this).data('hypervisor');

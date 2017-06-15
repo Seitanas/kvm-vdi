@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-03-10
+2017-06-15
 Vilnius, Lithuania.
 */
 function SQL_connect(){

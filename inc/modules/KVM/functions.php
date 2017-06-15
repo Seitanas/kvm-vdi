@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-06-08
+2017-06-15
 Vilnius, Lithuania.
 */
 
@@ -33,13 +33,9 @@ function ssh_command($command,$blocking){
     $output= stream_get_contents($reply);
     $error=stream_get_contents($errorReply);
     if (!empty($error))
-        write_log($error);
+        return $error;
     if (!empty($output))
         return $output;
-    if (!empty($error)){
-        $output=$error . $output;
-        return $output;
-    }
 }
 //#############################################################################
 function reload_vm_info(){
@@ -521,4 +517,13 @@ function drawVMScreen($vm, $hypervisor){
 function drawNewVMScreen(){
     require_once('NewVM.php');
     draw_html();
+}
+//############################################################################################
+function process_stdout($message){
+    write_log($message);
+    if (mb_substr(strtolower($message), 0, 5 ) === 'error' || mb_substr(strtolower($message), 0, 9 ) === 'traceback'){
+        return $message;
+    }
+    else
+        return 0;
 }
