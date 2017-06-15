@@ -210,7 +210,7 @@ set_lang();
     <div class="modal-footer">
         <div class="row">
             <div class="col-md-7">
-                <div class="alert hide text-left" id="new_vm_creation_info_box"></div>
+                <div class="alert text-left alert-info hide" id="new_vm_creation_info_box"></div>
                 </div>
             <div class="col-md-5">
                 <button type="button" class="btn btn-default create_vm_buttons" data-dismiss="modal"><?php echo _("Close");?></button>
