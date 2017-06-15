@@ -97,7 +97,7 @@ $(document).ready(function(){
         var parent = $(this).attr('data-parent');
         $.confirm({
             title: 'Alert!',
-            content: 'Are you sure you want to delete VM?',
+            content: 'Are you sure?',
             animation: 'opacity',
             buttons: {
                 yes: {
