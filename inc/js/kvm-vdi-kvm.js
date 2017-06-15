@@ -91,27 +91,40 @@ function checkVMStatus(vm, state, is_parent){
 //==================================================================
 $(document).ready(function(){
     $('#main_table').on("click", "a.DeleteVMButton", function() { //since table items are dynamically generated, we will not get ordinary .click() event
-        if (confirm('Are you sure?')){
-            $('#PleaseWaitDialog').modal('show');
-            var vm = $(this).attr('data-vm');
-            var hypervisor = $(this).attr('data-hypervisor');
-            var action = $(this).attr('data-action');
-            var parent = $(this).attr('data-parent');
-            $.post({
-                url: 'inc/infrastructure/KVM/DeleteVM.php',
-                data: {
-                    vm: vm,
-                    hypervisor: hypervisor,
-                    action: action,
-                    parent: parent
+        var vm = $(this).attr('data-vm');
+        var hypervisor = $(this).attr('data-hypervisor');
+        var action = $(this).attr('data-action');
+        var parent = $(this).attr('data-parent');
+        $.confirm({
+            title: 'Alert!',
+            content: 'Are you sure you want to delete VM?',
+            animation: 'opacity',
+            buttons: {
+                yes: {
+                    btnClass: 'btn-danger',
+                    action: function(){
+                        $('#PleaseWaitDialog').modal('show');
+                        $.post({
+                            url: 'inc/infrastructure/KVM/DeleteVM.php',
+                            data: {
+                                vm: vm,
+                                hypervisor: hypervisor,
+                                action: action,
+                                parent: parent
+                            },
+                            success: function(data) {
+                                formatAlertMessage(data)
+                                refresh_screen();
+                                $('#PleaseWaitDialog').modal('hide');
+                            },
+                        });
+                    }
                 },
-                success: function(data) {
-                    formatAlertMessage(data)
-                    refresh_screen();
-                    $('#PleaseWaitDialog').modal('hide');
-                },
-            });
-        }
+                no: {
+                    btnClass: 'btn-primary',
+                }
+            }
+        });
     });
 //==================================================================
     $('#create-vm-button-click').click(function() {

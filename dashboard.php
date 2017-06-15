@@ -36,6 +36,7 @@ set_lang();
     <link href="inc/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
     <link href="inc/css/dashboard.css" rel="stylesheet">
     <link href="inc/PNotify/pnotify.custom.min.css" rel="stylesheet">
+    <link href="inc/jquery-confirm/css/jquery-confirm.min.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -52,6 +53,7 @@ set_lang();
     <script src="inc/js/ie10-viewport-bug-workaround.js"></script>
     <script src="inc/metisMenu/metisMenu.min.js"></script>
     <script src="inc/PNotify/pnotify.custom.min.js"></script>
+    <script src="inc/jquery-confirm/js/jquery-confirm.min.js"></script>
     <script src="inc/js/kvm-vdi.js"></script>
     <?php
         if ($engine == 'OpenStack')
