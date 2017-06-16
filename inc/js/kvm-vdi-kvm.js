@@ -316,6 +316,7 @@ $(document).ready(function(){
                 },
                     success:function (data) {
                         $("#SubmitHypervisorsButton").addClass('hide');
+                        refresh_screen();
                         formatAlertMessage(data);
                 }
             });
@@ -347,6 +348,7 @@ $(document).ready(function(){
                         refresh_screen();
                     }
                     $("#HypervisorProgress").addClass('hide');
+                    refresh_screen();
                     formatAlertMessage(data);
                 }
             });
