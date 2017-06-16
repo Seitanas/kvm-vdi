@@ -302,25 +302,38 @@ $(document).ready(function(){
 
     $('#SubmitHypervisorsButton').click(function() {
         var to_delete = [];
-        if (confirm('Are you sure?')){
-            $(":checked").each(function() {
-                if ($(this).val()!='on')
-                    to_delete.push($(this).val());
-                $("#row-name-"+$(this).val()).remove();
-            });
-            $.post({
-                url : 'inc/infrastructure/KVM/UpdateHypervisors.php',
-                data: {
-                    type : 'delete',
-                    hypervisor : to_delete,
+        $.confirm({
+            title: 'Alert!',
+            content: 'Are you sure?',
+            animation: 'opacity',
+            buttons: {
+                yes: {
+                    btnClass: 'btn-danger',
+                    action: function(){
+                        $(":checked").each(function() {
+                            if ($(this).val()!='on')
+                            to_delete.push($(this).val());
+                            $("#row-name-"+$(this).val()).remove();
+                        });
+                        $.post({
+                            url : 'inc/infrastructure/KVM/UpdateHypervisors.php',
+                            data: {
+                                type : 'delete',
+                                hypervisor : to_delete,
+                            },
+                            success:function (data) {
+                                $("#SubmitHypervisorsButton").addClass('hide');
+                                refresh_screen();
+                                formatAlertMessage(data);
+                            }
+                        });
+                    }
                 },
-                    success:function (data) {
-                        $("#SubmitHypervisorsButton").addClass('hide');
-                        refresh_screen();
-                        formatAlertMessage(data);
+                no: {
+                    btnClass: 'btn-primary',
                 }
-            });
-        }
+            }
+        });
     });
 
     $('#AddHypervisorButton').click(function() {
