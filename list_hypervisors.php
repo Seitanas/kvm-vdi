@@ -22,6 +22,7 @@ $hypervisors_reply=get_SQL_array("SELECT * FROM hypervisors ORDER BY name,ip DES
     <link href="inc/x-editable/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet">
     <script src="inc/x-editable/bootstrap3-editable/js/bootstrap-editable.js"></script>
     <script src="inc/js/kvm-vdi.js"></script>
+    <script src="inc/js/kvm-vdi-kvm.js"></script>
 </head>
 <body>
     <div class="modal-content">
