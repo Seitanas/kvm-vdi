@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-06-15
+2017-07-19
 Vilnius, Lithuania.
 */
 
@@ -23,16 +23,16 @@ function ssh_disconnect(){
     global $connection;
     ssh2_exec($connection, 'exit;');
 }
-function ssh_command($command,$blocking){
+function ssh_command($command, $blocking, $ignore_error = false){
     global $connection;
     write_log("Executing: " . preg_replace('%\\"password.*?,%i', '"password\":\"*****\",',$command));
     $reply = ssh2_exec($connection,$command);
     $errorReply = ssh2_fetch_stream($reply, SSH2_STREAM_STDERR);
     stream_set_blocking($reply, $blocking);
     stream_set_blocking($errorReply, $blocking);
-    $output= stream_get_contents($reply);
-    $error=stream_get_contents($errorReply);
-    if (!empty($error))
+    $output = stream_get_contents($reply);
+    $error = stream_get_contents($errorReply);
+    if (!empty($error) && !$ignore_error)
         return $error;
     if (!empty($output))
         return $output;
@@ -477,7 +477,7 @@ function drawVMScreen($vm, $hypervisor){
     $h_reply=get_SQL_line("SELECT * FROM hypervisors WHERE id='$hypervisor'");
     $v_reply=get_SQL_array("SELECT * FROM vms WHERE id='$vm'");
     ssh_connect($h_reply[2].":".$h_reply[3]);
-    $address=ssh_command("sudo virsh domdisplay " . $v_reply[0]['name'], true);
+    $address=ssh_command("sudo virsh domdisplay " . $v_reply[0]['name'], true, true);
     $address=str_replace("localhost",$h_reply[2],$address);
     $address=str_replace("\n","",$address);
     $html5_token_value=$address;

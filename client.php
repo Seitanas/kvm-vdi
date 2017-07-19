@@ -42,7 +42,7 @@ if ($protocol=="SPICE"){
 	exit;
     }
     ssh_connect($h_reply[0]['ip'].":".$h_reply[0]['port']);
-    $status=ssh_command("sudo virsh domdisplay ".$machine_name,true);
+    $status=ssh_command("sudo virsh domdisplay ".$machine_name, true, true);
     $status=str_replace("spice://","",$status);
     $status=str_replace("\n","",$status);
     if ($use_hypervisor_address==1)
