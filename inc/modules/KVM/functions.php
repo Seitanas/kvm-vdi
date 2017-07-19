@@ -176,11 +176,13 @@ function draw_dashboard_table(){
     while ($x<sizeof($sql_reply)){
         $table_status="";
         $vms_query=get_SQL_array("SELECT vms.id,vms.name,vms.hypervisor,vms.machine_type,vms.source_volume,vms.snapshot,vms.maintenance,vms.filecopy,vms.state,vms.os_type,vms.locked,vms.lastused,clients.username, vms_tmp.name AS sourcename  FROM vms LEFT JOIN vms AS vms_tmp ON vms.source_volume=vms_tmp.id LEFT JOIN clients ON clients.id=vms.clientid WHERE vms.hypervisor='{$sql_reply[$x]['id']}' AND vms.machine_type <> 'vdimachine' ORDER BY vms.name");
-        if (!empty($sql_reply[$x]['name']))
+        if (!empty($sql_reply[$x]['name'])){
             $hypervisor_name=$sql_reply[$x]['name'];
-        else
+        }
+        else{
             $hypervisor_name=$sql_reply[$x]['ip'];
-        echo '<h1 class="sub-header">' .  _("Hypervisor: ") . $hypervisor_name . ' ';
+        }
+        echo '<h1>' . _("Hypervisor: ") . $hypervisor_name . ' ';
         if (!$sql_reply[$x]['maintenance'])
             echo '<a href="#" data-maintenance="1" data-hypervisor="' . $sql_reply[$x]['id'] . '" data-toggle="hover"  class="btn glyphicon glyphicon-ok-circle btn-success HypervisorMaintenanceButton"> ' . _("Enabled") . '</a>';
         else {
@@ -426,7 +428,7 @@ function draw_dashboard_table(){
                     }
         echo '</tbody>
         </table>
-        <?php';
+    </div>';
         ++$x;
      }
 }
