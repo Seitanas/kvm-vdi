@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-07-19
+2017-07-20
 Vilnius, Lithuania.
 */
 
@@ -212,7 +212,6 @@ function draw_dashboard_table(){
             $machine_type['sourcemachine']=_("Source machine");
             $machine_type['vdimachine']=_("VDI machine");
             while ($y<sizeof($vms_query)){
-                $pwr_status="on";
                 $lockstatus='';
                 $pwr_button="btn-success";
                 $vms_status_display = drawStateInfo($vms_query[$y]['state']);
@@ -292,18 +291,20 @@ function draw_dashboard_table(){
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="VMSActionMenu">';
-                                    if ($vms_query[$y]['state']=='shut'){
-                                        echo  '<li class="lockable-vm-buttons-' . $vms_query[$y]['id'] . ' ' . $lockstatus . '"><a class="PowerButton" href="#" data-action="single" data-state="up" data-vm="' . $vms_query[$y]['id'] . '" data-hypervisor="' . $sql_reply[$x]['id'] . '"><i class="text-success fa fa-play fa-fw text-success"></i>Power up</a></li>';
-                                    }
-                                    if ($pwr_status=="on"){
-                                      echo '<li><a data-toggle="modal" data-target="#vmConsole" href="vm_screen.php?vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '">
-                                                <i class="fa fa-window-maximize fa-fw text-info"></i>' . _("Open console") . '</a></li>
-                                            <li role="separator" class="divider"></li>
-                                            <li><a class="PowerButton" href="#" data-action="single" data-state="down" data-vm="' . $vms_query[$y]['id'] . '" data-hypervisor="' . $sql_reply[$x]['id'] . '" data-toggle="hover">
-                                                <i class="fa fa-power-off fa-fw text-danger" ></i>Soft shut down</a></li>
-                                            <li><a class="PowerButton" data-action="single" data-state="destroy" data-vm="' . $vms_query[$y]['id'] . '" data-hypervisor="' . $sql_reply[$x]['id'] . '" data-toggle="hover">
-                                                <i class="fa fa-times-circle-o fa-fw text-danger" aria-hidden="true"></i>Forced shut down</a></li>';
-                                      }
+                                    $vm_is_off_buttons = '';
+                                    $vm_is_on_buttons = '';
+                                    if ($vms_query[$y]['state'] == 'shut')
+                                        $vm_is_on_buttons = 'hide';
+                                    else if ($vms_query[$y]['state'] == 'running' || $vms_query[$y]['state'] == 'paused' || $vms_query[$y]['state'] == 'pmsuspended')
+                                        $vm_is_off_buttons = 'hide';
+                                    echo    '<li class="VMIsOffButtons-' . $vms_query[$y]['id'] . ' ' . $vm_is_off_buttons . ' lockable-vm-buttons-' . $vms_query[$y]['id'] . ' ' . $lockstatus . '"><a class="PowerButton" href="#" data-action="single" data-state="up" data-vm="' . $vms_query[$y]['id'] . '" data-hypervisor="' . $sql_reply[$x]['id'] . '"><i class="text-success fa fa-play fa-fw text-success"></i>Power up</a></li>
+                                            <li class="VMIsOnButtons-' . $vms_query[$y]['id'] . ' ' . $vm_is_on_buttons . '"><a data-toggle="modal" data-target="#vmConsole" href="vm_screen.php?vm=' . $vms_query[$y]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '">
+                                               <i class="fa fa-window-maximize fa-fw text-info"></i>' . _("Open console") . '</a></li>
+                                            <li class="VMIsOnButtons-' . $vms_query[$y]['id'] . ' ' . $vm_is_on_buttons . '" role="separator" class="divider"></li>
+                                            <li class="VMIsOnButtons-' . $vms_query[$y]['id'] . ' ' . $vm_is_on_buttons . '"><a class="PowerButton" href="#" data-action="single" data-state="down" data-vm="' . $vms_query[$y]['id'] . '" data-hypervisor="' . $sql_reply[$x]['id'] . '" data-toggle="hover">
+                                               <i class="fa fa-power-off fa-fw text-danger" ></i>Soft shut down</a></li>
+                                            <li class="VMIsOnButtons-' . $vms_query[$y]['id'] . ' ' . $vm_is_on_buttons . '"><a class="PowerButton" data-action="single" data-state="destroy" data-vm="' . $vms_query[$y]['id'] . '" data-hypervisor="' . $sql_reply[$x]['id'] . '" data-toggle="hover">
+                                               <i class="fa fa-times-circle-o fa-fw text-danger" aria-hidden="true"></i>Forced shut down</a></li>';
                                       echo '<li role="separator" class="divider"></li>
                                             <li class="lockable-vm-buttons-' . $vms_query[$y]['id'] . ' ' . $lockstatus . '"><a href="#" class="DeleteVMButton" data-vm="' . $vms_query[$y]['id'] . '" data-hypervisor="' . $sql_reply[$x]['id'] . '">
                                                 <i class="fa fa-trash-o fa-fw text-danger"></i>' . _("Delete machine") . '</a></li>
@@ -385,21 +386,23 @@ function draw_dashboard_table(){
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="VDIActionMenu">';
-                                        if ($VDI_query[$q]['state']=='shut'){
-                                            echo  '<li><a class="PowerButton" href="#" data-action="single" data-state="up" data-vm="' . $VDI_query[$q]['id'] . '" data-hypervisor=' . $sql_reply[$x]['id'] . '"><i class="text-success fa fa-play fa-fw text-success"></i>Power up</a></li>';
-                                        }
-                                        if ($pwr_status=="on"){
-                                            echo '<li><a data-toggle="modal" data-target="#vmConsole" href="vm_screen.php?vm=' . $VDI_query[$q]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '">
-                                                    <i class="fa fa-window-maximize fa-fw text-info"></i>' . _("Open console") . '</a></li>
-                                                 <li role="separator" class="divider"></li>
-                                                 <li><a class="PowerButton" href="#" data-action="single" data-state="down" data-vm="' . $VDI_query[$q]['id'] . '" data-hypervisor="' . $sql_reply[$x]['id'] . '" data-toggle="hover">
-                                                    <i class="fa fa-power-off fa-fw text-danger" ></i>Soft shut down</a></li>
-                                                 <li><a class="PowerButton" href="#" data-action="single" data-state="destroy" data-vm="' . $VDI_query[$q]['id'] . '" data-hypervisor="' . $sql_reply[$x]['id'] . '" data-toggle="hover">
-                                                    <i class="fa fa-times-circle-o fa-fw text-danger" aria-hidden="true"></i>Forced shut down</a></li>';
-                                        }
-                                        echo '<li role="separator" class="divider"></li>
-                                            <li><a href="#" data-vm="' . $VDI_query[$q]['id'] . '" data-hypervisor="' . $sql_reply[$x]['id'] . '" class="DeleteVMButton">
-                                            <i class="fa fa-trash-o fa-fw text-danger"></i>' . _("Delete machine") . '</a></li>
+                                        $vm_is_off_buttons = '';
+                                        $vm_is_on_buttons = '';
+                                        if ($VDI_query[$q]['state']=='shut')
+                                            $vm_is_on_buttons = 'hide';
+                                        if ($pwr_status=="on")
+                                            $vm_is_off_buttons = 'hide';
+                                        echo '<li class="VMIsOffButtons-' . $VDI_query[$q]['id'] .' ' . $vm_is_off_buttons . '"><a class="PowerButton" href="#" data-action="single" data-state="up" data-vm="' . $VDI_query[$q]['id'] . '" data-hypervisor=' . $sql_reply[$x]['id'] . '"><i class="text-success fa fa-play fa-fw text-success"></i>Power up</a></li>';
+                                        echo '<li class="VMIsOnButtons-' . $VDI_query[$q]['id'] . ' ' . $vm_is_on_buttons . '"><a data-toggle="modal" data-target="#vmConsole" href="vm_screen.php?vm=' . $VDI_query[$q]['id'] . '&hypervisor=' . $sql_reply[$x]['id'] . '">
+                                                <i class="fa fa-window-maximize fa-fw text-info"></i>' . _("Open console") . '</a></li>
+                                              <li class="VMIsOnButtons-' . $VDI_query[$q]['id'] . ' ' . $vm_is_on_buttons . ' divider" role="separator" class="divider"></li>
+                                              <li class="VMIsOnButtons-' . $VDI_query[$q]['id'] . ' ' . $vm_is_on_buttons . '"><a class="PowerButton" href="#" data-action="single" data-state="down" data-vm="' . $VDI_query[$q]['id'] . '" data-hypervisor="' . $sql_reply[$x]['id'] . '" data-toggle="hover">
+                                                <i class="fa fa-power-off fa-fw text-danger" ></i>Soft shut down</a></li>
+                                              <li class="VMIsOnButtons-' . $VDI_query[$q]['id'] . ' ' . $vm_is_on_buttons . '"><a class="PowerButton" href="#" data-action="single" data-state="destroy" data-vm="' . $VDI_query[$q]['id'] . '" data-hypervisor="' . $sql_reply[$x]['id'] . '" data-toggle="hover">
+                                                <i class="fa fa-times-circle-o fa-fw text-danger" aria-hidden="true"></i>Forced shut down</a></li>
+                                              <li role="separator" class="divider"></li>
+                                              <li><a href="#" data-vm="' . $VDI_query[$q]['id'] . '" data-hypervisor="' . $sql_reply[$x]['id'] . '" class="DeleteVMButton">
+                                                <i class="fa fa-trash-o fa-fw text-danger"></i>' . _("Delete machine") . '</a></li>
                                        </ul>
                                   </div>';
                                 echo '</td>';

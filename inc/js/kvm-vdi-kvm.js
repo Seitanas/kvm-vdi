@@ -63,6 +63,18 @@ function checkVMStatus(vm, state, is_parent){
                             if (obj['state'] == required_state){// if machine is in required state, update information in table
                                 $("#VMStatusText-" + obj.id).html(obj.state_html);
                                 $("#PowerProgressBar-" + obj.id).addClass('hide');
+                                /*
+                                    after specific machine is in required state, redraw its action
+                                    buttons to match its current state:
+                                */
+                                if(required_state == 'shut'){
+                                    $(".VMIsOffButtons-" + obj.id).removeClass('hide');
+                                    $(".VMIsOnButtons-" + obj.id).addClass('hide');
+                                }
+                                if(required_state == 'running'){
+                                    $(".VMIsOffButtons-" + obj.id).addClass('hide');
+                                    $(".VMIsOnButtons-" + obj.id).removeClass('hide');
+                                }
                                 --item_count;
                             }
                             else{
@@ -77,6 +89,18 @@ function checkVMStatus(vm, state, is_parent){
                         if (reply.state == required_state){
                             $("#VMStatusText-" + reply.id).html(reply.state_html);
                             $("#PowerProgressBar-" + reply.id).addClass('hide');
+                            /*
+                                after specific machine is in required state, redraw its action
+                                buttons to match its current state:
+                            */
+                            if(required_state == 'shut'){
+                                $(".VMIsOffButtons-" + reply.id).removeClass('hide');
+                                $(".VMIsOnButtons-" + reply.id).addClass('hide');
+                            }
+                            if(required_state == 'running'){
+                                $(".VMIsOffButtons-" + reply.id).addClass('hide');
+                                $(".VMIsOnButtons-" + reply.id).removeClass('hide');
+                            }
                         }
                         else{
                             $("#PowerProgressBar-" + reply.id).removeClass('hide');
@@ -368,7 +392,7 @@ $(document).ready(function(){
         }
     });
 
-    $('#main_table').on("click", ".PopulateMachinesButton", function(e) { //since table items are dynamically generated, we will not get ordinary .click() event
+    $('#main_table').on("click", ".PopulateMachinesButton", function(e) { // since table items are dynamically generated, we will not get ordinary .click() event
         e.preventDefault(); // prevent href to go # (jump to the top of the page)
         if (confirm('All virtual machines will be powered off and their initial snapshots recreated.\nProceed?')){
             $('#PleaseWaitDialog').modal('show');
@@ -388,14 +412,23 @@ $(document).ready(function(){
         }
     });
 
-    $('#main_table').on("click", ".PowerButton", function(e) { //since table items are dynamically generated, we will not get ordinary .click() event
+    $('#main_table').on("click", ".PowerButton", function(e) { // since table items are dynamically generated, we will not get ordinary .click() event
         e.preventDefault(); // prevent href to go # (jump to the top of the page)
         if (confirm('Are you sure?')){
-            $('#PleaseWaitDialog').modal('show');
             var vm = $(this).data('vm');
             var hypervisor = $(this).data('hypervisor');
             var state = $(this).data('state');
             var action = $(this).data('action');
+            /*  for single VM power cycles
+                'state' values should be:
+                up, down, destroy
+                must follow 'action' variable with value:
+                single
+
+                for multiple VM power cycle
+                'action' values should be:
+                mass_on, mass_off, mass_destroy
+            */
             if (action == 'single')
                 checkVMStatus(vm, state, 0);
             else
@@ -409,7 +442,6 @@ $(document).ready(function(){
                         action: action,
                     },
                     success: function(data) {
-                        $('#PleaseWaitDialog').modal('hide');
                         formatAlertMessage(data);
                     },
             });
