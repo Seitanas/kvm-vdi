@@ -150,51 +150,6 @@ $(document).ready(function(){
             }
         });
     });
-//==================================================================
-    $('#create-vm-button-click').click(function() {
-        $("#new_vm_creation_info_box").addClass('hide');
-        if(!$('#new_vm')[0].checkValidity()){
-            $('#new_vm').find('input[type="submit"]').click();
-        }
-        else{
-            $("#new_vm_creation_info_box").removeClass('hide');
-            $("#new_vm_creation_info_box").html("<i class=\"fa fa-spinner fa-spin fa-fw\"></i>Creating VM please wait.");
-            $(".create_vm_buttons").addClass('disabled');
-            var machinename = $('#machinename').val();
-            if ($('#machine_type').val()=='import')
-                machinename = $('#source-machine').val();
-                $.ajax({
-                    type : 'POST',
-                    url : 'inc/infrastructure/KVM/CreateVM.php',
-                    data: {
-                        machine_type: $('#machine_type').val(),
-                        hypervisor: $('#hypervisor').val(),
-                        source_volume: $('#source_volume').val(),
-                        source_drivepath: $('#source_drivepath').val(),
-                        source_drive_size: $('#source_drive_size').val(),
-                        iso_image: $('#iso_image').val(),
-                        iso_path: $('#iso_path').val(),
-                        numsock: $('#numsock').val(),
-                        numcore: $('#numcore').val(),
-                        numram: $('#numram').val(),
-                      network: $('#network').val(),
-                        machinename: machinename,
-                        machinecount: $('#machinecount').val(),
-                        os_type: $('#os_type').val(),
-                        os_version: $('#os_version').val(),
-                        vmname: $('#machinename').val(),
-                        source_hypervisor: $('#source-hypervisor').val(),
-                    },
-                    success:function (data) {
-                        if ($('#machine_type').val() != 'initialmachine') // initial machine uses redirect to disk_copy.php so no json messages here
-                            formatAlertMessage(data);
-                        $(".create_vm_buttons").removeClass('disabled');
-                        $("#new_vm_creation_info_box").addClass('hide');
-                        refresh_screen();
-                    }
-                });
-            }
-        });
 
     $('#main_table').on("click", "a.HypervisorMaintenanceButton", function() { //since table items are dynamically generated, we will not get ordinary .click() event
         var hypervisor = $(this).data('hypervisor');
@@ -314,81 +269,6 @@ $(document).ready(function(){
             $('#childof-'+this.id).removeClass('fa-plus');
             $('#childof-'+this.id).addClass('fa-minus');
             showHideTableSection(this.id,'show');
-        }
-    });
-
-    $('.DeleteHypervisorButton').click(function() {
-        $("#SubmitHypervisorsButton").removeClass('hide');
-        var id = $(this).data('id');
-        $('#hypervisor-'+id).prop('checked', true);
-        $(".name-"+id).addClass('hypervisor-deleted');
-    })
-
-    $('#SubmitHypervisorsButton').click(function() {
-        var to_delete = [];
-        $.confirm({
-            title: 'Alert!',
-            content: 'Are you sure?',
-            animation: 'opacity',
-            buttons: {
-                yes: {
-                    btnClass: 'btn-danger',
-                    action: function(){
-                        $(":checked").each(function() {
-                            if ($(this).val()!='on')
-                            to_delete.push($(this).val());
-                            $("#row-name-"+$(this).val()).remove();
-                        });
-                        $.post({
-                            url : 'inc/infrastructure/KVM/UpdateHypervisors.php',
-                            data: {
-                                type : 'delete',
-                                hypervisor : to_delete,
-                            },
-                            success:function (data) {
-                                $("#SubmitHypervisorsButton").addClass('hide');
-                                refresh_screen();
-                                formatAlertMessage(data);
-                            }
-                        });
-                    }
-                },
-                no: {
-                    btnClass: 'btn-primary',
-                }
-            }
-        });
-    });
-
-    $('#AddHypervisorButton').click(function() {
-        if(!$('#HypervisorForm')[0].checkValidity()){
-            $('#HypervisorForm').find('input[type="submit"]').click();
-        }
-        else{
-            $("#HypervisorProgress").removeClass('hide');
-            $.post({
-                url : 'inc/infrastructure/KVM/UpdateHypervisors.php',
-                data: {
-                    type : 'new',
-                    address1 : $('#address1').val(),
-                    address2 : $('#address2').val(),
-                    port : $('#port').val(),
-                    name : $('#name').val(),
-                },
-                success:function (data) {
-                    var msg = jQuery.parseJSON(data);
-                    if ("success" in msg){
-                        $("#address1").val("");
-                        $("#address2").val("");
-                        $("#port").val("");
-                        $("#name").val("");
-                        refresh_screen();
-                    }
-                    $("#HypervisorProgress").addClass('hide');
-                    refresh_screen();
-                    formatAlertMessage(data);
-                }
-            });
         }
     });
 

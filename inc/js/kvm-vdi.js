@@ -241,7 +241,6 @@ $(document).ready( function() {
             if (password1 != password2){
                 $('.form-group').addClass('has-error');
                 $('#PasswordsDoNotMatch').removeClass('hide');
-                console.log("lol");
             }
             else{
                 $.post({

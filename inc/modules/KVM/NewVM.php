@@ -1,4 +1,5 @@
 <?php
+
 function draw_html(){
 include (dirname(__FILE__) . '/../../../functions/config.php');
 $h_reply=get_SQL_array("SELECT * FROM hypervisors WHERE maintenance=0 ORDER BY name,ip");
@@ -8,8 +9,7 @@ set_lang();
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <script src="inc/js/kvm-vdi.js"></script>
-    <script src="inc/js/kvm-vdi-kvm.js"></script>
+  <script src="inc/js/modal/kvm-vdi-kvm-new-vm.js"></script>
 </head>
 <body>
 <style>
@@ -69,11 +69,11 @@ set_lang();
                     ?>
                     <div id="hypervisor-manualpath" class="hide">
                         <div class="col-md-5">
-                            <label><?php echo _("Specify disk path:");?></label>                    
+                            <label><?php echo _("Specify disk path:");?></label>
                             <input type="text" name="source_drivepath" class="form-control" id="source_drivepath" value="<?php echo $default_imagepath; ?>">
                         </div>
                         <div class="col-md-4" id="SourceDriveSize">
-                                <label><?php echo _("Disk size");?></label>                 
+                                <label><?php echo _("Disk size");?></label>
                             <div class="input-group">
                                 <input type="number" min="1" value="10" name="source_drive_size" id="source_drive_size" class="form-control" type="number">
                                 <span class="input-group-addon">GB</span>
@@ -214,7 +214,7 @@ set_lang();
                 </div>
             <div class="col-md-5">
                 <button type="button" class="btn btn-default create_vm_buttons" data-dismiss="modal"><?php echo _("Close");?></button>
-                <button type="button" class="btn btn-primary create_vm_buttons" id="create-vm-button-click"><?php echo _("Create VMs");?></button>
+                <button type="button" class="btn btn-primary create_vm_buttons" id="CreateVMButton"><?php echo _("Create VMs");?></button>
                 <input type="submit" class="hide">
             </div>
         </div>

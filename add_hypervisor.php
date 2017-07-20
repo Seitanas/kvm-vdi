@@ -4,7 +4,7 @@ KVM-VDI
 Tadas Ustinavičius
 
 Vilnius,Lithuania.
-2017-06-06
+2017-07-20
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -19,7 +19,7 @@ set_lang();
 <html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <script src="inc/js/kvm-vdi-kvm.js"></script>
+    <script src="inc/js/modal/kvm-vdi-kvm-hypervisors.js"></script>
 </head>
 <body>
     <form id="HypervisorForm">

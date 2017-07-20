@@ -4,7 +4,7 @@ KVM-VDI
 Tadas Ustinavičius
 
 Vilnius,Lithuania.
-2017-06-06
+2017-07-20
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -21,8 +21,7 @@ $hypervisors_reply=get_SQL_array("SELECT * FROM hypervisors ORDER BY name,ip DES
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <link href="inc/x-editable/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet">
     <script src="inc/x-editable/bootstrap3-editable/js/bootstrap-editable.js"></script>
-    <script src="inc/js/kvm-vdi.js"></script>
-    <script src="inc/js/kvm-vdi-kvm.js"></script>
+    <script src="inc/js/modal/kvm-vdi-kvm-hypervisors.js"></script>
 </head>
 <body>
     <div class="modal-content">
