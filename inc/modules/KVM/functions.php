@@ -260,7 +260,7 @@ function draw_dashboard_table(){
                                 ' . _("VDI control") . '<span class="caret"></span>
                                 </button>
                                         <ul class="dropdown-menu">
-                                            <li class="' . $lockstatus . '" id="copy-disk-from-source-button-' . $vms_query[$y]['id'] . '"><a href="copy_disk.php?hypervisor=' . $sql_reply[$x]['id'] .  '&vm=' . $vms_query[$y]['id'] . '" onclick="return confirmation1();">' . _("Copy disk from source") . '</a></li>
+                                            <li class="' . $lockstatus . '" id="copy-disk-from-source-button-' . $vms_query[$y]['id'] . '"><a href="#" class="CopyDiskButton" data-hypervisor="' . $sql_reply[$x]['id'] .  '" data-vm="' . $vms_query[$y]['id'] . '">' . _("Copy disk from source") . '</a></li>
                                             <li role="separator" class="divider"></li>
                                             <li><a href="#" class="MassMaintenanceButton" data-action="mass_on" data-source="' . $vms_query[$y]['id'] .  '">' . _("Turn maintenance on") . '</a></li>
                                             <li><a href="#" class="MassMaintenanceButton" data-action="mass_off" data-source="' . $vms_query[$y]['id'] .  '">' . _("Turn maintenance off") . '</a></li>

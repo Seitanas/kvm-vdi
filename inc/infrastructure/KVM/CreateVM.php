@@ -96,7 +96,7 @@ if ($machine_type == 'initialmachine'){
         exit;
     }
     $disk = $source_drivepath . '/' . $name . "-" . uniqid() . ".qcow2";
-    $vm_cmd = "sudo virt-install --name=" . escapeshellarg($name) . " --disk path=" . escapeshellarg($disk) . ",format=qcow2,bus=virtio,cache=none --disk path=,device=cdrom,target=hdc,perms=ro --soundhw=ac97 --vcpus=" . escapeshellarg($numcpu) . ",cores=" . escapeshellarg($numcore). ",sockets=" . escapeshellarg($numsock) . " --ram=" . escapeshellarg($numram) . " --network bridge=" . escapeshellarg($network) . ",model=virtio --os-type=" . escapeshellarg($os_type) . " --os-variant=" . escapeshellarg($os_version) . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --import --noreboot --import";
+    $vm_cmd = "sudo virt-install --name=" . escapeshellarg($name) . " --disk path=" . escapeshellarg($disk) . ",format=qcow2,bus=virtio,cache=none --disk path=,device=cdrom,target=hdc --soundhw=ac97 --vcpus=" . escapeshellarg($numcpu) . ",cores=" . escapeshellarg($numcore). ",sockets=" . escapeshellarg($numsock) . " --ram=" . escapeshellarg($numram) . " --network bridge=" . escapeshellarg($network) . ",model=virtio --os-type=" . escapeshellarg($os_type) . " --os-variant=" . escapeshellarg($os_version) . " --graphics spice,listen=0.0.0.0 --redirdev usb,type=spicevmc --video qxl --import --noreboot --import";
     $drive_cmd = "sudo qemu-img create -f qcow2 -o size=1G " . escapeshellarg($disk);
     $chown_command = "sudo chown $libvirt_user:$libvirt_group $disk";
     $xmledit_cmd = "sudo " . $hypervisor_cmdline_path . "/vdi-xmledit -name " . escapeshellarg($name);
@@ -110,12 +110,12 @@ if ($machine_type == 'initialmachine'){
         exit;
     }
     if ($message = process_stdout(ssh_command($xmledit_cmd,true))){
-        echo json_encode(array('error' => _('Got error while editing doamin XML : ' . $message)));
+        echo json_encode(array('error' => _('Got error while editing domain XML : ' . $message)));
         exit;
     }
     add_SQL_line("INSERT INTO  vms (name,hypervisor,machine_type,source_volume, os_type) VALUES ('$name','$hypervisor','$machine_type','$source_volume','$os_type')");
     $v_reply=get_SQL_line("SELECT id FROM vms WHERE name='$name'");
-    header("Location: $serviceurl/copy_disk.php?vm=" . $v_reply[0] . "&hypervisor=" . $hypervisor);
+    header("Location: $serviceurl/inc/infrastructure/KVM/CopyDisk.php?vm=" . $v_reply[0] . "&hypervisor=" . $hypervisor);
     exit;
 }
 

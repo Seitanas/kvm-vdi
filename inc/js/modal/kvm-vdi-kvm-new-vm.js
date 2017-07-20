@@ -34,9 +34,7 @@ $(document).ready(function(){
                         source_hypervisor: $('#source-hypervisor').val(),
                     },
                     success:function (data) {
-                        if (data){
-                            formatAlertMessage(data);
-                        }
+                        formatAlertMessage(data);
                         $(".create_vm_buttons").removeClass('disabled');
                         $("#new_vm_creation_info_box").addClass('hide');
                         refresh_screen();

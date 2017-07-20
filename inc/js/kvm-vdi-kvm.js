@@ -215,6 +215,39 @@ $(document).ready(function(){
         });
     });
 
+    $('#main_table').on("click", ".CopyDiskButton", function(e) { //since table items are dynamically generated, we will not get ordinary .click() event
+        e.preventDefault(); // prevent href to go # (jump to the top of the page)
+        var vm = $(this).attr('data-vm');
+        var hypervisor = $(this).attr('data-hypervisor');
+        $.confirm({
+            title: 'Alert!',
+            content: 'Are you sure?',
+            animation: 'opacity',
+            buttons: {
+                yes: {
+                    btnClass: 'btn-danger',
+                    action: function(){
+                        $.get({
+                            url: 'inc/infrastructure/KVM/CopyDisk.php',
+                            data: {
+                                vm: vm,
+                                hypervisor: hypervisor,
+                            },
+                            success: function(data) {
+                                formatAlertMessage(data)
+                                refresh_screen();
+                            },
+                        });
+                    }
+                },
+                no: {
+                    btnClass: 'btn-primary',
+                }
+            }
+        });
+
+    });
+
     $('#main_table').on("click", ".MassMaintenanceButton", function(e) { //since table items are dynamically generated, we will not get ordinary .click() event
         e.preventDefault(); // prevent href to go # (jump to the top of the page)
         $('#PleaseWaitDialog').modal('show');
