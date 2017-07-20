@@ -126,7 +126,7 @@ $(document).ready(function(){
                                 }
                             if (ip[0]==256)
                                 ip[0]=1;
-                            conf_string=conf_string + "host " + title.name + " { \n    hardware ethernet " + title.mac + "\n    fixed-address " + ip[0] + "." + ip[1] + "." + ip[2] + "." + ip[3] + "\n}\n";
+                            conf_string=conf_string + "host " + title.name + " { \n    hardware ethernet " + title.mac + ";\n    fixed-address " + ip[0] + "." + ip[1] + "." + ip[2] + "." + ip[3] + ";\n}\n";
                             ++ip[3];
                         });
                         $('#dhcp_conf').val(conf_string);
