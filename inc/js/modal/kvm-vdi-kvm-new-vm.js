@@ -34,8 +34,9 @@ $(document).ready(function(){
                         source_hypervisor: $('#source-hypervisor').val(),
                     },
                     success:function (data) {
-                        if ($('#machine_type').val() != 'initialmachine') // initial machine uses redirect to disk_copy.php so no json messages here
+                        if (data){
                             formatAlertMessage(data);
+                        }
                         $(".create_vm_buttons").removeClass('disabled');
                         $("#new_vm_creation_info_box").addClass('hide');
                         refresh_screen();

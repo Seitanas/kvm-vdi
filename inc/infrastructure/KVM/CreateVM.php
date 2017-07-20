@@ -41,7 +41,6 @@ $boot_iso = "";
 $boot_cmd = "";
 if ($iso_image == 'on'&&!empty($iso_path)){
         $boot_iso = escapeshellarg($default_iso_path . '/' . $iso_path);
-#        $boot_cmd = "--noautoconsole --cdrom " . escapeshellarg($default_iso_path . '/' . $iso_path);
 }
 else 
     $boot_cmd = "--pxe --noautoconsole";
