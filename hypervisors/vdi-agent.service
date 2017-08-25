@@ -1,5 +1,5 @@
 [Unit]
-Description=KZVM-VDI agent
+Description=KVM-VDI agent
 Wants=network-online.target
 After=network-online.target
 
