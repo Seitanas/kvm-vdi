@@ -34,6 +34,9 @@ $smtp_ssl=false;
 $smtp_auth=false;
 $smtp_auth_username='someuser';
 $smtp_auth_password='somepass';
+# If true, dashboard will substitute SPICE address
+# with hypervisor address.
+$use_hypervisor_address = true;
 ############################################################
 
 

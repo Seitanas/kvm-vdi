@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-08-25
+2017-09-12
 Vilnius, Lithuania.
 */
 
@@ -483,7 +483,7 @@ function drawVMScreen($vm, $hypervisor){
     $v_reply=get_SQL_array("SELECT * FROM vms WHERE id='$vm'");
     ssh_connect($h_reply[0]['ip'].":".$h_reply[0]['port']);
     $address=ssh_command("sudo virsh domdisplay " . $v_reply[0]['name'], true, true);
-    if (!empty($h_reply[0]['address2']))
+    if (!empty($h_reply[0]['address2']) && !$use_hypervisor_address)
         $address=str_replace("localhost",$h_reply[0]['address2'],$address);
     else
         $address=str_replace("localhost",$h_reply[0]['ip'],$address);
