@@ -1,9 +1,16 @@
 [server]
-address=http://192.168.0.20/kvm-vdi/
-password=12345
+address = http://192.168.0.20/kvm-vdi/
+password = 12345
+
 [hypervisor]
-tmp_snapshots=/tmp
-path_to_kvm=/usr/bin/kvm
+tmp_snapshots = /tmp
+path_to_kvm = /usr/bin/kvm
+# Should initial image be deleted before copying
+# new image from golden image?
+# This is useful if storage is limited and there is no
+# free space for temporary file.
+delete_before_copy = false
+
 [agent]
 #Guest agent socket timeout in seconds
 socket_timeout=60
@@ -11,25 +18,25 @@ socket_timeout=60
 
 
 [loggers]
-keys=root
+keys = root
 
 [handlers]
-keys=VDIconsoleHandler
+keys = VDIconsoleHandler
 
 [formatters]
-keys=VDIformatter
+keys = VDIformatter
 
 [logger_root]
-level=INFO
-handlers=VDIconsoleHandler
+level = INFO
+handlers = VDIconsoleHandler
 
 [handler_VDIconsoleHandler]
-#class=StreamHandler
-class=handlers.RotatingFileHandler
-args=('/var/log/VDI/vdi-agent.log', 'a+', 100*1024, 5)
-level=INFO
-formatter=VDIformatter
-#args=(sys.stderr,)
+#class = StreamHandler
+class = handlers.RotatingFileHandler
+args = ('/var/log/VDI/vdi-agent.log', 'a+', 100*1024, 5)
+level = INFO
+formatter = VDIformatter
+#args = (sys.stderr,)
 
 [formatter_VDIformatter]
-format= %(threadName)s %(asctime)s %(name)-12s %(levelname)-8s %(message)s
+format = %(threadName)s %(asctime)s %(name)-12s %(levelname)-8s %(message)s
