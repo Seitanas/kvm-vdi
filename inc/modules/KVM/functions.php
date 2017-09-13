@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-09-12
+2017-09-13
 Vilnius, Lithuania.
 */
 
@@ -444,7 +444,7 @@ function vmPowerCycle($hypervisor, $vm, $action, $state){
         $x=0;
         while ($child_vms[$x]['name']){
             if ($action=="mass_on"){
-                $agent_command=json_encode(array('vmname' => $child_vms[$x]['name'], 'username' => '', 'password' => '', 'os_type' => $child_vms[$x]['os_type']));
+                $agent_command=json_encode(array('command' => 'STARTVM', 'vmname' => $child_vms[$x]['name'], 'username' => '', 'password' => '', 'os_type' => $child_vms[$x]['os_type']));
                 ssh_command('echo "' . addslashes($agent_command) . '"| socat /usr/local/VDI/kvm-vdi.sock - ',true);
             }
             if ($action=="mass_off")
@@ -466,7 +466,7 @@ function vmPowerCycle($hypervisor, $vm, $action, $state){
                 }
                 add_SQL_line("UPDATE vms SET maintenance='true' WHERE source_volume='{$v_reply[0]['id']}'");
             }
-        $agent_command=json_encode(array('vmname' => $v_reply[0]['name'], 'username' => '', 'password' => '', 'os_type' => $v_reply[0]['os_type']));
+        $agent_command=json_encode(array('command' => 'STARTVM', 'vmname' => $v_reply[0]['name'], 'username' => '', 'password' => '', 'os_type' => $v_reply[0]['os_type']));
         ssh_command('echo "' . addslashes($agent_command) . '"| socat /usr/local/VDI/kvm-vdi.sock - ',true);
         }
         if ($state=="down")
