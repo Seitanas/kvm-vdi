@@ -1,0 +1,77 @@
+#!/usr/bin/env python
+
+import time
+import socket
+import os, os.path
+import json
+from ConfigParser import ConfigParser
+import logging
+import logging.config
+from module import Variables
+from module.VMStartupService import VMStartupService
+
+
+def main():
+    sockfile = "/usr/local/VDI/kvm-vdi.sock"
+    logdir = "/var/log/VDI";
+    if not os.path.exists(logdir):
+        os.makedirs(logdir)
+    if os.path.exists( sockfile ):
+        os.remove( sockfile )
+    logging.config.fileConfig('/usr/local/VDI/config')
+    logger = logging.getLogger('kvm-vdi-agent')
+    logger.info("Starting KVM-VDI hypervisor agent")
+    server = socket.socket( socket.AF_UNIX, socket.SOCK_STREAM )
+    server.bind(sockfile)
+    os.chmod(sockfile, 0o777)
+    server.listen(5)
+    config = ConfigParser()
+    config.read('/usr/local/VDI/config')
+    socket_timeout = int(config.get('agent', 'socket_timeout'))
+    Variables.terminate = 1 # oVirt agent seems to have fixed issue with windows OS. Making login thread exit after login routine
+    try:
+        while True:
+            conn, addr = server.accept()
+            while True:
+                data = conn.recv( 1024 )
+                if not data:
+                    break
+                else:
+                    command = json.loads(data)
+                    fail = 0
+                try:
+                    vmname = command['vmname']
+                except:
+                    fail = 1
+                try:
+                    username = command['username']
+                except:
+                    fail = 1
+                try:
+                    password = command['password']
+                except:
+                    fail = 1
+                try:
+                    os_type = command['os_type']
+                except:
+                    fail = 1
+                if fail == 1:
+                    logger.info ("Illegal json")
+                    logger.debug ("Illegal json: %s", data)
+                else:
+                    logger.debug("Starting login thread for vm: %s", vmname)
+                    VMStartupService(vmname, username, password, os_type, socket_timeout).start()
+                break
+    except KeyboardInterrupt:
+        logger.debug("Keyboard interrupt")
+    Variables.terminate = 1
+    time.sleep(1)
+    server.close()
+    os.remove( sockfile )
+
+if __name__ == '__main__':
+    main()
+
+
+
+
