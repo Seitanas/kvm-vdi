@@ -9,6 +9,7 @@ import logging
 import logging.config
 from module import Variables
 from module.VMStartupService import VMStartupService
+from module.CopyDisk import CopyDisk
 
 
 def main():
@@ -28,6 +29,9 @@ def main():
     config = ConfigParser()
     config.read('/usr/local/VDI/config')
     socket_timeout = int(config.get('agent', 'socket_timeout'))
+    backend_address = config.get('server', 'address')
+    backend_password = config.get('server', 'password')
+    delete_before_copy = config.getboolean('hypervisor', 'delete_before_copy')
     """ oVirt agent seems to have fixed issue with windows OS.
         Making login thread exit after login routine:
     """
@@ -52,6 +56,16 @@ def main():
                             logger.debug(
                                 "Starting login thread "
                                 "for vm: %s", cmd['vmname'])
+                        if cmd['command'] == 'COPYDISK':
+                            CopyDisk(
+                                cmd['source_file'],
+                                cmd['destination_file'],
+                                cmd['vm'],
+                                backend_address,
+                                backend_password,
+                                delete_before_copy).start()
+                            logger.info(
+                                "Starting disk copy thread")
                     except Exception, e:
                         logger.info("Illegal json")
                         logger.debug("Illegal json: %s", e)
