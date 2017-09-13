@@ -42,11 +42,11 @@ sw.add(v)
 w.maximize()
 w.connect("destroy", lambda q: gtk.main_quit())
 http_session = requests.session()
-username=""
-password=""
-refresh_run=1
-global client_path
-global engine
+username = ""
+password = ""
+refresh_run = 1
+client_path = ""
+engine = ""
 client_path = "/client.php"
 
 class Login(QtGui.QDialog):
@@ -72,9 +72,9 @@ class Login(QtGui.QDialog):
         global password
         global client_path
         global engine
-        username=str(self.User.text())
-        password=str(self.Pass.text())
-        reply=http_session.post(dashboard_path+"client_pools.php", data={'username': username, 'password': password}, verify=False, headers=http_headers)
+        username = str(self.User.text())
+        password = str(self.Pass.text())
+        reply = http_session.post(dashboard_path+"client_pools.php", data={'username': username, 'password': password}, verify=False, headers=http_headers)
         if reply.text!='LOGIN_FAILURE':
             v.connect("notify::title", pool_click)
             v.load_html_string(str(reply.text),dashboard_path)
@@ -162,11 +162,10 @@ class remote_viewer(threading.Thread):
         return self._stop.isSet()
     def run(self):
         global refresh_run
-        global engine
         if engine == 'OpenStack':
-            vm_id=self.data['vm_id']
+            vm_id = self.data['vm_id']
         else:
-            vm_id=self.data['name']
+            vm_id = self.data['name']
         t = vm_heartbeat(vm_id)
         t.daemon=True
         t.start()
@@ -182,8 +181,7 @@ class remote_viewer(threading.Thread):
         viewer_config.set('virt-viewer', 'password', spice_password)
         with open('/tmp/' + tmpname + '.cfg', 'wb') as configfile:
             viewer_config.write(configfile)
-        os.system("/usr/bin/remote-viewer --kiosk-quit=on-disconnect  --kiosk /tmp/" + tmpname + ".cfg ")
-        #os.system("/usr/bin/remote-viewer /tmp/" + tmpname + ".cfg ")
+        os.system("/usr/local/bin/remote-viewer --kiosk-quit=on-disconnect  --kiosk /tmp/" + tmpname + ".cfg ")
         dashboard_reload();
         logger.info("Exiting virt-viewer")
         refresh_run=1
