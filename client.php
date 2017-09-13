@@ -51,7 +51,7 @@ if ($protocol=="SPICE"){
         $status=str_replace("localhost",$h_reply[0]['address2'],$status);
     if ($_SESSION['ad_user']=='yes'&&$vm[0]['os_type']=='windows')//we only need to pass username@domainname to windows login.
         $username=$username."@".$domain_name;
-    $agent_command=json_encode(array('vmname' => $machine_name, 'username' => $username, 'password' => $password, 'os_type' => $vm[0]['os_type']));
+    $agent_command=json_encode(array('command' => 'STARTVM', 'vmname' => $machine_name, 'username' => $username, 'password' => $password, 'os_type' => $vm[0]['os_type']));
     if (empty($status)||$status=='error: Domain is not running'){
         add_SQL_line("UPDATE vms SET spice_password='' WHERE id='{$suggested_vm[0]['id']}'"); // reset SPICE password for shut off VMs
         $status='BOOTUP';
