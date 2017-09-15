@@ -4,7 +4,7 @@ KVM-VDI
 Tadas Ustinavičius
 
 Vilnius,Lithuania.
-2017-06-08
+2017-09-15
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -62,9 +62,6 @@ set_lang();
             echo '<script src="inc/js/kvm-vdi-kvm.js"></script>';
     ?>
     <script>
-    $(document).on("hidden.bs.modal", function (e) {
-        $(e.target).removeData("bs.modal").find(".modal-content").empty();
-    });
     function countdown(filepath,id) {
         var $container = $("#progress-"+id);
         (function step() {
