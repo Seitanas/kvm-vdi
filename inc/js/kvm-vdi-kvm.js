@@ -307,22 +307,36 @@ $(document).ready(function(){
 
     $('#main_table').on("click", ".PopulateMachinesButton", function(e) { // since table items are dynamically generated, we will not get ordinary .click() event
         e.preventDefault(); // prevent href to go # (jump to the top of the page)
-        if (confirm('All virtual machines will be powered off and their initial snapshots recreated.\nProceed?')){
-            $('#PleaseWaitDialog').modal('show');
-            var vm = $(this).data('vm');
-            var hypervisor = $(this).data('hypervisor');
-            $.post({
-                url: 'inc/infrastructure/KVM/PopulateVMS.php',
-                    data: {
-                        vm: vm,
-                        hypervisor: hypervisor,
-                    },
-                    success: function(data) {
-                        $('#PleaseWaitDialog').modal('hide');
-                        formatAlertMessage(data);
-                    },
-            });
-        }
+        var vm = $(this).attr('data-vm');
+        var hypervisor = $(this).attr('data-hypervisor');
+        $.confirm({
+            title: 'Alert!',
+            content: 'All virtual machines will be powered off and their initial snapshots recreated.\nProceed?',
+            animation: 'opacity',
+            buttons: {
+                yes: {
+                    btnClass: 'btn-danger',
+                    action: function(){
+                        $('#PleaseWaitDialog').modal('show');
+                        $.post({
+                            url: 'inc/infrastructure/KVM/PopulateVMS.php',
+                            data: {
+                                vm: vm,
+                                hypervisor: hypervisor,
+                            },
+                            success: function(data) {
+                                $('#PleaseWaitDialog').modal('hide');
+                                formatAlertMessage(data);
+                            },
+                        });
+                   }
+                },
+                no: {
+                    btnClass: 'btn-primary',
+                }
+            }
+        });
+
     });
 
     $('#main_table').on("click", ".PowerButton", function(e) { // since table items are dynamically generated, we will not get ordinary .click() event
