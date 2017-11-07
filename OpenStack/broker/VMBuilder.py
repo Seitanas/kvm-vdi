@@ -48,14 +48,15 @@ class VMBuilder(threading.Thread):
             try:
                 response = self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/GetVMInfo.php", data = {'vm_id': new_vm_id}, verify=False, headers=Variables.http_headers).text
                 reply = json.loads(response)
+                if reply['server'].get('status', None) == 'ACTIVE' and new_vm_power:
+                    #shutdown newly created vm:
+                    logger.debug("Powering off VM %s", new_vm_id)
+                    self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/PowerCycle.php", data = {'vm_id': new_vm_id, 'power_state': 'down'}, verify=False, headers=Variables.http_headers)
+                    new_vm_power = 0
+                elif reply['server'].get('status', None) == 'SHUTOFF':
+                    break
             except:
                 logger.debug("Got error in dashboard response: %s", response)
-            if reply['server'].get('status', None) == 'ACTIVE' and new_vm_power:
-                #shutdown newly created vm:
-                logger.debug("Powering off VM %s", new_vm_id)
-                self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/PowerCycle.php", data = {'vm_id': new_vm_id, 'power_state': 'down'}, verify=False, headers=Variables.http_headers)
-                new_vm_power = 0
-            elif reply['server'].get('status', None) == 'SHUTOFF':
                 break
             if Variables.terminate:
                 break
