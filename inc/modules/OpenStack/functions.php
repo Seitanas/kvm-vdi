@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-05-05
+2017-11-07
 Vilnius, Lithuania.
 */
 //############################################################################################
@@ -14,7 +14,7 @@ function memcachedReadConfig(){
     $config['token']=memcache_get($memcache, 'token');
     $config['token_expire']=memcache_get($memcache, 'token_expire');
     $config['compute_url']=memcache_get($memcache, 'compute_url');
-    $config['volumev2_url']=memcache_get($memcache, 'volumev2_url');
+    $config['cinderv3_url']=memcache_get($memcache, 'cinderv3_url');
     $config['image_url']=memcache_get($memcache, 'image_url');
     $config['network_url']=memcache_get($memcache, 'network_url');
     return $config;
@@ -52,13 +52,12 @@ function OpenStackConnect(){
         return $result;
         exit;
     }
-//    print_r($result);
     curl_close($ch);
     foreach ($result['access']['serviceCatalog'] as $item){
         if ($item['type'] == 'compute')
             $compute_url = $item['endpoints'][0]['adminURL'];
-        if ($item['type'] == 'volumev2')
-            $volumev2_url = $item['endpoints'][0]['adminURL'];
+        if ($item['type'] == 'volumev3')
+            $cinderv3_url = $item['endpoints'][0]['adminURL'];
         if ($item['type'] == 'image')
             $image_url = $item['endpoints'][0]['adminURL'];
         if ($item['type'] == 'network')
@@ -69,7 +68,7 @@ function OpenStackConnect(){
     memcache_set($memcache, 'token', $token);
     memcache_set($memcache, 'token_expire', $token_expire);
     memcache_set($memcache, 'compute_url', $compute_url);
-    memcache_set($memcache, 'volumev2_url', $volumev2_url);
+    memcache_set($memcache, 'cinderv3_url', $cinderv3_url);
     memcache_set($memcache, 'image_url', $image_url);
     memcache_set($memcache, 'network_url', $network_url);
     return 0;
@@ -227,7 +226,7 @@ function getSnapshotInfo($snapshot_id){
     $config=array();
     $config=memcachedReadConfig();
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL,$config['volumev2_url'] . '/snapshots/' . $snapshot_id);
+    curl_setopt($ch, CURLOPT_URL,$config['cinderv3_url'] . '/snapshots/' . $snapshot_id);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
         'X-Auth-Token: ' . $config['token'],
         'Content-type: application/json',
@@ -245,7 +244,7 @@ function getVolumeInfo($volume_id){
     $config=array();
     $config=memcachedReadConfig();
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $config['volumev2_url'] . '/volumes/' . $volume_id);
+    curl_setopt($ch, CURLOPT_URL, $config['cinderv3_url'] . '/volumes/' . $volume_id);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
         'X-Auth-Token: ' . $config['token'],
         'Content-type: application/json',
@@ -341,7 +340,7 @@ function createSnapshot($source, $vm_name, $vm_type){
     $config=array();
     $config=memcachedReadConfig();
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL,$config['volumev2_url'] . '/snapshots');
+    curl_setopt($ch, CURLOPT_URL,$config['cinderv3_url'] . '/snapshots');
     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
         'X-Auth-Token: ' . $config['token'],
         'Content-type: application/json',
@@ -364,7 +363,7 @@ function createVolume($source, $vm_name, $vm_type, $size){
     $config=array();
     $config=memcachedReadConfig();
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL,$config['volumev2_url'] . '/volumes');
+    curl_setopt($ch, CURLOPT_URL,$config['cinderv3_url'] . '/volumes');
     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
         'X-Auth-Token: ' . $config['token'],
         'Content-type: application/json',
