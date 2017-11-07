@@ -55,15 +55,14 @@ class VMBuilder(threading.Thread):
                     new_vm_power = 0
                 elif reply['server'].get('status', None) == 'SHUTOFF':
                     break
-            except:
-                logger.debug("Got error in dashboard response: %s", response)
+            except Exception, err:
+                logger.error("Got error in dashboard response: %s %s", err, reply)
                 break
+
             if Variables.terminate:
                 break
             time.sleep(5)
-        #print (Variables.vms_to_build)
         Variables.vms_to_build.pop(self.osInstanceId, None)
         self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/UpdateMaintenance.php", data = {'vm_id': new_vm_id, 'state':'false'}, verify=False, headers=Variables.http_headers)
-#        self.http_session.post(Variables.dashboard_path + "inc/infrastructure/OpenStack/UpdateMaintenance.php", data = {'vm_id': self.osInstanceId, 'state':'false'}, verify=False, headers=Variables.http_headers)
         logger.debug("Finishing thread")
         #print (Variables.vms_to_build)
