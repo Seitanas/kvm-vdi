@@ -18,7 +18,7 @@ config = ConfigParser()
 config.read('/etc/kvm-vdi/kvm-vdi.cfg')
 address = config.get('dashboard', 'address')
 password = config.get('dashboard', 'password')
-path_to_kvm = config.get('emulator', 'path_to_kvm')
+path_to_kvm = ''
 spice_password = (''.join(choice(ascii_uppercase+ascii_lowercase+digits)
                           for i in range(26)))
 '''define if vdi-wrapper is executed for
@@ -27,8 +27,8 @@ startup_procedure = 0
 y = len(sys.argv)
 native_args = sys.argv
 sys.argv[0] = path_to_kvm
-kvm_paths = ['/usr/libexec/qemu-kvm',
-             '/usr/bin/qemu-kvm', '/usr/bin/qemu-system-x86_64']
+kvm_paths = ['/usr/bin/qemu-system-x86_64', '/usr/libexec/qemu-kvm',
+             '/usr/bin/qemu-kvm']
 for kvm in kvm_paths:
     if os.path.isfile(kvm):
         path_to_kvm = kvm
