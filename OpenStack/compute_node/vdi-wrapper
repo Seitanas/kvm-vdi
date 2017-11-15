@@ -1,17 +1,17 @@
 #!/usr/bin/python
 
 from ConfigParser import ConfigParser
-
 import os
 import requests
 import sys
-
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 from random import choice
 from string import ascii_lowercase
 from string import ascii_uppercase
 from string import digits
+import json
+
 
 
 config = ConfigParser()
@@ -25,8 +25,11 @@ spice_password = (''.join(choice(ascii_uppercase+ascii_lowercase+digits)
 vm startup or for other libvirt routine'''
 startup_procedure = 0
 y = len(sys.argv)
+
 native_args = sys.argv
-sys.argv[0] = path_to_kvm
+vdi_args = sys.argv
+command_args = native_args
+vdimachine = 0
 kvm_paths = ['/usr/bin/qemu-system-x86_64', '/usr/libexec/qemu-kvm',
              '/usr/bin/qemu-kvm']
 for kvm in kvm_paths:
@@ -34,33 +37,48 @@ for kvm in kvm_paths:
         path_to_kvm = kvm
 x = 1
 while (x != y):
-    namearg = str(sys.argv[x])
-    if (namearg == "-name"):
-        vmname_tmp = str(sys.argv[x+1])
+    namearg = str(vdi_args[x])
+    if "-name" in namearg:
+        vmname_tmp = str(vdi_args[x+1])
         vmname_tmp = vmname_tmp.split(",")
         vmname = vmname_tmp[0]
         vmname = vmname.replace("guest=", "")
         startup_procedure = 1
-    if "-spice" in namearg:
-        port_tmp = str(sys.argv[x+1])
+        """ Get type of VM. Only generate SPICE password
+            if VM is defined as VDI machine in dashboard
+        """
+        try:
+            response = requests.post(address+"/inc/infrastructure/OpenStack/GetVMType.php",
+                             data={'password': password, 'vmname': vmname},
+                             verify=False)
+            vminfo = json.loads(response.text)
+            if 'sourcemachine' in vminfo['machine_type'] or 'initialmachine' in vminfo['machine_type'] or 'vdimachine' in vminfo['machine_type'] or 'ephemeralvdi' in vminfo['machine_type']:
+                vdimachine = 1
+        except:
+            break
+    if "-spice" in namearg and vdimachine:
+        port_tmp = str(vdi_args[x+1])
         port_tmp = port_tmp.split(",")
         spice_port = port_tmp[0]
         spice_port = spice_port.replace("port=", "")
-        sys.argv[x+1] = sys.argv[x+1] + ",password=" + spice_password
-        sys.argv[x+1] = sys.argv[x+1] + ",agent-mouse=on,image-compression=auto_glz,streaming-video=filter,disable-copy-paste,disable-agent-file-xfer"
-        sys.argv[x+1] = sys.argv[x+1].replace("disable-ticketing,", "")
+        vdi_args[x+1] = vdi_args[x+1] + ",password=" + spice_password
+        vdi_args[x+1] = vdi_args[x+1] + ",agent-mouse=on,image-compression=auto_glz,streaming-video=filter,disable-copy-paste,disable-agent-file-xfer"
+        vdi_args[x+1] = vdi_args[x+1].replace("disable-ticketing,", "")
     x += 1
-command_args = sys.argv
+
 if (startup_procedure):
     try:
-        response = requests.post(address+"/backend.php",
-                             data={'pass': password, 'vm': vmname,
-                                   'spice_password': spice_password,
-                                   'spice_port': spice_port},
-                             verify=False)
+        if vdimachine:
+            response = requests.post(address+"/backend.php",
+                       data={'pass': password, 'vm': vmname,
+                             'spice_password': spice_password,
+                             'spice_port': spice_port},
+                       verify=False)
+            command_args = vdi_args
     except:
         # if contacting dashboard web service fails,
         # fall back to native qemu-kvm arguments
         command_args = native_args
+
 os.execv(path_to_kvm, command_args)
 # call kvm via execv() to replace parent process with it
