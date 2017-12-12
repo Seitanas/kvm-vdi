@@ -112,10 +112,7 @@ class vm_heartbeat(threading.Thread):
         seconds=0
         while not self.stopped():
             if seconds==30:
-                if engine == 'OpenStack':
-                    hb_reply=http_session.post(dashboard_path+"client_hb.php", data={'vm_id': self.vm_id}, verify=False, headers=http_headers)
-                else:
-                    hb_reply=http_session.post(dashboard_path+"client_hb.php", data={'vmname': self.vm_id}, verify=False, headers=http_headers)
+                hb_reply=http_session.post(dashboard_path+"client_hb.php", data={'vmname': self.vm_id}, verify=False, headers=http_headers)
                 logger.debug("VM heartbeat")
                 seconds=0
             if not self.stopped() and seconds < 30: #sleep for one second. Longer sleep times cause thread to wait on exit.
