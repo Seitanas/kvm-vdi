@@ -17,8 +17,8 @@ $value=$_POST['value'];
 if (empty($token)||empty($value)){
     exit;
 }
-if (!file_exists('/tmp/kvm-vdi/')) {
-    mkdir('/tmp/kvm-vdi', 0777, true);
+if (!file_exists($temp_folder . '/kvm-vdi/')) {
+    mkdir($temp_folder . '/kvm-vdi', 0777, true);
 }
 $token=remove_specialchars($token);
 $value=str_replace('/','',$value);
@@ -28,6 +28,6 @@ $value=str_replace('(','',$value);
 $value=str_replace('"','',$value);
 $value=str_replace("'",'',$value);
 $value=str_replace(')','',$value);
-file_put_contents("/tmp/kvm-vdi/$token","$token: $value");
+file_put_contents($temp_folder . "/kvm-vdi/$token","$token: $value");
 echo "OK";
 exit;
