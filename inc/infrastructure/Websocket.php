@@ -2,7 +2,7 @@
 /*
 KVM-VDI
 Tadas Ustinavičius
-2017-05-04
+2018-03-06
 Vilnius, Lithuania.
 */
 include dirname(__FILE__) . '/../../functions/config.php';
