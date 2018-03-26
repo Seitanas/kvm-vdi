@@ -3,14 +3,12 @@
 KVM-VDI
 Tadas Ustinavičius
 
-Vilnius University.
-Center of Information Technology Development.
-
 Vilnius,Lithuania.
-2016-09-06
+2018-03-26
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
+require_once('functions/motd.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,13 +35,13 @@ require_once('functions/functions.php');
                 <div class="login-panel panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title"><?php echo _("KVM-VDI client area");?>
-			    <span class="pull-right">
-                        	<a href="https://github.com/Seitanas/kvm-vdi" target="_new">
-                            	    <span class="fa fa-info-circle glyphicon glyphicon-collapse-up"></span>
+                            <span class="pull-right">
+                                <a href="https://github.com/Seitanas/kvm-vdi" target="_new">
+                                    <span class="fa fa-info-circle glyphicon glyphicon-collapse-up"></span>
                                 </a>
-                    	    </span>
-			</h3>
-	    <div class="clearfix"></div>
+                            </span>
+                        </h3>
+                        <div class="clearfix"></div>
                     </div>
                     <div class="panel-body">
                         <form role="form" method="post" action="client_pools.php">
@@ -55,16 +53,25 @@ require_once('functions/functions.php');
                                     <input class="form-control" placeholder="Password" name="password" type="password" id="password" value="" required>
                                 </div>
                                 <input type="submit" id="login" value="<?php echo _("Sign In");?>" class="btn btn-lg btn-success btn-block">
-				<?php if (isset($_GET['error'])){?>
-				    <div class="alert alert-danger" role="alert"><?php echo _("Wrong username/password");?>
-	    				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				    </div>
-				<?php }?>
+                                    <?php if (isset($_GET['error'])){?>
+                                    <div class="alert alert-danger" role="alert"><?php echo _("Wrong username/password");?>
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    </div>
+                                    <?php }?>
                             </fieldset>
                         </form>
                     </div>
                 </div>
             </div>
+            <?php
+            if ($motd_enabled){
+            echo '
+            <div class="col-md-4">
+                      <div class="login-panel panel panel-default">
+                          <div class="panel-body">' . $motd_content .  '</div>
+                      </div>
+            </div>';
+            } ?>
         </div>
     </div>
     <script src="inc/js/jquery.min.js"></script>
