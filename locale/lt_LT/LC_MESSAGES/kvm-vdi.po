@@ -8,219 +8,370 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-23 12:32+0200\n"
+"POT-Creation-Date: 2018-03-26 09:14+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: lt\n"
+"Last-Translator: FULL NAME <tadas@ring.lt>\n"
+"Language-Team: LANGUAGE <tadas@ring.lt>\n"
+"Language: lt_LT \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Content-Type: text/plain; charset=utf-8\n"
 
-msgid "Change password"
-msgstr "Slaptaždžio keitimas"
+#: kvm-vdi/about.php:31
+msgid "KVM-VDI"
+msgstr ""
 
-msgid "Enter password"
-msgstr "Įveskite slaptažodį"
+#: kvm-vdi/about.php:40
+msgid "Vilnius University."
+msgstr ""
 
-msgid "Repeat password"
-msgstr "Pakartokite slaptažodį"
+#: kvm-vdi/about.php:40
+msgid "Center of Information Technology Development."
+msgstr ""
 
+#: kvm-vdi/about.php:41
+msgid "Project page"
+msgstr ""
+
+#: kvm-vdi/about.php:42
+msgid "Vilnius, Litnuania"
+msgstr ""
+
+#: kvm-vdi/about.php:51 kvm-vdi/add_ad_group.php:41
+#: kvm-vdi/add_credential.php:65 kvm-vdi/add_hypervisor.php:69
+#: kvm-vdi/add_pool.php:40 kvm-vdi/change_password.php:49
+#: kvm-vdi/dhcpconf_gen.php:75 kvm-vdi/list_credentials.php:83
+#: kvm-vdi/list_hypervisors.php:69 kvm-vdi/manage_client_pool.php:64
+#: kvm-vdi/manage_vm_pool.php:80 kvm-vdi/vm_info.php:110
 msgid "Close"
 msgstr "Uždaryti"
 
+#: kvm-vdi/add_ad_group.php:29
+msgid "Add ActiveDirectory group"
+msgstr "Pridėti ActiveDirectory grupę"
+
+#: kvm-vdi/add_ad_group.php:35 kvm-vdi/add_pool.php:34
+msgid "Name"
+msgstr "Vardas"
+
+#: kvm-vdi/add_ad_group.php:42 kvm-vdi/add_credential.php:66
+#: kvm-vdi/add_hypervisor.php:70 kvm-vdi/add_pool.php:41
+#: kvm-vdi/change_password.php:50 kvm-vdi/list_credentials.php:84
+#: kvm-vdi/list_hypervisors.php:70 kvm-vdi/vm_info.php:113
+#: kvm-vdi/vm_info.php:115
 msgid "Save changes"
-msgstr "Išsaugoti"
+msgstr "Išsaugoti nustatymus"
 
-msgid "'<strong>Error!</strong> Empty password.'"
-msgstr "'<strong>Klaida!</strong> Tuščias slaptažodis.'"
+#: kvm-vdi/add_credential.php:33
+msgid "Add new administrator"
+msgstr "Sukurti naują administratorių"
 
-msgid "'<strong>Error!</strong> Passwords do not match.'"
-msgstr "'<strong>Klaida!</strong> Nesutampa slaptažodžiai.'"
+#: kvm-vdi/add_credential.php:35
+msgid "Add new client"
+msgstr "Sukusti naują klientą"
 
-msgid "Refresh VM info"
-msgstr "Antaujinti VM informaciją"
+#: kvm-vdi/add_credential.php:42 kvm-vdi/list_credentials.php:54
+msgid "Username"
+msgstr "Vartotojo vardas"
 
-msgid "Edit clients.xml"
-msgstr "Redaguoti \"clients.xml\""
+#: kvm-vdi/add_credential.php:50
+msgid "Password"
+msgstr "Slaptažodis"
 
-msgid "Create VM(s)"
-msgstr "Sukurti virtualias mašinas"
+#: kvm-vdi/add_credential.php:52
+msgid "Generate password"
+msgstr "Sugeneruoti slaptažodį"
 
+#: kvm-vdi/add_hypervisor.php:29
+msgid "Add new hypervisor"
+msgstr "Prijungti naują hypervizorių"
+
+#: kvm-vdi/add_hypervisor.php:35
+msgid "SSH address of new hypervisor."
+msgstr "Hypervizoriaus SSH adresas"
+
+#: kvm-vdi/add_hypervisor.php:42
+msgid "SSH port. Leave empty for default."
+msgstr "SSH portas. Galima palikti tuščią."
+
+#: kvm-vdi/add_hypervisor.php:49
+msgid "Hypervisor address for thin client network (if differs)."
+msgstr "Hypervizoriaus adresas plonų klientų tinkle (jei skiriasi)"
+
+#: kvm-vdi/add_hypervisor.php:56
+msgid "Hypervisor name (optional)."
+msgstr "Hypervizoriaus adresas (nebūtina)"
+
+#: kvm-vdi/add_hypervisor.php:63
+msgid "Contacting hypervisor"
+msgstr "Prijungiamas hypervizorius"
+
+#: kvm-vdi/add_pool.php:28
+msgid "Add new pool"
+msgstr "Pridėti naują telkinį"
+
+#: kvm-vdi/change_password.php:29 kvm-vdi/dashboard.php:280
+msgid "Change password"
+msgstr "Pakeisti slaptažodį"
+
+#: kvm-vdi/change_password.php:35
+msgid "Enter password"
+msgstr "Įveskite slaptažodį"
+
+#: kvm-vdi/change_password.php:42
+msgid "Repeat password"
+msgstr "Pakartoti slaptažodį"
+
+#: kvm-vdi/change_password.php:43
+msgid "Passwords do not match"
+msgstr "Slaptažodžiai nesutampa"
+
+#: kvm-vdi/client_index.php:37
+msgid "KVM-VDI client area"
+msgstr "KVm-VDI klientų sritis"
+
+#: kvm-vdi/client_index.php:55 kvm-vdi/index.php:61
+msgid "Sign In"
+msgstr "Prisijungti"
+
+#: kvm-vdi/client_index.php:57
+msgid "Wrong username/password"
+msgstr "Neteisingas vartotojo vardas arba slaptažodis"
+
+#: kvm-vdi/client_pools.php:118 kvm-vdi/dashboard.php:133
+msgid "Please wait"
+msgstr "Prašome palaukti"
+
+#: kvm-vdi/client_pools.php:144 kvm-vdi/dashboard.php:281
 msgid "Logout"
-msgstr "Atsijugnti"
+msgstr "Atsijungti"
 
+#: kvm-vdi/client_pools.php:216 kvm-vdi/client_pools.php:226
+msgid "Warning!"
+msgstr "Dėmesio!"
+
+#: kvm-vdi/client_pools.php:216
+msgid "No VMs available. System in maintenance mode."
+msgstr "Laivų virtualių mašinų nėra. Sistema profilaktikos būsenoje."
+
+#: kvm-vdi/client_pools.php:226
+msgid "No free VMs available."
+msgstr "Nėra laisvų virtualių mašinų."
+
+#: kvm-vdi/dashboard.php:90
+msgid ""
+"All virtual machines will be powered off and their initial snapshots "
+"recreated.\\nProceed?"
+msgstr ""
+
+#: kvm-vdi/dashboard.php:97
+msgid "All VDI machines will be deleted.\\nProceed?"
+msgstr "Visos VDV mašinos bus ištrintos.\\nTęsti?"
+
+#: kvm-vdi/dashboard.php:201
+msgid "Refresh VM info"
+msgstr "Atnaujinti VM informaciją"
+
+#: kvm-vdi/dashboard.php:225
+msgid "Clients"
+msgstr "Klientai"
+
+#: kvm-vdi/dashboard.php:227
+msgid "Add client"
+msgstr "Sukurti klient1"
+
+#: kvm-vdi/dashboard.php:228 kvm-vdi/list_credentials.php:39
+msgid "Manage clients"
+msgstr "Valdyti klientus"
+
+#: kvm-vdi/dashboard.php:232
+msgid "Add AD group"
+msgstr "Pridėti AD grupę"
+
+#: kvm-vdi/dashboard.php:233 kvm-vdi/list_credentials.php:41
+msgid "Manage AD groups"
+msgstr "Valdyti AD grupes"
+
+#: kvm-vdi/dashboard.php:237
+msgid "Add LDAP attribute"
+msgstr "Pridėti LDAP atributą"
+
+#: kvm-vdi/dashboard.php:238
+msgid "Manage LDAP attributes"
+msgstr "Valdyti LDAP atributus"
+
+#: kvm-vdi/dashboard.php:242
+msgid "Add pool"
+msgstr "Pridėti telkinį"
+
+#: kvm-vdi/dashboard.php:243 kvm-vdi/list_credentials.php:45
+msgid "Manage pools"
+msgstr "Valdyti telkinius"
+
+#: kvm-vdi/dashboard.php:244 kvm-vdi/manage_vm_pool.php:22
+msgid "Add VMs to pool"
+msgstr "Prodėti VM į telkinį"
+
+#: kvm-vdi/dashboard.php:245 kvm-vdi/manage_client_pool.php:23
+msgid "Add clients to pool"
+msgstr "Pridėti klietus į telkinį"
+
+#: kvm-vdi/dashboard.php:248
+msgid "Add AD group to pool"
+msgstr "Pridėti AD grupę prie telkinio"
+
+#: kvm-vdi/dashboard.php:250
+msgid "Add LDAP attribute to pool"
+msgstr "Pridėti LDAP atributus į telkinį"
+
+#: kvm-vdi/dashboard.php:254
+msgid "Create Virtual Machines"
+msgstr "Kurti virtualias mašinas"
+
+#: kvm-vdi/dashboard.php:258
+msgid "Tools"
+msgstr "Įrankiai"
+
+#: kvm-vdi/dashboard.php:260 kvm-vdi/dhcpconf_gen.php:22
+msgid "Generate DHCP config"
+msgstr "Generuoti DHCP konfigūraciją"
+
+#: kvm-vdi/dashboard.php:264
+msgid "System"
+msgstr "Sistema"
+
+#: kvm-vdi/dashboard.php:268
+msgid "Add hypervisor"
+msgstr "Pridėti hypervizorių"
+
+#: kvm-vdi/dashboard.php:269 kvm-vdi/list_hypervisors.php:30
+msgid "Modify hypervisors"
+msgstr "Redaguoti hypervizorius"
+
+#: kvm-vdi/dashboard.php:271
+msgid "Add administrator"
+msgstr "Sukurti administratorių"
+
+#: kvm-vdi/dashboard.php:272 kvm-vdi/list_credentials.php:43
+msgid "Manage administrators"
+msgstr "Valdyti administratorius"
+
+#: kvm-vdi/dashboard.php:278
+msgid "Profile"
+msgstr "Profilis"
+
+#: kvm-vdi/dashboard.php:289
 msgid "<strong>Please wait!</strong> Populating virtual machines."
-msgstr "<strong>Prašome palaukti!</strong> Kuriamos naujos mašinos."
+msgstr "<strong>Prašome palaukti!</strong> Kuriamos virtualios mašinos."
 
+#: kvm-vdi/dashboard.php:292
 msgid "<strong>Please wait!</strong> Copying image."
-msgstr "<strong>Prašome palaukt!</strong> Kopijuojamas atvaizdas."
+msgstr "<strong>Prašome palaukti!</strong> Kopijuojamas atvaizdas."
 
-msgid "Hypervisor: "
-msgstr "Hypervizorius: "
+#: kvm-vdi/dhcpconf_gen.php:35
+msgid "Available Vms:"
+msgstr "Turimos virtualios mašinos"
 
-msgid "Machine name"
-msgstr "Mašinos pavadinimas"
+#: kvm-vdi/dhcpconf_gen.php:47
+msgid "Generate config for:"
+msgstr "Generuoti konfigūraciją:"
 
-msgid "Machine type"
-msgstr "Mašinos tipas"
+#: kvm-vdi/dhcpconf_gen.php:51
+msgid "DHCP configuration:"
+msgstr "DHCK nustatymai"
 
-msgid "Source image"
-msgstr "Atvaizdo šaltinis"
+#: kvm-vdi/dhcpconf_gen.php:61
+msgid "Start IP address"
+msgstr "Pradinis IP adresas"
 
-msgid "Virt-snapshot"
-msgstr "Virtuali atvaizdo kopija"
+#: kvm-vdi/dhcpconf_gen.php:74
+msgid "Generate"
+msgstr "Generuoti"
 
-msgid "Maintenance"
-msgstr "Priežiūra"
+#: kvm-vdi/index.php:43
+msgid "KVM-VDI administrator portal"
+msgstr "KVM-VDI administratoriaus portalas"
 
-msgid "Operations"
-msgstr "Veiksmai"
+#: kvm-vdi/index.php:62
+msgid "Go to client area"
+msgstr "Eiti į vartotojo aplinką"
 
-msgid "Simple machine"
-msgstr "Paprasta mašina"
+#: kvm-vdi/list_credentials.php:66 kvm-vdi/list_hypervisors.php:61
+msgid "Delete"
+msgstr "Ištrinti"
 
-msgid "Initial machine"
-msgstr "Pirminė mašina"
+#: kvm-vdi/list_credentials.php:68
+msgid "Reset password"
+msgstr "Sugeneruoti naują slaptažodį"
 
-msgid "Source machine"
-msgstr "Šaltinis"
+#: kvm-vdi/manage_client_pool.php:29
+msgid "Available clients"
+msgstr "Esami klientai"
 
-msgid "VDI machine"
-msgstr "Virtuali darbo vieta"
+#: kvm-vdi/manage_client_pool.php:41
+msgid "Clients in pool"
+msgstr "Klientai telkinyje"
 
-msgid "Copy disk from source"
-msgstr "Kopijuoti advaizdą iš šaltinio"
+#: kvm-vdi/manage_client_pool.php:47 kvm-vdi/manage_vm_pool.php:63
+msgid "Pool"
+msgstr "Telkinys"
 
-msgid "Turn maintenance on"
-msgstr "Įjungti priežiūrą"
+#: kvm-vdi/manage_client_pool.php:63 kvm-vdi/manage_vm_pool.php:79
+msgid "Submit"
+msgstr "Įvesti"
 
-msgid "Turn maintenance off"
-msgstr "Išjungti priežiūrą"
+#: kvm-vdi/manage_vm_pool.php:31
+msgid "Show non-VDI VMs"
+msgstr "Parodyti ne VDV virtualias mašinas"
 
-msgid "Populate machines"
-msgstr "Diegti darbo vietas"
+#: kvm-vdi/manage_vm_pool.php:44
+msgid "Available Vms"
+msgstr "Esamos virtualios mašinos"
 
-msgid "Mass power on"
-msgstr "Įjungti visas mašinas"
+#: kvm-vdi/manage_vm_pool.php:56
+msgid "Vms in pool"
+msgstr "Virtualios mašinos telkinyje"
 
-msgid "Mass shut down (soft)"
-msgstr "Išjungti visas mašinas"
+#: kvm-vdi/vm_info.php:57
+msgid "OS type:"
+msgstr "OS tipas:"
 
-msgid "Mass shut down (forced)"
-msgstr "Išjungti visas mašinas (priverstinai)"
-
-msgid "Turn on snapshots"
-msgstr "Įjungti virtualius atvaizdus"
-
-msgid "Turn off snapshots"
-msgstr "Išjungti virtualius atvaizdus"
-
-msgid "Power up"
-msgstr "Įjungti"
-
-msgid "Shut down"
-msgstr "Išjungti"
-
-msgid "Shut down (soft)"
-msgstr "Išjungti"
-
-msgid "Are you sure?"
-msgstr "Ar jūs įsitikinę?"
-
-msgid "Power down"
-msgstr "Išjungti"
-
-msgid "Open console"
-msgstr "Atidaryti konsolę"
-
-msgid "Create virtual machine(s)"
-msgstr "Sukurti virtualias mašinas"
-
-msgid "Machine type:"
-msgstr "Mašinos tipas"
-
-msgid "Please select machine type"
-msgstr "Pasirinkite mašinos tipą"
-
-msgid "Target hypervisor:"
-msgstr "Pasirinkite hipervizorių"
-
-msgid "Please select hypervisor"
-msgstr "Pasirinkite hipervizorių"
-
-msgid "Use volume from:"
-msgstr "Naudoti atvaizdą iš:"
-
-msgid "Please select source"
-msgstr "Pasirinkite šaltinį"
-
-msgid "Specify disk path:"
-msgstr "NUrodykite atvaizdo kelią:"
-
-msgid "Disk size"
-msgstr "Atvaizdo dydis"
-
-msgid "OS type"
-msgstr "OS"
-
-msgid "Mount CD iso:"
-msgstr "Prijungti CD disko ISO"
-
-msgid "Select ISO image"
-msgstr "Pasirinkite ISO matvaizdą"
-
-msgid "Hardware info:"
-msgstr "Informacija apie įrangą:"
-
-msgid "CPUs"
-msgstr "procesoriai"
-
-msgid "Cores"
-msgstr "Branduoliai"
-
-msgid "Network"
-msgstr "Tinklas"
-
-msgid "Please select OS type"
-msgstr "Pasirinkite OS"
-
+#: kvm-vdi/vm_info.php:59
 msgid "Linux"
 msgstr ""
 
+#: kvm-vdi/vm_info.php:60
 msgid "Windows"
 msgstr ""
 
-msgid "Version"
-msgstr "Versija"
+#: kvm-vdi/vm_info.php:70
+msgid "MAC address:"
+msgstr "MAC adresas:"
 
-msgid "Please select version"
-msgstr "Pasirinkite versiją"
+#: kvm-vdi/vm_info.php:79
+msgid "Machine type:"
+msgstr "Mašinos tipas:"
 
-msgid "Mass deployment"
-msgstr "Masinis diegimas"
+#: kvm-vdi/vm_info.php:82
+msgid "Please select machine type"
+msgstr "Prašome pasirinkti mašinos tipą"
 
-msgid "Prepend machine name:"
-msgstr "Pradinis mašinos pavadinimas:"
+#: kvm-vdi/vm_info.php:83
+msgid "Simple machine"
+msgstr ""
 
-msgid "Number of machines to create:"
-msgstr "Naujų mašinų kiekis:"
+#: kvm-vdi/vm_info.php:84
+msgid "Initial machine"
+msgstr ""
 
+#: kvm-vdi/vm_info.php:85
+msgid "Source machine"
+msgstr ""
+
+#: kvm-vdi/vm_info.php:86
+msgid "VDI machine"
+msgstr ""
+
+#: kvm-vdi/vm_info.php:104
 msgid "Use virtual snapshots"
-msgstr "Naudoti virtualius atvaizdus"
-
-msgid "VM screen"
-msgstr "VM nuotrauka"
-
-msgid "VM name: "
-msgstr "VM vardas: "
-
-msgid "Open remote console"
-msgstr "Atidaryti konsolę"
-
-msgid "Create VMs"
-msgstr "Sukurti"
-
-
-msgid "All virtual machines will be powered off and their initial snapshots recreated.\nProceed?"
-msgstr "Visos virtualios mašios bus išjungtos ir jų kopijos ištrintos \nTęsti?"
+msgstr ""
