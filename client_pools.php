@@ -3,16 +3,14 @@
 KVM-VDI
 Tadas Ustinavičius
 
-Vilnius University.
-Center of Information Technology Development.
-
 
 Vilnius,Lithuania.
-2017-05-03
+2018-03-26
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
 slash_vars();
+set_lang();
 if ($_SERVER['HTTP_USER_AGENT']=='KVM-VDI client')
     $html5_client=0;
 else

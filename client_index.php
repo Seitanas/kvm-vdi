@@ -9,6 +9,7 @@ Vilnius,Lithuania.
 include ('functions/config.php');
 require_once('functions/functions.php');
 require_once('functions/motd.php');
+set_lang();
 ?>
 <!DOCTYPE html>
 <html lang="en">

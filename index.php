@@ -3,11 +3,8 @@
 KVM-VDI
 Tadas Ustinavičius
 
-Vilnius University.
-Center of Information Technology Development.
-
 Vilnius,Lithuania.
-2016-09-06
+2018-03-26
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -15,6 +12,7 @@ if (check_db()<1){
     header("Location:  $serviceurl/install/");
     exit;
     }
+set_lang();
 ?>
 <!DOCTYPE html>
 <html lang="en">
