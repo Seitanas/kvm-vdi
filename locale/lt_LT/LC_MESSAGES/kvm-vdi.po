@@ -416,3 +416,6 @@ msgstr "Operacijos"
 msgid "OS type/Status/Used by"
 msgstr "OS tipas/statusas/vartotojas"
 
+msgid "Number of machines to create:"
+msgstr "Norimas mašinų kiekis:"
+
