@@ -23,19 +23,19 @@ msgstr ""
 
 #: kvm-vdi/about.php:40
 msgid "Vilnius University."
-msgstr ""
+msgstr "Vilniaus Universitetas."
 
 #: kvm-vdi/about.php:40
 msgid "Center of Information Technology Development."
-msgstr ""
+msgstr "Informacinių technologijų taikymo centras"
 
 #: kvm-vdi/about.php:41
 msgid "Project page"
-msgstr ""
+msgstr "Projekto puslapis"
 
 #: kvm-vdi/about.php:42
 msgid "Vilnius, Litnuania"
-msgstr ""
+msgstr "Vilnius, Lietuva"
 
 #: kvm-vdi/about.php:51 kvm-vdi/add_ad_group.php:41
 #: kvm-vdi/add_credential.php:65 kvm-vdi/add_hypervisor.php:69
@@ -162,7 +162,8 @@ msgstr "Nėra laisvų virtualių mašinų."
 msgid ""
 "All virtual machines will be powered off and their initial snapshots "
 "recreated.\\nProceed?"
-msgstr ""
+msgstr "Visos virtualios mašinos bus išjungtos ir jų pirminiai atvaizdai "
+"sukurti iš naujo. \\Tęsti?"
 
 #: kvm-vdi/dashboard.php:97
 msgid "All VDI machines will be deleted.\\nProceed?"
@@ -178,7 +179,7 @@ msgstr "Klientai"
 
 #: kvm-vdi/dashboard.php:227
 msgid "Add client"
-msgstr "Sukurti klient1"
+msgstr "Sukurti klientą"
 
 #: kvm-vdi/dashboard.php:228 kvm-vdi/list_credentials.php:39
 msgid "Manage clients"
@@ -352,26 +353,66 @@ msgstr "MAC adresas:"
 msgid "Machine type:"
 msgstr "Mašinos tipas:"
 
+msgid "Machine type"
+msgstr "Mašinos tipas"
+
 #: kvm-vdi/vm_info.php:82
 msgid "Please select machine type"
 msgstr "Prašome pasirinkti mašinos tipą"
 
 #: kvm-vdi/vm_info.php:83
 msgid "Simple machine"
-msgstr ""
+msgstr "Paprasta mašina"
 
 #: kvm-vdi/vm_info.php:84
 msgid "Initial machine"
-msgstr ""
+msgstr "Pradinė mašina"
 
 #: kvm-vdi/vm_info.php:85
 msgid "Source machine"
-msgstr ""
+msgstr "Šaltinio mašina"
 
 #: kvm-vdi/vm_info.php:86
 msgid "VDI machine"
-msgstr ""
+msgstr "VDV mašina"
 
 #: kvm-vdi/vm_info.php:104
 msgid "Use virtual snapshots"
-msgstr ""
+msgstr "Naudoti virtualius atvaizdus"
+
+msgid "About"
+msgstr "Apie"
+
+msgid "Networks:"
+msgstr "Tinklai:"
+
+msgid "Flavors"
+msgstr "Resursų dydis"
+
+msgid "Machine source:"
+msgstr "Šaltinio mašina:"
+
+msgid "Machine name:"
+msgstr "Mašinos pavadinimas:"
+
+msgid "Machine name"
+msgstr "Mašinos pavadinimas"
+
+msgid "System info:"
+msgstr "Sistemos informacija:"
+
+msgid "Create virtual machine(s)"
+msgstr "Sukurti virutalią mašiną(s)"
+
+msgid "Source image"
+msgstr "Šaltinio mašina"
+
+msgid "Maintenance"
+msgstr "Profilaktika"
+
+msgid "Operations"
+msgstr "Operacijos"
+
+msgid "OS type/Status/Used by"
+msgstr "OS tipas/statusas/vartotojas"
+

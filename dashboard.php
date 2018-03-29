@@ -4,7 +4,7 @@ KVM-VDI
 Tadas Ustinavičius
 
 Vilnius,Lithuania.
-2017-09-15
+2018-03-29
 */
 include ('functions/config.php');
 require_once('functions/functions.php');
@@ -271,7 +271,7 @@ set_lang();
                 <li class="nav"><a href="add_credential.php?credential_type=user" data-toggle="modal" data-target="#modalWm"><i class="fa fa-user-plus fa-fw"></i><?php echo _("Add administrator");?></a></li>
                 <li class="nav"><a href="list_credentials.php?credential_type=user" data-toggle="modal" data-target="#modalWm"><i class="fa fa-recycle fa-fw"></i><?php echo _("Manage administrators");?></a></li>
                 <li class="nav-divider"></li>
-                <li class="nav"><a data-target="#modalWm" data-toggle="modal" href="about.php"><i class="fa fa-star-o fa-fw"></i>About</a></li>
+                <li class="nav"><a data-target="#modalWm" data-toggle="modal" href="about.php"><i class="fa fa-star-o fa-fw"></i><?php echo _("About")?></a></li>
 		    </ul>
 		</li>
 		<li>
