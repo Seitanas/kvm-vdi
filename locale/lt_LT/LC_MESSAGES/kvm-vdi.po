@@ -211,7 +211,7 @@ msgstr "Valdyti telkinius"
 
 #: kvm-vdi/dashboard.php:244 kvm-vdi/manage_vm_pool.php:22
 msgid "Add VMs to pool"
-msgstr "Prodėti VM į telkinį"
+msgstr "Pridėti VM į telkinį"
 
 #: kvm-vdi/dashboard.php:245 kvm-vdi/manage_client_pool.php:23
 msgid "Add clients to pool"
