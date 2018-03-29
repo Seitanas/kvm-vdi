@@ -402,7 +402,7 @@ msgid "System info:"
 msgstr "Sistemos informacija:"
 
 msgid "Create virtual machine(s)"
-msgstr "Sukurti virutalią mašiną(s)"
+msgstr "Sukurti virtualią mašiną(s)"
 
 msgid "Source image"
 msgstr "Šaltinio mašina"
