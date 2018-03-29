@@ -4,6 +4,7 @@ function HTML5Buttons(){
     include (dirname(__FILE__) . '/../../../functions/config.php');
     require_once(dirname(__FILE__) . '/../../../functions/functions.php');
     slash_vars();
+    set_lang();
     if (!check_client_session()){
         exit;
     }
@@ -41,7 +42,7 @@ function HTML5Buttons(){
             AND vms.lastused > DATE_SUB(NOW(), INTERVAL '$return_to_pool_after' MINUTE)");
             $vm_image="text-warning";
             $provided_vm=array();
-            $provided_vm[0]['name']="none";
+            $provided_vm[0]['name']=_("none");
             if ($already_have[0][0] == 1){//if vm was already provided within $return_to_pool_after period
                 $vm_image="text-success";
                 $provided_vm=get_SQL_array("SELECT vms.name, vms.state, vms.id, vms.osInstanceId FROM poolmap_vm LEFT JOIN vms ON poolmap_vm.vmid=vms.source_volume LEFT JOIN hypervisors ON vms.osHypervisorName = hypervisors.name 
@@ -85,8 +86,8 @@ function HTML5Buttons(){
                 </div>
             </div>
             <div class="panel-footer">
-                <span class="pull-left"><small>Pool size: ' . $vm_count[0][0] . '</small></span>
-                <span class="pull-right"><small>Available: ' . $vm_count_available[0][0] . '</small></span>
+                <span class="pull-left"><small>' . _("Pool size:") . $vm_count[0][0] . '</small></span>
+                <span class="pull-right"><small>' . _("Available:") . $vm_count_available[0][0] . '</small></span>
                 <div class="clearfix"></div>
             </div>
         </div>

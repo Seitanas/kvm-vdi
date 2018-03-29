@@ -419,3 +419,11 @@ msgstr "OS tipas/statusas/vartotojas"
 msgid "Number of machines to create:"
 msgstr "Norimas mašinų kiekis:"
 
+msgid "none"
+msgstr "nepriskirta"
+
+msgid "Pool size:"
+msgstr "VDV telkinyje:"
+
+msgid "Available:"
+msgstr "Laisvų VDV:"
