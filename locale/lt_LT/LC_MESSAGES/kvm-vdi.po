@@ -68,7 +68,7 @@ msgstr "Sukurti naują administratorių"
 
 #: kvm-vdi/add_credential.php:35
 msgid "Add new client"
-msgstr "Sukusti naują klientą"
+msgstr "Sukurti naują klientą"
 
 #: kvm-vdi/add_credential.php:42 kvm-vdi/list_credentials.php:54
 msgid "Username"
