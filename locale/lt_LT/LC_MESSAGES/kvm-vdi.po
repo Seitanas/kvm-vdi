@@ -427,3 +427,6 @@ msgstr "VDV telkinyje:"
 
 msgid "Available:"
 msgstr "Laisvų VDV:"
+
+msgid "Create VMs"
+msgstr "Kurti mašinas"
